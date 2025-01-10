@@ -16,25 +16,6 @@ export class AuthenticationService {
     this.currentUserLoggedIn$ = new Subject();
   }
 
-  async login(username: string, password: string) {
-    try {
-      const data = await this.http.post('/login', {username, password}, {observe: 'response'}).toPromise();
-      if (data.status === 200) {
-        const token = data.body['data']['token'];
-        await this.setTokens(token);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error(error);
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('user_id');
-      sessionStorage.removeItem('permissions');
-      return false;
-    }
-  }
-
   async surveyLogin(accessCode: string) {
     const appConfig = await this.appConfigService.getAppConfig();
     const groupId = appConfig['groupId'];

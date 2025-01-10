@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CasesService } from './cases.service';
-import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CaseEventInfo } from './case-event-info.class';
 import { CASE_EVENT_STATUS_IN_PROGRESS } from '../classes/case-event.class';
@@ -237,10 +236,6 @@ describe('CasesService', () => {
     imports:[HttpClientModule],
     providers: [
       {provide:CasesService, useClass:MockCasesService},
-      {
-        provide: UserService,
-        useClass: MockUserService
-      }
     ]
   }));
 

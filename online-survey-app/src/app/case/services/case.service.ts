@@ -6,7 +6,6 @@ import { NotificationStatus, Notification, NotificationType } from './../classes
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseDefinitionsService } from './case-definitions.service';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from 'src/app/core/auth/_services/user.service';
 // Classes.
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Case } from '../classes/case.class'
@@ -102,7 +101,6 @@ class CaseService {
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
