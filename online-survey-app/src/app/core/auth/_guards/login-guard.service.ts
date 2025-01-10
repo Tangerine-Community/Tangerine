@@ -16,9 +16,10 @@ export class LoginGuard implements CanActivate {
     if (config['requireAccessCode'] === 'true') {
       if (await this.authenticationService.isLoggedIn()) {
         return true;
+      } else {
+        this.router.navigate(['survey-login'], { queryParams: { returnUrl: state.url } });
+        return false;
       }
-      this.router.navigate(['survey-login'], { queryParams: { returnUrl: state.url } });
-      return false;
     }
 
     return true;
