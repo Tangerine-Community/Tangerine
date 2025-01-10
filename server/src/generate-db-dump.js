@@ -8,7 +8,7 @@ router.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword',
   const syncPassword = req.params.syncPassword;
   const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
   const devicesUrl = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}-devices`
-  console.log("about to generateDbDump to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
+  console.log("about to generateDbDump to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername)
   const groupDevicesDb = await new PouchDB(devicesUrl)
   const device = await groupDevicesDb.get(deviceId)
   const formInfos = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
