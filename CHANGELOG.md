@@ -1,21 +1,91 @@
 # What's new
 
+## v3.31.2
+
+__General Updates__
+
+- Add APIs to access MySQL tables
+Data Managers who have been granted the `can_access_mysql_api` permission can now access Tangerine MySQL data through the web interface. This is useful for building reporting dashboards within Tangerine or through other tools like PowerBI, R, Stata or Tableau. 
+
+See the [Custom Dashboard Example](docs/editor/custom-dashboard.md) for instructions.
+
+- Scoring: Add scoring percent and denominator values
+When Tangerine form scoring is turned on, each section will now output the score, percent, and denominator values. The values will be output in csv and mysql data as:
+- `<section_name>_score_denominator`
+- `<section_name>_score_percent`
+
+Projects who want this functionality to run on existing uploads can use a Tangerine Wedge script: 
+[Add Scoring Percent and Denominator](https://github.com/ICTatRTI/couchdb-subscribe-and-action-example/tree/unicef-bangla-section-score-count-and-percent)
+
+- Add server scripts: New server administration scripts
+
+__Fixes__
+- After adding a user to a group, navigate back to the user table
+- Run 'npm install' during APK and PWA builds to ensure installation of dependencies and build for custom code
+
+__Libs and Dependencies__
+- Bump tangy-form to v4.45.4 to add scoring percent and denominator values
+- Bump tangy-form-editor to v7.18.1
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* N/A
+
+## v3.31.1
+
+__General Updates__
+
+- Allow mysql outputs of TANGY-TIMED and TANGY-UNTIMED-GRID data
+
+__Administration__
+
+- The `reporting-cache-clear` script will honor the environmnt variable `T_ONLY_PROCESS_THESE_GROUPS` to limit the groups processed
+  * Set `T_ONLY_PROCESS_THESE_GROUPS` to a comma-separated list of group names to limit the groups cleared and then processed by the script
+
+__Fixes__
+- Fixes for editing of Form Responses in the server web UI
+  * Edits of Attendence, Behavior, and Scoring are currently prohibited in the server web UI
+  * Verified and Archived Form Responses must be Unverified and Unarchived before editing is available
+- Teacher Dashboard Scoring: Fix issues with custom scoring
+- Fix output of Case Participants to mysql
+- Fix online survey release
+
+__Libs and Dependencies__
+- Bump version of `tangy-form` to v4.54.4
+  * Fix check for 'readOnly' input metadata
+  * Fix undefined access of input without tagName
+  * Fix missing function parens
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* N/A
+
+
+
 ## v3.31.0
 
 __New Features__
-- A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430). [#3473](https://github.com/Tangerine-Community/Tangerine/issues/3473)
+
+- **Audio and Visual Feedback**: A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430). [#3473](https://github.com/Tangerine-Community/Tangerine/issues/3473)
 
 - Client Login Screen Custom HTML: A new app-config.json setting, `customLoginMarkup`, allows for custom HTML to be added to the login screen. This feature is useful for adding custom branding or additional information to the login screen. As an example:
 ```json
 "customLoginMarkup": "<div style='text-align: center;'><img src='assets/media/logo.png' alt='logo' style='max-width: 100%;'></div>"
 ```
 
-- Add ID Search to Data > Import: A new feature in the Data > Import screen allows users to search for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. [#3681](https://github.com/Tangerine-Community/Tangerine/issues/3681)
+- **Improved Data Management**: 
+  * Data Managers now have access to a full workflow to review, edit, and verify data in the Tangerine web server. The Data Manager can click on a record and enter a new screen that allows them to perform actions align with a data collection supervision process.
+  * Searching has been improved to allow seaqrching for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. [#3681](https://github.com/Tangerine-Community/Tangerine/issues/3681)
 
 __Fixes__
 - Client Search Service: exclude archived cases from recent activity
-- Improve import of responses using user-profile short code on client [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
 - Media library cannot upload photos [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+- User Profile Import: The process of importing an existing device user now allows for retries and an asynchronous process to download existing records. This fixes an issue cause by timeouts when trying to import a user with a large number of records. [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
+- When `T_ONLY_PROCESS_THESE_GROUPS` has a list of one or more groups, running `reporting-cache-clear` will only process the groups in the list
 
 __Tangerine Teach__
 
@@ -24,12 +94,18 @@ __Tangerine Teach__
 
 __Libs and Dependencies__
 - Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0 for the new Prompt Box widget
+- Bump version of `tangy-form` to v4.45.1 for disabling of `tangy-gps` in server edits
 
 __Server upgrade instructions__
 
 See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
-*Special Instructions for this release:* NONE
+*Special Instructions for this release:* 
+
+Once the Tangerine and CouchDB are running, run the upgrade script for v3.31.0:
+
+`docker exec -it tangerine /tangerine/server/src/upgrade/v3.31.0.js`
+
 
 
 ## v3.30.2
