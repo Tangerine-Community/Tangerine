@@ -10,7 +10,7 @@ const login = async (req, res) => {
     const { groupId, accessCode } = req.params;
 
     const groupDb = new DB(groupId)
-    let options = { key: accessCode, include_docs: true }
+    let options = { key: accessCode, include_docs: true, reduce: false }
     if (req.params.limit) {
       options.limit = req.params.limit
     }
