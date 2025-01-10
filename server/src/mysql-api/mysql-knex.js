@@ -55,10 +55,15 @@ async function closeConnection() {
 async function getTableData(schema, table, columns=[], where=undefined, join=undefined, groupby=[])
 {
   const cols = columns.length > 0 ? columns.join(', ') : '*'
-  const joinClause = join ? `JOIN ${join}` : ''
-  const whereClause = where ? `WHERE ${where}` : ''
-  const groupByClause = groupby.length > 0 ? `GROUP BY ${groupby.join(', ')}` : ''
-  const results = await KNEX.raw(`SELECT ${cols} FROM ${schema}.${table} ${joinClause} ${whereClause} ${groupByClause}`)
+  const joinClause = join ? `JOIN ??` : ''
+  const whereClause = where ? `WHERE ??` : ''
+  const groupByClause = groupby.length > 0 ? `GROUP BY ??` : ''
+  const query = `SELECT ${cols} FROM ?? ${joinClause} ${whereClause} ${groupByClause}`
+  const bindings = [schema + '.' + table]
+  if (join) bindings.push(join)
+  if (where) bindings.push(where)
+  if (groupby.length > 0) bindings.push(groupby.join(', '))
+  const results = await KNEX.raw(query, bindings)
   return results
 }
 
