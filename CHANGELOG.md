@@ -1,5 +1,37 @@
 # What's new
 
+## v3.31.2
+
+__General Updates__
+
+- Add APIs to access MySQL tables
+Data Managers who have been granted the `can_access_mysql_api` permission can now access Tangerine MySQL data through the web interface. This is useful for building reporting dashboards within Tangerine or through other tools like PowerBI, R, Stata or Tableau. 
+
+See the [Custom Dashboard Example](docs/editor/custom-dashboard.md) for instructions.
+
+- Scoring: Add scoring percent and denominator values
+When Tangerine form scoring is turned on, each section will now output the score, percent, and denominator values. The values will be output in csv and mysql data as:
+  - `sectionName_score`
+  - `sectionName_percent`
+  - `sectionName_denominator`
+
+For existing projects who want this functionality, there are scripts availabel to add the values to already uploaded data.
+
+- Add server scripts: New server administration scripts
+
+__Fixes__
+- After adding a user to a group, navigate back to the user table
+- Run 'npm install' during APK and PWA builds to ensure installation of dependencies and build for custom code
+
+__Libs and Dependencies__
+- NA
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* N/A
+
 ## v3.31.1
 
 __General Updates__
