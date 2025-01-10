@@ -28,6 +28,8 @@ T_MYSQL_CONTAINER_NAME="mysql"
 T_MYSQL_USER="admin"
 T_MYSQL_PASSWORD="password"
 T_MYSQL_PHPMYADMIN="FALSE"
+# Enter "true" if using a mysql container instead of an external database service such as AWS RDS. This will launch a mysql container.
+T_USE_MYSQL_CONTAINER=""
 
 #
 # Optional
@@ -62,11 +64,11 @@ T_REPORTING_DELAY="300000"
 # Number of change docs from the Couchdb changes feed queried by reporting-worker (i.e. use as the limit parameter)
 T_LIMIT_NUMBER_OF_CHANGES=200
 
-# Limit processing to certain group dbs.
+# Limit processing to certain group dbs. Cache clear and batching reporting outputs will only run on the groups specified below.
+# If empty, all groups will be processed.
+# The value of the paramter is an array of group names. For example:
+# T_ONLY_PROCESS_THESE_GROUPS="['group-1','group-2']"
 T_ONLY_PROCESS_THESE_GROUPS=""
-
-# Enter "true" if using a mysql container instead of an external database service such as AWS RDS. This will launch a mysql container.
-T_USE_MYSQL_CONTAINER=""
 
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50

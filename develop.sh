@@ -78,8 +78,8 @@ if echo "$T_MODULES" | grep mysql; then
 
   if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
     ./mysql-start-container.sh
-    echo "Waiting 60 seconds for mysql container to start..."
-    sleep 60
+    echo "Waiting 20 seconds for mysql container to start..."
+    sleep 20
     ./mysql-setup.sh
   fi
 fi
@@ -221,6 +221,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json:delegated \
   --volume $(pwd)/server/src:/tangerine/server/src:delegated \
   --volume $(pwd)/client/src:/tangerine/client/src:delegated \
+  --volume $(pwd)/client/dist:/tangerine/client/dist:delegated \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting:delegated \
   --volume $(pwd)/upgrades:/tangerine/upgrades:delegated \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \

@@ -11,9 +11,11 @@ export class DynamicTableComponent implements OnInit, OnChanges {
   @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowEdit: EventEmitter<any> = new EventEmitter<any>();
   @Output() rowDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowArchive: EventEmitter<any> = new EventEmitter<any>();
   @Input() data:Array<any> = []
   @Input() columnLabels = {}
   @Input() hideActionBar
+  @Input() showArchiveButton
   columns:Array<any>
   displayedColumns:Array<any>
   dataSource:any
@@ -63,6 +65,9 @@ export class DynamicTableComponent implements OnInit, OnChanges {
   }
   onRowDelete(row) {
     this.rowDelete.emit(row)
+  }
+  onRowArchive(row) {
+    this.rowArchive.emit(row)
   }
 
 
