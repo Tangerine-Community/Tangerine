@@ -22,6 +22,7 @@ import {ProcessGuard} from "./_guards/process-guard.service";
 import { ProcessMonitorDialogComponent } from './_components/process-monitor-dialog/process-monitor-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import { FormTitleFromInfoPipe } from '../pipes/format-form-title-from-info.pipe';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -48,6 +49,7 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     TangyLoadingComponent,
     BreadcrumbComponent,
     UnsanitizeHtmlPipe,
+    FormTitleFromInfoPipe,
     NgxPermissionsModule,
     HasAPermissionDirective,
     HasSomePermissionsDirective,
@@ -57,6 +59,7 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
   declarations: [
     TangyLoadingComponent,
     UnsanitizeHtmlPipe,
+    FormTitleFromInfoPipe,
     BreadcrumbComponent,
     HasAPermissionDirective,
     HasSomePermissionsDirective,
