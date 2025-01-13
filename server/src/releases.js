@@ -63,7 +63,6 @@ const releasePWA = async (req, res)=>{
 
 const releaseOnlineSurveyApp = async(req, res) => {
 	// @TODO Make sure user is member of group.
-	debugger;
 	const groupId = sanitize(req.params.groupId)
 	const formId = sanitize(req.params.formId)
 	const releaseType = sanitize(req.params.releaseType)
@@ -75,7 +74,6 @@ const releaseOnlineSurveyApp = async(req, res) => {
 	} else {
 		uploadKey = sanitize(req.body.uploadKey)
 	}
-	debugger;
 	const requireAccessCode = req.body.locked ? req.body.locked : false
 
 	try {
