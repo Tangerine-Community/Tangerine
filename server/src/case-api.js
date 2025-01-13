@@ -88,6 +88,7 @@ createCase = async (req, res) => {
 
 readCase = async (req, res) => {
   const groupDb = new DB(req.params.groupId)
+  let caseId = req.params.caseId
   let data = {}
   try {
     data = await groupDb.get(caseId);
@@ -123,6 +124,7 @@ createEventForm = async (req, res) => {
   let groupId = req.params.groupId
   let caseId = req.params.caseId
   let caseEventId = req.params.caseEventId
+  let caseDefinitionId = req.params.caseDefinitionId
   let eventFormDefinitionId = req.params.eventFormDefinitionId
 
   const caseDefinition = _getCaseDefinition(groupId, caseDefinitionId)
