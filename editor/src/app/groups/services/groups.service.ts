@@ -106,20 +106,20 @@ export class GroupsService {
     }
   }
 
-  async downloadCSV(groupName: string, formId: string, selectedYear = '*', selectedMonth = '*', excludePII: boolean) {
+  async downloadCSV(groupName: string, formId: string, fromYear = '*', fromMonth = '*', toYear = '*', toMonth = '*', excludePII: boolean) {
     let sanitized = ''
     if (excludePII) {
       sanitized = '-sanitized'
     }
     try {
-      if (selectedMonth === '*' || selectedYear === '*') {
+      if (fromYear === '*' || fromMonth === '*') {
         const result = await this.httpClient
           .get(`/api/csv${sanitized}/${groupName}/${formId}`)
           .toPromise();
         return result;
       } else {
         const result = await this.httpClient
-          .get(`/api/csv${sanitized}/${groupName}/${formId}/${selectedYear}/${selectedMonth}`)
+          .get(`/api/csv${sanitized}/${groupName}/${formId}/${fromYear}/${fromMonth}/${toYear}/${toMonth}`)
           .toPromise();
         return result;
       }
@@ -129,11 +129,11 @@ export class GroupsService {
       }
     }
   }
-  async downloadCSVDataSet(groupName: string, formIds: string, selectedYear = '*', selectedMonth = '*', description: string,excludePII: boolean) {
+  async downloadCSVDataSet(groupName: string, formIds: string, fromYear = '*', fromMonth = '*', toYear = '*', toMonth = '*', description: string,excludePII: boolean) {
     try {
       let sanitized = excludePII? '-sanitized' : ''
       const result = await this.httpClient
-          .post(`/api/create/csvDataSet${sanitized}/${groupName}`, {formIds, description,selectedMonth,selectedYear})
+          .post(`/api/create/csvDataSet${sanitized}/${groupName}`, {formIds, description,fromYear, fromMonth, toYear, toMonth})
           .toPromise();
           console.log(result)
         return result;

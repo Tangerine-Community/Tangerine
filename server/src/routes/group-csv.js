@@ -58,8 +58,15 @@ const generateCSV = async (req, res) => {
 
   const sleepTimeBetweenBatches = 0
   let cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${dbName} ${formId} "${outputPath}" ${batchSize} ${sleepTimeBetweenBatches}`
-  if (req.params.year && req.params.month) {
-    cmd += ` ${sanitize(req.params.year)} ${sanitize(req.params.month)}`
+  if (req.params.fromYear && req.params.fromMonth) {
+    cmd += ` ${sanitize(req.params.fromYear)} ${sanitize(req.params.fromMonth)}`
+  } else{
+    cmd += ` '' '' `
+  }
+  if(req.params.toYear && req.params.toMonth) {
+    cmd += ` ${sanitize(req.params.toYear)} ${sanitize(req.params.toMonth)}`
+  } else{
+    cmd += ` '' '' `
   }
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
@@ -77,7 +84,7 @@ const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
   // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
   const formIds = req.body.formIds.split(',').map(formId => formId).join(',')
-  const {selectedYear, selectedMonth, description} = req.body
+  const {fromYear, fromMonth, toYear, toMonth, description} = req.body
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
@@ -86,10 +93,10 @@ const generateCSVDataSet = async (req, res) => {
   }
   const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
   let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${selectedYear === '*' ? `'*'` : sanitize(selectedYear)} ${selectedMonth === '*' ? `'*'` : sanitize(selectedMonth)} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
-  log.info(`generating csv start: ${cmd}`)
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${fromYear === '*' ? `'*'` : sanitize(fromYear)} ${fromMonth === '*' ? `'*'` : sanitize(fromMonth)} ${toYear === '*' ? `'*'` : sanitize(toYear)} ${toMonth === '*' ? `'*'` : sanitize(toMonth)} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
+  log.info(`generating csv start: ${cmd}\n`)
   exec(cmd).then(status => {
-    log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}`)
+    log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}\n`)
   }).catch(error => {
     log.error(error)
   })
@@ -102,8 +109,10 @@ const generateCSVDataSet = async (req, res) => {
     stateUrl,
     downloadUrl,
     description,
-    year: selectedYear,
-    month: selectedMonth,
+    fromYear,
+    fromMonth,
+    toYear,
+    toMonth,
     dateCreated: Date.now()
   })
   res.send({
@@ -223,8 +232,10 @@ const getDataset = async (datasetId) => {
     stateExists,
     excludePii,
     description: result.description,
-    month: result.month,
-    year: result.year,
+    fromYear: result.fromYear,
+    fromMonth: result.fromMonth,
+    toYear: result.toYear,
+    toMonth: result.toMonth,
     downloadUrl: result.downloadUrl,
     fileName: result.fileName,
     dateCreated: result.dateCreated,
