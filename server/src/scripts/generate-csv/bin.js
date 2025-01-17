@@ -2,10 +2,11 @@
 
 if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize] <sleepTimeBetweenBatches> [year] [month] [headers]`  ')
+  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize] <sleepTimeBetweenBatches> [fromYear] [fromMonth] [toYear] [toMonth] [headers]`  ')
   console.log('Example:')
   console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
-  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 10 5 2018 Jan true 'first_name,last_name'`)
+  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 10 5 2018 0 2018 1 true 'first_name,last_name'`)
+  console.log('`Take note Javascript uses 0-based indexing for months) i.e January is 0, February is 1, December is 11 etc.)`')
   process.exit()
 }
 
@@ -26,9 +27,11 @@ const params = {
   outputPath: process.argv[4],
   batchSize: (process.argv[5]) ? parseInt(process.argv[5]) : 5,
   sleepTimeBetweenBatches: (process.argv[6]) ? parseInt(process.argv[6]) : 0,
-  year: (process.argv[7]) ? process.argv[7] : null,
-  month: (process.argv[8]) ? process.argv[8] : null,
-  columnHeadersOverride: process.argv[9] ? process.argv[9].split(',') : []
+  fromYear: (process.argv[7]) ? process.argv[7] : null,
+  fromMonth: (process.argv[8]) ? process.argv[8] : null,
+  toYear: (process.argv[9]) ? process.argv[9] : null,
+  toMonth: (process.argv[10]) ? process.argv[10] : null,
+  columnHeadersOverride: process.argv[11] ? process.argv[11].split(',') : []
 }
 
 let state = Object.assign({}, params, {
