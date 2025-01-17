@@ -26,7 +26,7 @@ const writeState = async function (state) {
 }
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
-function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTemplateId) {
+function generateCsv(dbName, formId, outputPath, fromYear = '*', fromMonth = '*', toYear="*", toMonth="*", csvTemplateId) {
   return new Promise(async function(resolve, reject) {
     let csvTemplate
     if (csvTemplateId) {
@@ -36,9 +36,14 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
     const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
     const sleepTimeBetweenBatches = 0
     let cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${dbName} ${formId} "${outputPath}" ${batchSize} ${sleepTimeBetweenBatches}`
-    if (year !== '*' && month !== '*') {
-      cmd += ` ${sanitize(year)} ${sanitize(month)}`
-    } else {
+    if (fromYear !== '*' && fromMonth !== '*') {
+      cmd += ` ${sanitize(fromYear)} ${sanitize(fromMonth)}`
+    } else{
+      cmd += ` '' '' `
+    } if(toYear !== '*' && toMonth !== '*') {
+      cmd += ` ${sanitize(toYear)} ${sanitize(toMonth)}`
+    }
+    else {
       cmd += ` '' '' `
     }
     cmd = `${cmd} ${csvTemplate ? `"${csvTemplate.headers.join(',')}"` : ''}`
@@ -53,7 +58,7 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
   })
 }
 
-async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false, excludeArchivedForms = false, excludeUserProfileAndReports = false) {
+async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', fromYear = '*', fromMonth = '*', toYear="*", toMonth="*", excludePii = false, excludeArchivedForms = false, excludeUserProfileAndReports = false) {
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
@@ -64,8 +69,10 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     dbName: `${groupId}-reporting${excludePii ? '-sanitized' : ''}`,
     formIds,
     outputPath,
-    year,
-    month,
+    fromYear,
+    fromMonth,
+    toYear,
+    toMonth,
     excludePii,
     csvs: formIds.map(formId => {
       return {
@@ -106,7 +113,7 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
       const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
       log.debug("About to generateCsv in generate-csv-data-set.js")
-      generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
+      generateCsv(state.dbName, formId, csvOutputPath, fromYear, fromMonth, toYear, toMonth, csv.csvTemplateId)
       while (!await fs.pathExists(csvStatePath)) {
         await sleep(1*1000)
       }
