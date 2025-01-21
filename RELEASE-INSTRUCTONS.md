@@ -1,5 +1,30 @@
+## v4 Release Instructions
 
-## Release a prerelease  
+### Release for Production
+
+0. Checkout the repository locally with branch release/v4.x.x.
+1. Merge main into the release branch.
+2. Complete an entry in `CHANGELOG.md` for the release.
+3. Go to the New Release Page on github (https://github.com/Tangerine-Community/Tangerine/releases/new).
+5. Set the "Tag version" to the version of the release branch is currently targeting. For example, if the current stable version is v4.0.0, there is a `release/v4.1.0` branch because of feature freeze, then the `release/v4.1.0` branch is targeting `release/v4.0.0`.
+6. Pull the tags from the remote repository. `git fetch --tags`
+7. Build the release. `docker compose build`
+8. Tag the built docker images. 
+```
+docker tag tangerine/server:latest tangerine/server:v4.x.x
+docker tag tangerine/server-ui:latest tangerine/server-ui:v4.x.x
+docker tag tangerine/apk-generator:latest tangerine/apk-generator:v4.x.x
+```
+8. Push the images to the docker repository. 
+```
+docker push tangerine/server:v4.x.x
+docker push tangerine/server-ui:v4.x.x
+docker push tangerine/apk-generator:v4.x.x
+```
+
+## v3 Release Instructions
+
+### Release a prerelease  
 
 Prereleases are useful for testing some recently merged code into the develop branch.
 
@@ -13,7 +38,7 @@ Prereleases are useful for testing some recently merged code into the develop br
 7. Cancel the Build Docs action!
 
 
-## Release a release candidate
+### Release a release candidate
 
 After code freeze, a release branch is made and it's time to start creating some releases for QA. These are technically still "prereleases", just a slightly different intent in that we hope they are stable.
 
@@ -28,7 +53,7 @@ After code freeze, a release branch is made and it's time to start creating some
 6. `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview-rc.sh <tag name>`.
 7. Cancel the Build Docs action!
 
-## Release a stable version 
+### Release a stable version 
 
 Once the release candidate (rc) has passed testing, it's time to roll the stable release.
 
@@ -42,7 +67,7 @@ Once the release candidate (rc) has passed testing, it's time to roll the stable
 8. Verify that tangerine-preview has successfully published. You may want to install it and try it on a content set to spot check it.
 9. Announce on Teams we have a new release.
 
-## Hotfixing a past minor release
+### Hotfixing a past minor release
 When we want to create a release for an existing minor release, we create a hotfix branch. There is a blind spot on the Git Flow documentation where it assumes you would always create a hotfix branch from the main because you would never hotfix older versions of your software. Because we do hotfix past minor/major releases, to create a hotfix branch we branch from the last stable tag on that major/minor version. 
 
 1. Create a hotfix branch by checking out the minor version tag and then create the branch. `git checkout v3.18.7; git checkout -b hotfix/v3.18.8;`

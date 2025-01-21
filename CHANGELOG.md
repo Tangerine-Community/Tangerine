@@ -1,29 +1,16 @@
 # What's new
 
+## v4.1.2
+
+__New Features__
+- Import features and fixes from v3.31.0
+- Import features and fixes from v3.31.1
+- Update RELEASE-INSTRUCTIONS
+
 ## v4.0.1
 
 _New Features_
 
-- New custom element - tangy-acuity-chart - for displaying optotypes in a chart format. 
-  - This element takes the following properties:
-    - `sequenceNumber` - the "score" you wish to display, such as 20/200. 
-      - 20/10 corresponds to sequenceNumber="1".
-      - 20/20 corresponds to sequenceNumber="4".
-    - `characterName` - the name of the character to display, such as `LandoltC_W`
-  - Usage:
-    - Example `<tangy-acuity-chart name="acuity-score-2-4" sequenceNumber="1" characterName="LandoltC_W"></tangy-acuity-chart>`
-      - The element will display the character "LandoltC_W" at the specified sequenceNumber.
-      - If you wish to display 5 images of the same magnification (e.g. 20/20), you would use  sequenceNumber="4" for each image 
-        and then change each image for each tangy-acuity-chart: - LandoltC_W, LandoltC_E, LandoltC_N, LandoltC_S, LandoltC_C.
-      - If you wish for the images to get larger for the next 5 images, increment the sequenceNumber by 1. 
-        For example, sequenceNumber="5" would display 20/50, and sequenceNumber="6" would display 20/12.
-    - Each tangy-form-item should contain a single tangy-acuity-chart. See the demos of the [tangy-acuity-chart (Landholt-C)](./tangy-form/demo/tangy-acuity-chart.html) 
-        and [tangy-acuity-chart (Auckland](./tangy-form/demo/tangy-acuity-chart-Auckland.html) optotypes.
-    - The first time a form using tangy-acuity-chart loads, it displays the Configuration panel. Enter the following:
-      - Notation - choose Feet or Metres
-      - Distance - must be a number greater than 3000 mm.
-      - Length of line below - must be a number greater than 200 mm.
-    - The app will store these values in the browser's local storage so that they may be re-used the next time.
 - Deployment has been improved - To update a deployment, make a release in the tangerine repo. This will trigger a build in the CI/CD pipeline. The CI/CD pipeline will build the docker images and push them to the docker registry.
   Do a `docker-compose pull` to get the latest images. Then run ./start-docker-compose.sh to start the new containers.
   You might need to remove the old containers before you do the pull in case they don't update.
