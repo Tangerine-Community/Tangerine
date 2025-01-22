@@ -9,8 +9,10 @@ jobs:
   build-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout current branch
-        uses: actions/checkout@v3
+      - name: Checkout main-v4 branch
+      - uses: actions/checkout@v4
+        with:
+          ref: main-v4
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
