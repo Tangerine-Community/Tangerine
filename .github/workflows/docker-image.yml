@@ -2,7 +2,8 @@ name: Docker Image CI
 
 on:
   release:
-    types: [created]
+    - 'main-v4'
+
 
 jobs:
   build-server:
