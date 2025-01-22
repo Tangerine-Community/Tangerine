@@ -2,7 +2,8 @@ name: Docker Image CI
 
 on:
   release:
-    - 'main-v4'
+    branches:
+      - main-v4
 
 
 jobs:
