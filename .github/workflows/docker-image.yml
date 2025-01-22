@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main-v4 branch
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         with:
           ref: main-v4
       - name: Docker meta
