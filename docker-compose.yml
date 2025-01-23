@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   init:
     container_name: "init"
@@ -29,7 +28,7 @@ services:
 
   server:
       container_name: "server"
-      image: tangerine/server
+      image: "tangerine/server:${T_TAG:-latest}"
       depends_on:
         - init
         - couchdb
@@ -75,7 +74,7 @@ services:
 
   server-ui:
     container_name: "server-ui"
-    image: tangerine/server-ui
+    image: "tangerine/server-ui:${T_TAG:-latest}"
     tty: true
     depends_on:
       - server
@@ -109,7 +108,7 @@ services:
 
   apk-generator:
     container_name: "apk-generator"
-    image: tangerine/apk-generator
+    image: "tangerine/apk-generator:${T_TAG:-latest}"
     tty: true
     depends_on:
       - server

@@ -1,8 +1,17 @@
 #!/bin/sh
 set -e
 echo "Running start-docker-compose.sh"
-echo "pwd: $pwd"
 
+# Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
+if [ "$1" = "" ]; then
+  if [ "$T_TAG" = "" ]; then
+    T_TAG=$(git describe --tags --abbrev=0)
+  else
+    T_TAG="$T_TAG"
+  fi
+else
+  T_TAG="$1"
+fi
 
 #
 # Set up data folders.
@@ -74,4 +83,5 @@ if [ ! -d state ]; then
   mkdir state
 fi
 
-docker compose up -d
+echo "Running docker compose with Tangerine version $T_TAG"
+T_TAG=$T_TAG docker compose up -d
