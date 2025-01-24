@@ -28,7 +28,7 @@ Be sure to update any cron jobs to include the new build commands if they are us
 
 ``
 git pull
-npm rn install-server
+npm run install-server
 npm build
 ``
 

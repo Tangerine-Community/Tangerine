@@ -88,10 +88,17 @@ const releaseOnlineSurveyApp = async(req, res) => {
 	const formId = sanitize(req.params.formId)
 	const releaseType = sanitize(req.params.releaseType)
 	const appName = sanitize(req.params.appName)
-	const uploadKey = sanitize(req.params.uploadKey)
+
+	let uploadKey;
+	if (req.params.uploadKey) {
+		uploadKey = sanitize(req.params.uploadKey)
+	} else {
+		uploadKey = sanitize(req.body.uploadKey)
+	}
+	const requireAccessCode = req.body.locked ? req.body.locked : false
 
 	try {
-		const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} "${appName}" ${uploadKey} `
+		const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} "${appName}" ${uploadKey} ${requireAccessCode}`
 		log.info(`RELEASING Online survey app: ${cmd}`)
 		await exec(cmd)
 		res.send({ statusCode: 200, data: 'ok' })
