@@ -475,7 +475,8 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
       } // sanitize
     }
   }
-  let data = await tangyModules.hook("csv_flatFormReponse", {flatFormResponse, formResponse});
+
+  let data = await tangyModules.hook("csv_flatFormReponse", {groupId, flatFormResponse, formResponse});
   return data.flatFormResponse;
 };
 

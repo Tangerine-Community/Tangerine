@@ -137,6 +137,18 @@
           "allowDeleteIfFormNotStarted": true,
           "required": false,
           "repeatable": true 
+        },
+        {
+          "id": "event-form-definition-h9d3hd9",
+          "formId": "form-allowed-online-survey",
+          "forCaseRole": "role-2",
+          "name": "A form allowed to be filled online",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": true,
+          "allowOnline": true
         }
       ]
     },
