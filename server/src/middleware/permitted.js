@@ -14,7 +14,7 @@ const permitOnGroupIfAll = (permissions) => {
   const isAllowed = groupPermissions => permissions.every(e => groupPermissions.includes(e));
   return (req, res, next) => {
     try {
-      const group = req.params.groupId || req.params.groupName || req.params.group;
+      const group = req.params.groupId || req.params.groupName || req.params.group || req.query.groupId;
       const allGroupsPermissions = req.user.groupPermissions;
       const myGroupsPermissions = (allGroupsPermissions.find(g => g.groupName === group)).permissions;
       if (isAllowed(myGroupsPermissions)) {

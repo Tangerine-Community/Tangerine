@@ -56,7 +56,7 @@ export class UpdateUserRoleComponent implements OnInit {
     try {
       await this.groupsService.addUserToGroup(this.groupId, this.username, this.role);
       this.errorHandler.handleError(_TRANSLATE('User Added to Group Successfully'));
-      this.router.navigate([`groups/${this.groupId}`]);
+      this.router.navigate([`groups/${this.groupId}/configure/security`]);
     } catch (error) {
       console.log(error);
     }
