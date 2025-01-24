@@ -84,12 +84,12 @@ __Fixes__
 - Run 'npm install' during APK and PWA builds to ensure installation of dependencies and build for custom code
 
 __Libs and Dependencies__
-- Bump tangy-form to v4.45.4 to add scoring percent and denominator values
-- Bump tangy-form-editor to v7.18.1
+- Bump tangy-form to v4.46.1 to add scoring percent and denominator values
+- Bump tangy-form-editor to v7.18.2
 
 __Server upgrade instructions__
 
-See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
 *Special Instructions for this release:* N/A
 
@@ -120,7 +120,7 @@ __Libs and Dependencies__
 
 __Server upgrade instructions__
 
-See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
 *Special Instructions for this release:* N/A
 
@@ -158,7 +158,7 @@ __Libs and Dependencies__
 
 __Server upgrade instructions__
 
-See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
 *Special Instructions for this release:* 
 
