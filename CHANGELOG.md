@@ -24,8 +24,8 @@ __Fixes__
 - Run 'npm install' during APK and PWA builds to ensure installation of dependencies and build for custom code
 
 __Libs and Dependencies__
-- Bump tangy-form to v4.45.4 to add scoring percent and denominator values
-- Bump tangy-form-editor to v7.18.1
+- Bump tangy-form to v4.46.1 to add scoring percent and denominator values
+- Bump tangy-form-editor to v7.18.2
 
 __Server upgrade instructions__
 
