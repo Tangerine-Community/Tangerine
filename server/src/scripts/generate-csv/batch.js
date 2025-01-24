@@ -91,7 +91,6 @@ async function batch() {
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
-  // let csvReplacement = csvReplacementCharacters? JSON.parse(csvReplacementCharacters) : false
   if (docs.length === 0) {
     state.complete = true
   } else {
