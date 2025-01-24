@@ -55,7 +55,7 @@ __Tangerine Case APIs__
 
 __Server upgrade instructions__
 
-See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
 *Special Instructions for this release:* N/A
 
