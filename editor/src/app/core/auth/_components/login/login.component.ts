@@ -41,10 +41,10 @@ export class LoginComponent implements OnInit {
       if (await this.authenticationService.login(this.user.username, this.user.password)) {
         this.router.navigate(['/projects']);
       } else {
-        this.errorMessage = _TRANSLATE('Login Unsuccesful');
+        this.errorMessage = _TRANSLATE('Login Unsuccessful');
       }
     } catch (error) {
-      this.errorMessage = _TRANSLATE('Login Unsuccesful');
+      this.errorMessage = _TRANSLATE('Login Unsuccessful');
       console.error(error);
     }
   }

@@ -40,7 +40,18 @@ const { extendSession, findUserByUsername,
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
- const {saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
+const {login: surveyLogin, saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey, getOnlineSurveys} = require('./online-survey')
+const {
+  getCaseDefinitions,
+  getCaseDefinition,
+  createCase,
+  readCase,
+  createCaseEvent,
+  createEventForm,
+  createParticipant,
+  getCaseEventFormSurveyLinks
+} = require('./case-api')
+const { createUserProfile } = require('./user-profile')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
@@ -174,14 +185,35 @@ app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUse
  app.get('/configuration/archiveToDisk', isAuthenticated, archiveToDiskConfig);
  app.get('/configuration/passwordPolicyConfig', isAuthenticated, passwordPolicyConfig);
 
+/**
+ * User Profile API Routes
+ */
+
+app.post('/userProfile/createUserProfile/:groupId', isAuthenticated, createUserProfile);
+
+/**
+ * Case API Routes
+ */
+
+app.get('/case/getCaseDefinitions/:groupId', isAuthenticated, getCaseDefinitions);
+app.get('/case/getCaseDefinition/:groupId/:caseDefinitionId', isAuthenticated, getCaseDefinition);
+app.post('/case/createCase/:groupId/:caseDefinitionId', isAuthenticated, createCase);
+app.post('/case/readCase/:groupId/:caseId', isAuthenticated, readCase);
+app.post('/case/createCaseEvent/:groupId/:caseId/:caseEventDefinitionId', isAuthenticated, createCaseEvent);
+app.post('/case/createEventForm/:groupId/:caseId/:caseEventId/:caseEventFormDefinitionId', isAuthenticated, createEventForm);
+app.post('/case/createParticipant/:groupId/:caseId/:caseDefinitionId/:caseRoleId', isAuthenticated, createParticipant);
+app.get('/case/getCaseEventFormSurveyLinks/:groupId/:caseId', isAuthenticated, getCaseEventFormSurveyLinks);
 
 /**
  * Online survey routes
  */
 
+app.post('/onlineSurvey/login/:groupId/:accessCode', surveyLogin);
 app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurvey);
 app.put('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
 app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
+app.get('/onlineSurvey/getOnlineSurveys/:groupId', isAuthenticated, getOnlineSurveys);
+
 /*
  * More API
  */
@@ -286,7 +318,10 @@ app.post('/editor/release-apk/:group', isAuthenticated, releaseAPK)
 
 app.post('/editor/release-pwa/:group/', isAuthenticated, releasePWA)
 
+// TODO @deprice: This route should be removed.
 app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, releaseOnlineSurveyApp)
+
+app.post('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/', isAuthenticated, releaseOnlineSurveyApp)
 
 app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, unreleaseOnlineSurveyApp)
 
