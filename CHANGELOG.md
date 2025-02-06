@@ -1,5 +1,21 @@
 # What's new
 
+## v3.32.1
+
+__General Updates__
+
+- [#3776](https://github.com/Tangerine-Community/Tangerine/issues/3776) Add platform config variable T_USER_SHORT_CODE_LENGTH to set the length of the user short code
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* 
+
+Once the Tangerine and CouchDB are running, run the upgrade script for v3.32.1:
+
+`docker exec -it tangerine /tangerine/server/src/upgrade/v3.32.1.js`
+
 ## v3.32.0
 
 Tangerine v3.32.0 contains a major update to the deployment and fuctionality of Online Surveys including the introduction of authentication and case association. 
