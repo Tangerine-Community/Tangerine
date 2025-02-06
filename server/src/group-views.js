@@ -59,6 +59,7 @@ module.exports.unpaid = function(doc) {
   }
 }
 
+// T_USER_SHORT_CODE_LENGTH will get replaced when called by insert-group-view.js and default to 6 if not set.
 module.exports.responsesByUserProfileShortCode = {
   map: function (doc) {
     const userShortCodeLength = T_USER_SHORT_CODE_LENGTH || 6
@@ -79,6 +80,7 @@ module.exports.responsesByUserProfileShortCode = {
   reduce: '_count'
 }
 
+// T_USER_SHORT_CODE_LENGTH will get replaced when called by insert-group-view.js and default to 6 if not set.
 module.exports.userProfileByUserProfileShortCode = function (doc) {
   const userShortCodeLength = T_USER_SHORT_CODE_LENGTH || 6
   if (doc.collection === "TangyFormResponse" && doc.form && doc.form.id === 'user-profile') {
