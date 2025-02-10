@@ -6,6 +6,12 @@ __General Updates__
 
 - [#3776](https://github.com/Tangerine-Community/Tangerine/issues/3776) Add platform config variable T_USER_SHORT_CODE_LENGTH to set the length of the user short code
 
+Enables configuration of the length of the user profile short code, which are used in Tangerine Sync Protocol 1 to import existing responses into a device. The default length in 6 characters. Tangerine users with custom userProfileIds should consider increasing the value to avoid duplicate ids. To change the value, set `T_USER_SHORT_CODE_LENGTH` in the `config.sh` file to set the length of the user short code, then run `docker exec -it tangerine push-all-groups-views.js`.
+
+- Add shared csv template parameter to generate csv data sets script and API
+
+The `/api/create/csvDataSets/` API and script called [generate-csv-data-sets](./server/src/scripts/generate-csv-data-sets/bin.js) are useful to generate CSV Data Sets (Spreadsheets) across all forms in all groups. This change adds a second parameter called `sharedCsvTemplateId` which is the CouchDB Id of a Spreadsheet Template stored in the groups database named `group-<id>-csv-templates`. When the parameter is provided to the script or API, the CSV Template will be applied to control the headers on the CSV datasets produced by the process. Only CSVs will be produced for groups that have the `sharedCsvTemplateId` template in the `group-<id>-csv-templates` database.
+
 __Server upgrade instructions__
 
 See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
