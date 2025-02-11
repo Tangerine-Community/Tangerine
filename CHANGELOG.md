@@ -6,7 +6,7 @@ __General Updates__
 
 - [#3776](https://github.com/Tangerine-Community/Tangerine/issues/3776) Add platform config variable T_USER_SHORT_CODE_LENGTH to set the length of the user short code
 
-Enables configuration of the length of the user profile short code, which are used in Tangerine Sync Protocol 1 to import existing responses into a device. The default length in 6 characters. Tangerine users with custom userProfileIds should consider increasing the value to avoid duplicate ids. To change the value, set `T_USER_SHORT_CODE_LENGTH` in the `config.sh` file to set the length of the user short code, then run `docker exec -it tangerine push-all-groups-views.js`.
+Enables configuration of the length of the user profile short code, which are used in Tangerine Sync Protocol 1 to import existing responses into a device. The default length in 6 characters. Tangerine users with custom userProfileIds should consider increasing the value to avoid duplicate ids. To change the value, set `T_USER_SHORT_CODE_LENGTH` in the `config.sh` file to set the length of the user short code, then run `docker exec -it tangerine push-all-groups-views`.
 
 - Add shared csv template parameter to generate csv data sets script and API
 
