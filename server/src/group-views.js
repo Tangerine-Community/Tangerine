@@ -38,7 +38,7 @@ module.exports.responsesByMonthAndFormId = function(doc) {
 module.exports.responsesByUserProfileId = function(doc) {
   if (doc.collection === "TangyFormResponse") {
     if (doc.form && doc.form.id === 'user-profile') {
-      return emit(doc._id, true)
+      return emit(doc._id.trim(), true)
     }
     var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
     var userProfileInput = null
@@ -48,7 +48,7 @@ module.exports.responsesByUserProfileId = function(doc) {
       }
     })
     if (userProfileInput) {
-      emit(userProfileInput.value, true)
+      emit(userProfileInput.value.trim(), true)
     }
   }
 }
@@ -59,10 +59,17 @@ module.exports.unpaid = function(doc) {
   }
 }
 
+// T_USER_SHORT_CODE_LENGTH will get replaced when called by insert-group-view.js and default to 6 if not set.
 module.exports.responsesByUserProfileShortCode = {
   map: function (doc) {
+    const userShortCodeLength = T_USER_SHORT_CODE_LENGTH || 6
     if (doc.form && doc.form.id === 'user-profile') {
-      return emit(doc._id.substr(doc._id.length-6, doc._id.length), 1)
+      const userProfileId = doc._id.trim()
+      if (userProfileId.length < userShortCodeLength) {
+        return emit(userProfileId, 1)
+      } else {
+        return emit(userProfileId.substr(userProfileId.length - userShortCodeLength, userProfileId.length), 1)
+      }
     }
     var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
     var userProfileInput = null
@@ -72,15 +79,27 @@ module.exports.responsesByUserProfileShortCode = {
       }
     })
     if (userProfileInput) {
-      emit(userProfileInput.value.substr(userProfileInput.value.length-6, userProfileInput.value.length), 1)
+      const userProfileInputValue = userProfileInput.value.trim()
+      if (userProfileInputValue.length < userShortCodeLength) {
+        emit(userProfileInputValue, 1)
+      } else {
+        emit(userProfileInputValue.substr(userProfileInputValue.length-userShortCodeLength, userProfileInputValue.length), 1)
+      }
     }
   },
   reduce: '_count'
 }
 
+// T_USER_SHORT_CODE_LENGTH will get replaced when called by insert-group-view.js and default to 6 if not set.
 module.exports.userProfileByUserProfileShortCode = function (doc) {
+  const userShortCodeLength = T_USER_SHORT_CODE_LENGTH || 6
   if (doc.collection === "TangyFormResponse" && doc.form && doc.form.id === 'user-profile') {
-      return emit(doc._id.substr(doc._id.length - 6, doc._id.length), true);
+    const userProfileId = doc._id.trim()
+    if (userProfileId.length < userShortCodeLength) {
+      return emit(userProfileId, true)
+    } else {
+      return emit(userProfileId.substr(userProfileId.length - userShortCodeLength, userProfileId.length), true);
+    }
   }
 }
 

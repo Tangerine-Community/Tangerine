@@ -124,8 +124,9 @@ const generateCSVDataSet = async (req, res) => {
 
 const generateCSVDataSetsRoute = async (req, res) => {
   const datasetsId = req.params.datasetsId
+  const sharedCsvTemplateId = req.params.sharedCsvTemplateId || undefined
   // Do not await, let it run in the background.
-  generateCsvDataSets(datasetsId)
+  generateCsvDataSets(datasetsId, sharedCsvTemplateId)
   const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${datasetsId}.json`
   const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${datasetsId}.zip`
   res.send({
