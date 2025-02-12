@@ -3,10 +3,16 @@ const spawn = require('child_process').spawn
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra');
 const sanitize = require('sanitize-filename');
-const axios = require('axios')
+const axios = require('axios');
+const jsdom = require("jsdom");
 const writeFile = util.promisify(fs.writeFile);
 const log = require('tangy-log').log
-
+const { JSDOM } = jsdom;
+class NodeJSDOMParser {
+  parseFromString(s, contentType = 'text/html') {
+    return new JSDOM(s, {contentType}).window.document;
+  }
+}
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
     username: process.env.T_USER1,
@@ -104,9 +110,15 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     } else {
       state.csvs.find(csv => csv.formId === formId).inProgress = true
       await writeState(state)
-      const formTitle = formInfo
-        ? formInfo.title.replace(/ /g, '_')
-        : formId
+      let formTitle;
+      if(!formInfo.title) formTitle = formId;
+      if(!formInfo.title.includes('t-lang')) formTitle = formInfo.title.replace(/ /g, '_');
+      if(formInfo.title.includes('t-lang')) {
+        const titleDomString = new NodeJSDOMParser().parseFromString(formInfo.title, 'text/html')
+        const formTitleEnglish = titleDomString.querySelector('t-lang[en]')
+        formInfo.title = formTitleEnglish ? formTitleEnglish.textContent : titleDomString.querySelector('t-lang').textContent
+        formTitle = formInfo.title.replace(/ /g, '_')
+      }
       const groupFormname = sanitize(groupLabel + '-' + formTitle, options)
       const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
       const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
