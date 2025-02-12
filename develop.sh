@@ -75,13 +75,13 @@ fi
 
 if echo "$T_MODULES" | grep mysql; then
   ./mysql-create-dirs.sh
-fi
 
-if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
+  if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
     ./mysql-start-container.sh
-    echo "Waiting 60 seconds for mysql container to start..."
-        sleep 60
-        ./mysql-setup.sh
+    echo "Waiting 20 seconds for mysql container to start..."
+    sleep 20
+    ./mysql-setup.sh
+  fi
 fi
 
 if echo "$T_MYSQL_PHPMYADMIN" | grep "TRUE"; then
@@ -184,6 +184,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --env \"T_LEGACY=$T_LEGACY\" \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
+  --env \"T_USER_SHORT_CODE_LENGTH=$T_USER_SHORT_CODE_LENGTH\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
   --env \"T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH=$T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH\" \
@@ -231,6 +232,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
   --volume $(pwd)/translations:/tangerine/translations:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+  --volume $(pwd)/online-survey-app/dist:/tangerine/online-survey-app/dist:delegated \
   --volume $(pwd)/tangy-form-editor:/tangerine/tangy-form-editor:delegated \
   --volume $(pwd)/tangy-form:/tangerine/tangy-form:delegated \
   tangerine/tangerine:local

@@ -13,8 +13,9 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseService } from '../../services/case.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { t } from 'tangy-form/util/t.js'
-
-
+import { GroupsService } from 'src/app/groups/services/groups.service';
+import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
   selector: 'app-event-form-list-item',
@@ -47,19 +48,36 @@ export class EventFormListItemComponent implements OnInit {
   canUserDeleteForms: boolean;
   groupId:string;
   eventFormArchived: boolean = false;
+  canLinkToOnlineSurvey: boolean = false;
   response:any
+  surveyLinkUrl:string;
 
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
     private router:Router,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private groupsService: GroupsService,
+    private tangyErrorHandler: TangyErrorHandler
   ) {
     ref.detach();
   }
 
   async ngOnInit() {
     this.groupId = window.location.pathname.split('/')[2]
+
+    const group = await this.groupsService.getGroupInfo(this.groupId);
+    const groupOnlineSurveys = group?.onlineSurveys ?? [];
+
+    this.canLinkToOnlineSurvey = groupOnlineSurveys.some(survey => 
+      survey.published && 
+      survey.formId === this.eventFormDefinition.formId && 
+      this.eventFormDefinition.allowOnline
+    );
+
+    if (this.canLinkToOnlineSurvey) {
+      this.surveyLinkUrl = `/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.case._id}/${this.caseEvent.id}/${this.eventForm.id}`;
+    }
 
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
@@ -131,4 +149,35 @@ export class EventFormListItemComponent implements OnInit {
   onUnarchiveFormClick() {
     this.formUnarchivedEvent.emit(this.eventForm.id);
   }
+
+  showLinkMenu() {
+    this.ref.detectChanges()
+  }
+
+  onCopyLinkClick() {
+    const url = `${window.location.origin}${this.surveyLinkUrl}`;
+    try {
+      navigator.clipboard.writeText(url);
+
+      this.tangyErrorHandler.handleError('Online Survey link copied to clipboard');
+    } catch (err) {
+      let errMsg = 'Failed to copy link to clipboard';
+      if (window.location.origin.startsWith('http://')) {
+        errMsg = 'Copy to clipboard is not supported with http://.';
+      }
+      this.tangyErrorHandler.handleError(errMsg);
+    }
+  }
+
+  onQRCodeLinkClick() {
+    const url = `${window.location.origin}${this.surveyLinkUrl}`;
+
+    const qr = new qrcode.default(0, 'H')
+    qr.addData(`${url}`)
+    qr.make()
+    window['dialog'].innerHTML = `<div style="width:${Math.round((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) *.6)}px" id="qr"></div>`
+    window['dialog'].open()
+    window['dialog'].querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
+  }
+
 }
