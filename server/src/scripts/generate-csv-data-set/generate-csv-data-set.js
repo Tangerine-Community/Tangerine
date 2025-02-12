@@ -31,7 +31,13 @@ function generateCsv(dbName, formId, outputPath, fromYear = '*', fromMonth = '*'
     let csvTemplate
     if (csvTemplateId) {
       const url = `${process.env.T_COUCHDB_ENDPOINT}/${dbName.replace('-reporting', '')}-csv-templates/${csvTemplateId}`
-      csvTemplate = (await axios.get(url)).data
+      try {
+        const response = await axios.get(url)
+        csvTemplate = response?.data
+      } catch (e) {
+        log.debug(`Could not find csv template with id ${csvTemplateId}`)
+        return 0
+      }
     }
     const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
     const sleepTimeBetweenBatches = 0
@@ -46,8 +52,8 @@ function generateCsv(dbName, formId, outputPath, fromYear = '*', fromMonth = '*'
     else {
       cmd += ` '' '' `
     }
+    log.debug(`generate-csv ${csvTemplate ? `with headers from ${csvTemplateId}` : ''}: ${cmd}`)
     cmd = `${cmd} ${csvTemplate ? `"${csvTemplate.headers.join(',')}"` : ''}`
-    log.debug("generate-csv: " + cmd)
     const maxBuffer = 1024 * 1024 * 100;
     exec(cmd, { maxBuffer }).then(status => {
       resolve(status)
