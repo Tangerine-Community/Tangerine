@@ -1,5 +1,120 @@
 # What's new
 
+## v3.32.1
+
+__General Updates__
+
+- [#3776](https://github.com/Tangerine-Community/Tangerine/issues/3776) Add platform config variable T_USER_SHORT_CODE_LENGTH to set the length of the user short code
+
+Enables configuration of the length of the user profile short code, which are used in Tangerine Sync Protocol 1 to import existing responses into a device. The default length in 6 characters. Tangerine users with custom userProfileIds should consider increasing the value to avoid duplicate ids. To change the value, set `T_USER_SHORT_CODE_LENGTH` in the `config.sh` file to set the length of the user short code, then run `docker exec -it tangerine push-all-groups-views`.
+
+- Add shared csv template parameter to generate csv data sets script and API
+
+The `/api/create/csvDataSets/` API and script called [generate-csv-data-sets](./server/src/scripts/generate-csv-data-sets/bin.js) are useful to generate CSV Data Sets (Spreadsheets) across all forms in all groups. This change adds a second parameter called `sharedCsvTemplateId` which is the CouchDB Id of a Spreadsheet Template stored in the groups database named `group-<id>-csv-templates`. When the parameter is provided to the script or API, the CSV Template will be applied to control the headers on the CSV datasets produced by the process. Only CSVs will be produced for groups that have the `sharedCsvTemplateId` template in the `group-<id>-csv-templates` database.
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* 
+
+Once the Tangerine and CouchDB are running, run the upgrade script for v3.32.1:
+
+`docker exec -it tangerine /tangerine/server/src/upgrade/v3.32.1.js`
+
+## v3.32.0
+
+Tangerine v3.32.0 contains a major update to the deployment and fuctionality of Online Surveys including the introduction of authentication and case association. 
+
+__Online Survey Authentication__
+
+Online Surveys can now be released for public access or require authentication. When authentication is required, data collectors will be required to provide a device user Access Code to access the survey. The survey will be associated with the device user who provided the short code. 
+
+To deploy an Online Survey and require authentication:
+1. Create the form
+2. Add the `"requireAccessCode": true` property to the `app-config.json` file
+3. Navigate to Deploy > Release Online Survey for the group
+4. In the Unpublished Surveys list, click the <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="rgb(255, 149, 34)"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z"/></svg> icon to deploy a survey and require an access code.
+
+__Custom Markdown for Online Survey Login Page__
+
+Custom styling (text, logos, formatting etc.) can be added to the login page for Online Surveys. In the content set repository, create a file called `client/custom-login-markup.html`. The file can contain any valid html. Any images can be added to the `media` folder and used in the html. Example [Custom Login Markup](content-sets/case-module/client/custom-login-markup.html).
+
+__Online Survey Case Form Authentication__
+
+Online Surveys with authentication can also be configured when using the Case Module. This is useful for studies who want to deploy secure forms without needing to install a full PWA or APK for one form associated with the case. For example, a mother-child cohort study deploys Tangerine to track the health of the mother and child after birth. Labs are collected in the field and sent for analysis. Instead of requiring the lab to install a tablet or PWA with the Tangerine app, the lab forms can be deployed online to simplify the completion process.
+
+To configure forms for secure deployment online in Case, add the `"allowOnline": true` property to the `eventFormDefinitions` section in the case definition file. See the form definition for `form-allowed-online-survey` in [case-type-1](./content-sets/case-module/client/case-type-1.json).
+
+__Online Survey Help Link__
+
+A help link can be added to the web pages for Online Surveys and will appear with the <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg> icon in the header. Define the link url by adding the `"helpLink": "https://www.tangerinecentral.org"` property to the `app-config.json` file. When clicked, the link will open in a new browser window.
+
+__Tangerine Case APIs__
+
+- `/userProfile/createUserProfile/:groupId`
+    - Creates a user-profile document in the group
+    - Additional body data in json format will add properties to the user-profile: `{ "age": "7", "dob": "1/1/2018"}`
+- `/case/createCase/:groupId/:caseDefinitionId`
+    - Creates a case in the group with the case type defined by the case definition id
+    - Additional body data in json format will add properties to the case: `{ "age": "7", "dob": "1/1/2018"}`
+- `/case/readCase/:groupId/:caseId`
+    - Read a case from the group with the case id
+- `/case/createCaseEvent/:groupId/:caseId/:caseDefinitionId/:caseEventDefinitionId`
+    - Creates an event with the event type as defined in the case definition
+- `/case/createParticipant/:groupId/:caseId/:caseDefinitionId/:caseRoleId`
+    - Creates a participant with the case role as defined in the case definition
+- `/case/getCaseEventFormSurveyLinks/:groupId/:caseId/`
+    Returns a JSON document with the urls for all case forms with active online surveys in the format:
+    ```json
+    {
+      "eventDefinitionId": event.caseEventDefinitionId,
+      "eventFormDefinitionId": eventForm.eventFormDefinitionId,
+      "formId": formId,
+      "url": url
+    }
+    ```
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* N/A
+
+
+## v3.31.2
+
+__General Updates__
+
+- Add APIs to access MySQL tables
+Data Managers who have been granted the `can_access_mysql_api` permission can now access Tangerine MySQL data through the web interface. This is useful for building reporting dashboards within Tangerine or through other tools like PowerBI, R, Stata or Tableau. 
+
+See the [Custom Dashboard Example](docs/editor/custom-dashboard.md) for instructions.
+
+- Scoring: Add scoring percent and denominator values
+When Tangerine form scoring is turned on, each section will now output the score, percent, and denominator values. The values will be output in csv and mysql data as:
+- `<section_name>_score_denominator`
+- `<section_name>_score_percent`
+
+Projects who want this functionality to run on existing uploads can use a Tangerine Wedge script: 
+[Add Scoring Percent and Denominator](https://github.com/ICTatRTI/couchdb-subscribe-and-action-example/tree/unicef-bangla-section-score-count-and-percent)
+
+- Add server scripts: New server administration scripts
+
+__Fixes__
+- After adding a user to a group, navigate back to the user table
+- Run 'npm install' during APK and PWA builds to ensure installation of dependencies and build for custom code
+
+__Libs and Dependencies__
+- Bump tangy-form to v4.46.1 to add scoring percent and denominator values
+- Bump tangy-form-editor to v7.18.2
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* N/A
+
 ## v3.31.1
 
 __General Updates__
@@ -27,7 +142,7 @@ __Libs and Dependencies__
 
 __Server upgrade instructions__
 
-See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
 *Special Instructions for this release:* N/A
 
@@ -65,7 +180,7 @@ __Libs and Dependencies__
 
 __Server upgrade instructions__
 
-See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
 
 *Special Instructions for this release:* 
 

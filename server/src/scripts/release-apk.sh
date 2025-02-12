@@ -48,11 +48,11 @@ if [ -d "$RELEASE_DIRECTORY" ]; then
   rm -rf $RELEASE_DIRECTORY
 fi
 
-#if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
-#  cd "/tangerine/groups/$GROUP/"
-#  npm run install-server && npm run build
-#  cd /
-#fi
+if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
+  cd "/tangerine/groups/$GROUP/"
+  npm run install-server && npm run build
+  cd /
+fi
 
 #sleep 10
 

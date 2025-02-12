@@ -10,6 +10,7 @@ const permissionsList = {
     'can_access_data',
     'can_access_uploads',
     'can_access_download_csv',
+    'can_access_mysql_api',
     'can_access_cases',
     'can_delete_cases',
     'can_archive_cases',

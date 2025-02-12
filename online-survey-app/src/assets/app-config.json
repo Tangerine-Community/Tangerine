@@ -4,5 +4,7 @@
   "groupId":"GROUP_ID",
   "languageDirection": "ltr",
   "languageCode": "en",
-  "appName":"APP_NAME"
+  "appName":"APP_NAME",
+  "requireAccessCode": "REQUIRE_ACCESS_CODE",
+  "helpLink": "HELP_LINK"
 }
