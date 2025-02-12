@@ -68,7 +68,7 @@
           <mat-checkbox [checked]="allFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
         </td>
         <td>
-          {{form.title}}
+          {{form|formTitleFromInfo}}
         </td>
         <td>
           <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
@@ -87,7 +87,7 @@
           <mat-checkbox [checked]="allFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
         </td>
         <td>
-          {{form.title}}
+          {{form|formTitleFromInfo}}
         </td>
         <td>
           <mat-form-field class="csv-template-selection" appearance="fill" color="primary">

@@ -41,7 +41,7 @@
   <mat-list-item class="drag-item" *ngFor="let form of publishedSurveys; let index=index">
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
     <span *ngIf="form.locked">
       <button mat-icon-button class="lock-button">
         <i class="material-icons mat-32 tangy-location-list-icon">lock</i>
@@ -64,7 +64,7 @@
   <mat-list-item class="drag-item" *ngFor="let form of unPublishedSurveys; let index=index">
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
     <span >{{form.updatedOn|date :'medium'}}
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button (click)="publishSurvey(form.id, form.title, false)">

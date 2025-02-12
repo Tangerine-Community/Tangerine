@@ -5,7 +5,7 @@
       <mat-list-item>
         <span>{{index+1}}</span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
         <span><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">add</i>
@@ -39,7 +39,7 @@
     </mat-list>
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
     <span>
       <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
     </span>
@@ -54,7 +54,7 @@
       <mat-list-item>
         <span>{{index+1}}</span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
         <span>
           <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
@@ -63,7 +63,7 @@
     </mat-list>
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
 
     <span >
       <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
