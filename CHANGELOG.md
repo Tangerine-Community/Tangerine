@@ -12,6 +12,12 @@ Enables configuration of the length of the user profile short code, which are us
 
 The `/api/create/csvDataSets/` API and script called [generate-csv-data-sets](./server/src/scripts/generate-csv-data-sets/bin.js) are useful to generate CSV Data Sets (Spreadsheets) across all forms in all groups. This change adds a second parameter called `sharedCsvTemplateId` which is the CouchDB Id of a Spreadsheet Template stored in the groups database named `group-<id>-csv-templates`. When the parameter is provided to the script or API, the CSV Template will be applied to control the headers on the CSV datasets produced by the process. Only CSVs will be produced for groups that have the `sharedCsvTemplateId` template in the `group-<id>-csv-templates` database.
 
+- Format Form Titles in Tangerine Web UI to show the form title or form id with translations
+  - Fixes [#3735](https://github.com/Tangerine-Community/Tangerine/issues/3735)
+  - Closes [#3751](https://github.com/Tangerine-Community/Tangerine/issues/3751)
+
+Form Titles will now appear in more places in the Tangerine Web UI for improved readability. If the form title doesn't contain `t-lang` tag, return the text. Otherwise, it will use the English translation if it exists or the first translation if there's no English version of the title. Use the same heuristic in the pipe when creating and naming csv files.
+
 __Server upgrade instructions__
 
 See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
