@@ -225,7 +225,6 @@ module.exports = {
           } else {
             const flatDoc = await prepareFlatData(doc, sanitized);
             tableName = flatDoc.type;
-            console.log("tableName: " + tableName)
             docType = 'response';
             primaryKey = 'ID'
             createFunction = function (t) {
@@ -543,7 +542,9 @@ const generateFlatResponse = async function (formResponse, sanitized) {
       } // sanitize
     }
   }
-  return flatFormResponse;
+
+  let data = await tangyModules.hook("mysqljs_flatFormResponse", {groupId, flatFormResponse, formResponse});
+  return data.flatFormResponse;
 };
 
 /**

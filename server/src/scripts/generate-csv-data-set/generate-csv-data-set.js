@@ -37,7 +37,13 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
     let csvTemplate
     if (csvTemplateId) {
       const url = `${process.env.T_COUCHDB_ENDPOINT}/${dbName.replace('-reporting', '')}-csv-templates/${csvTemplateId}`
-      csvTemplate = (await axios.get(url)).data
+      try {
+        const response = await axios.get(url)
+        csvTemplate = response?.data
+      } catch (e) {
+        log.debug(`Could not find csv template with id ${csvTemplateId}`)
+        return 0
+      }
     }
     const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
     const sleepTimeBetweenBatches = 0
@@ -47,8 +53,8 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
     } else {
       cmd += ` '' '' `
     }
+    log.debug(`generate-csv ${csvTemplate ? `with headers from ${csvTemplateId}` : ''}: ${cmd}`)
     cmd = `${cmd} ${csvTemplate ? `"${csvTemplate.headers.join(',')}"` : ''}`
-    log.debug("generate-csv: " + cmd)
     const maxBuffer = 1024 * 1024 * 100;
     exec(cmd, { maxBuffer }).then(status => {
       resolve(status)
@@ -117,7 +123,6 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
       const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
       const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
-      log.debug("About to generateCsv in generate-csv-data-set.js")
       generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
       while (!await fs.pathExists(csvStatePath)) {
         await sleep(1*1000)
