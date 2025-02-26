@@ -18,6 +18,15 @@ The `/api/create/csvDataSets/` API and script called [generate-csv-data-sets](./
 
 Form Titles will now appear in more places in the Tangerine Web UI for improved readability. If the form title doesn't contain `t-lang` tag, return the text. Otherwise, it will use the English translation if it exists or the first translation if there's no English version of the title. Use the same heuristic in the pipe when creating and naming csv files.
 
+- Tangy Audio Recording and Audio Playback Inputs
+
+Two new inputs are available for recording and playing back audio.
+
+```html
+<tangy-audio-recording name="test-audio" label="Record Audio"></tangy-audio-recording>
+<tangy-audio-playback name="test-playback" label="Audio Playback" src="assets/sounds/fewtimes_Eng.mp3"></tangy-audio-playback>
+```
+
 __Server upgrade instructions__
 
 See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
