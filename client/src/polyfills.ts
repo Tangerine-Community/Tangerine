@@ -49,6 +49,8 @@ import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
 import 'tangy-form/input/tangy-prompt-box.js';
+import 'tangy-form/input/tangy-audio-recording.js';
+import 'tangy-form/input/tangy-audio-playback.js';
 // import 'tangy-form/input/tangy-scan-image.js';
 
 
