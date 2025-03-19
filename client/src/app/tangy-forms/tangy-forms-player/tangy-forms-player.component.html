@@ -1,4 +1,5 @@
 <div id="menu-container" *ngIf="rendered && formInfo && formInfo.templates && formInfo.templates.length > 0 && response && response.complete">
+  <t-select basePath="./assets/" label="Language:" pathToTranslationDefinitions="./assets/translations.json"></t-select>
   <mwc-icon (click)="print()" class="print">print</mwc-icon>
   <mwc-icon [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
   <mat-menu #appMenu="matMenu">
