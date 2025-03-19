@@ -4,10 +4,11 @@
     <span *ngIf="response.archived">
       <mwc-icon *appHasAPermission="let i;group:groupId; permission:'can_unarchive_forms'" (click)="unarchive()" class="md-container-button">unarchive</mwc-icon>
     </span>
-    <span *ngIf="!response.archived">      
+    <span *ngIf="!response.archived">
       <mwc-icon *appHasAPermission="let i;group:groupId; permission:'can_archive_forms'" (click)="archive()" class="md-container-button">archive</mwc-icon>
     </span>
     <mwc-icon (click)="print()" class="print md-container-button">print</mwc-icon>
+    <t-select basePath="./assets/" label="Language:" pathToTranslationDefinitions="./assets/translations.json"></t-select>
     <span *ngIf="formInfo.templates && formInfo.templates.length > 0">
       <mwc-icon  [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
       <mat-menu #appMenu="matMenu">
