@@ -52,6 +52,14 @@ installation or web browser installation:
     Once installed, the app can work again offline. This method is
     suitable in places of good connectivity.
 
+**WARNING**
+
+When using browser app installation, it is important to keep in mind that the app lives in the browser’s data/cache. If you use incognito mode, the app and data will be removed every time you close the browser. Some people clear their cache for the browser which also results in complete removal of app and data.
+
+Users using the Brwoser app installation must always use the same browser in regular mode (not incognito) and never clear the cache. 
+
+If you are using Browser installation, you should never install the app for more than one group at the same time. If switching groups, the user must sync and then clear the previous app in order to install a new one. If mixing between groups data contamination may occur where the data for one group is uploaded to another.
+
 **NOTE**: We recommend thoroughly testing your instruments and its data
 output before releasing them! To test your instrument use the Test Release mode.
 
