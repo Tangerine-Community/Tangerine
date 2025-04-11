@@ -1,5 +1,9 @@
 export class AppConfig {
 
+  constructor(data) {
+    Object.assign(this, data)
+  }
+
   // 
   // Tangerine Flavor
   //
