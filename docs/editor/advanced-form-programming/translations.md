@@ -23,4 +23,5 @@ If you would like to add or modify translations for your group, currently we wou
 
 See the default `translations.json` file [here](https://github.com/Tangerine-Community/Tangerine/blob/master/client/default-assets/translations.json) and find the other default translation files [here](https://github.com/Tangerine-Community/Tangerine/tree/master/client/default-assets).
 
+If you want to include a new language in your installation create the language file and add the entry for this language in the translations.json file. Place those in the translations folder of your installation and then execute translations-update command from within the container to copy the new files in all groups
 

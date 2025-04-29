@@ -43,4 +43,10 @@ A Case is a Document in a CouchDB database. A Case consists of 4 other Entities:
 
 ## EventForm Schema
 
+# MySQL
+
+![tangerine-mysql-base-database-structure.png](../assets/tangerine-mysql-base-database-structure.png)
+
+
+
 

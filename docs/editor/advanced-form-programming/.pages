@@ -1,4 +1,17 @@
 title: "Advanced Form Programming"
 arrange:
-    - index.md
+    - README.md
     - local-content-development.md
+    - content-sets.md
+    - configuration.md
+    - custom-apps.md
+    - custom-dashboard.md
+    - globals.md
+    - password-policy.md
+    - kiosk-or-fullscreen-modes.md
+    - form-versions.md
+    - reserved-words.md
+    
+    - translations.md
+    - class.md
+ 

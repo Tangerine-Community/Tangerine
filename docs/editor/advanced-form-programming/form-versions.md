@@ -2,7 +2,11 @@
 
 Throughout the lifetime of a form, many versions of a form may be deployed. When reviewing form responses collected on a past version of a form, it's important to open that form response using the version of the form it was collected on. When filling out a form response, it helps to think of the form response as a clear plastic sheet that you are writing on over the paper copy of the form. If the questions on that underlying physical form are removed, moved, or new questions are added, the clear plastic sheet you filled out previous form responses on no longer overlays correctly on the updated paper copy of that form.  The consequence of not using Form Versions on a form that changes over time is that when reviewing past data, if 1a question was removed in a future version of a form, it will appear that data collected in the past are now missing that data. There are other scenarios where a form version should be created which we will cover in later sections, but first a simple example.
 
-## Example
+## Releasing updates to existing forms
+
+## Gotchas
+- If you remove an input from an item or move that input to another item, when a user resumes a form response that was created with the prior version, content for that input will appear to have dissappeared.
+- If you add remove an item from a form, when users resume form responses created on with the prior version, it will appear they have lost data since the item has been removed.
 
 ### First Release
 

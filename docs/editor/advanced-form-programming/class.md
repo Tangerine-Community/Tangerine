@@ -1,8 +1,59 @@
-# Class module
+# Class module (Teach)
 
 ## Setup
 
-Add `class` to the `T_MODULES` property in config.sh. Create a new group via editor; this takes advantage of the class module which sets important class-related properties and file. If you /must/ use the `create-group` command, change `homeUrl` to `dashboard` and set `uploadUnlockedFormReponses =  true`. 
+Add `class` to the `T_MODULES` property in config.sh. Create a new group via editor; this takes advantage of the class module which sets important class-related properties and file. If you /must/ use the `create-group` command, change `homeUrl` to `dashboard` or `attendance-dashboard` and set `uploadUnlockedFormReponses =  true`. 
+
+You must also configure the `teachProperties` object in app-config.json for the Teach group. Below is an example configuration. Make sure to include the student name(s) variable and other variables that you want to populate in form responses under `studentRegistrationFields`. If the student name variable is not in this list you may see your student listing as empty on the tablet's dashboard
+
+```
+"teachProperties": {
+    "units": [
+      "Semester 1",
+      "Semester 2",
+      "Semester 3",
+      "Semester 4"
+    ],
+    "unitDates": [
+      {
+        "name": "Semester 1",
+        "start": "2025-02-15",
+        "end": "2025-04-23"
+      },
+      {
+        "name": "Semester 2",
+        "start": "2025-04-24",
+        "end": "2025-06-30"
+      },
+      {
+        "name": "Semester 3",
+        "start": "2025-07-04",
+        "end": "2025-09-09"
+      },
+      {
+        "name": "Semester 4",
+        "start": "2025-09-11",
+        "end": "2025-11-17"
+      }
+    ],
+    "attendancePrimaryThreshold": 80,
+    "attendanceSecondaryThreshold": 70,
+    "scoringPrimaryThreshold": 70,
+    "scoringSecondaryThreshold": 60,
+    "behaviorPrimaryThreshold": 70,
+    "behaviorSecondaryThreshold": 60,
+    "useAttendanceFeature": true,
+    "showAttendanceCalendar": true,
+    "studentRegistrationFields": [
+      "student_name",
+      "student_surname",
+      "classId",
+      "phone",
+      "student_num"
+    ]
+  },
+  "useAttendanceFeature": true,
+```
 
 ## Feedback
 
@@ -71,7 +122,4 @@ For tangy form items that use a _score field: Calculate the totalAnswers by subt
   Use score for totalCorrect and totalAnswers for maxValueAnswer, unless the max value was assigned earlier.
 
 Finally, there is support for calculating the score at report-time by looping through answeredQuestions and summing the score and max values.
-
-
-
 

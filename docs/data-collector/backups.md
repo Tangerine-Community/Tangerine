@@ -7,6 +7,8 @@ The backup files will be saved in the `/storage/self/primary/Documents/Tangerine
 
 ## Copy device backups to a computer
 
+You can copy the backups by sending them over email from the indicated location but also by using the adb Android utlities
+
 Transfering the backup requres the [Android Debug Bridge](https://developer.android.com/tools/adb) installed on the computer. Make sure to add the command `adb` to your executable PATH environment variable. 
 
 Use the following commands to save *all* of the database backup files:

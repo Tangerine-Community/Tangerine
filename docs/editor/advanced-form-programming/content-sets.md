@@ -36,6 +36,33 @@ If using Content set 2, this build process is not necessary. However, it is an a
 
 ## Creating a new Content Set
 
+Create a new content set by copying a group's content into the content sets folder. You have to update the app-config.json file and rename it to app-config-default.json. In this file, if using sync1, you must update the `uploadToken` and put the correct `homeUrl` for your app. Copy this folder under the content-sets folder
+
+## Enable content set dropdown in new group creation
+
+You can configure a drop down during group creation to allow you to select a pre-configured content set with it's forms. To do this rename the file `content-sets-example.json` to `content-sets.json` then open the file and adjust the id and labels. The id must correspond to your content-set folder name. In the example below I have enabled the default (regular group) and the teach content-sets
+
+```
+[
+    {
+        "id": "default",
+        "label": "Default content set"
+    },
+    {
+        "id": "teach",
+        "label": "Teach"
+    }
+]
+```
+
+This will result in having a drop down in the group creation
+
+!!! warning
+    Having this configuration means that only the user1 account should create new groups. For regular Tangerine groups, make sure that the uploadToken in the app-config-default.json file for the content set is correctly set. 
+
+
+<img src="../../assets/groupDropdown.png" width="300">
+
 ## Importing a Content Set into Tangerine
 
 New group set:
