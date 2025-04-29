@@ -17,6 +17,7 @@ Enter a name for your group and click Submit
 <img src="../media/newGroupname.png" width="250">
 
 
-WARNING: If you are using the free service you are not able to create new groups.
+!!! warning 
+    If you are using the free service you are not able to create new groups.
 
-If you are a Tangerine subscriber, or run Tangerine on your own server, the user1 account can be configured to be the only account with permissions to create new groups. If this is desired, please send a request for this configuration to support@tangerinehelp.zendesk.com Any Admin user can create a new group unless configured for the user1 account only
+    If you are a Tangerine subscriber, or run Tangerine on your own server, the user1 account can be configured to be the only account with permissions to create new groups. If this is desired, please send a request for this configuration to support@tangerinehelp.zendesk.com Any Admin user can create a new group unless configured for the user1 account only

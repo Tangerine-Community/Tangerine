@@ -1,4 +1,4 @@
-# On Device Data Corrections using Issues
+# On Device Data Corrections
 
 Enable "Allow Creation of Issues" in your App Config for Devices and Data Collectors will be able to propose changes to data that has already been submitted. After the Data Collector syncs, Data Managers may view those proposals in the Issues UI in their corresponding group, then comment or choose to merge the issue. 
 
