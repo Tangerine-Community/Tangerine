@@ -3,6 +3,7 @@ arrange:
     - README.md
     - local-content-development.md
     - content-sets.md
+    - custom-scripts.md
     - configuration.md
     - custom-apps.md
     - custom-dashboard.md
@@ -11,7 +12,6 @@ arrange:
     - kiosk-or-fullscreen-modes.md
     - form-versions.md
     - reserved-words.md
-    
     - translations.md
     - class.md
  
