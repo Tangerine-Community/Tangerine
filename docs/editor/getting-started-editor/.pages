@@ -8,6 +8,7 @@ nav:
     - input-types.md
     - skip-logic.md
     - validation.md
+    - calculated-inputs.md
     - downloading-your-data.md
     - Deployment: ../../data-collector/deployment
     - user-management.md
