@@ -1,5 +1,5 @@
 title: "Getting Started with Editor"
-arrange:
+nav:
     - README.md
     - create-new-group.md
     - create-new-form.md
@@ -9,5 +9,6 @@ arrange:
     - skip-logic.md
     - validation.md
     - downloading-your-data.md
+    - Deployment: ../../data-collector/deployment
     - user-management.md
     

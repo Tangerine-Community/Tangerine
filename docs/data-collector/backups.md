@@ -1,6 +1,6 @@
 ## Backups
 
-Data managers can take backups of the data on a device using the Export Data feature. Log in as the "admin" user on the device to export data for all users. The Export Data feature is in the dropdown menu in the top-right corner after log-in. 
+Data managers can take backups of the data on a device using the **Export Data** feature. Log in as the "admin" user on the device to export data for all users. The Export Data feature is in the dropdown menu in the top-right corner after log-in. 
 
 The backup files will be saved in the `/storage/self/primary/Documents/Tangerine/backups/` directory on the device.
 

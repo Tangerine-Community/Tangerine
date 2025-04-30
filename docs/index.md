@@ -47,6 +47,16 @@ title: Home
       border-radius: 5px;
     }
 
+       .full  a.link {
+      display: inline-block;
+      margin-top: 0;
+      padding: 0;
+      background-color: unset;
+      color: blue;
+      text-decoration: none;
+      border-radius: 0px;
+    }
+
     @media (min-width: 768px) {
     .card {
         /* Calculate width for two columns with a gap */
@@ -73,9 +83,14 @@ title: Home
     <p>Developer documentation</p>
     <a href="./get-involved">Learn More</a>
   </div>
+    <div class="card">
+    <h3>Prodcut Suite </h3>
+    <p>Select from pre-build tested products</p>
+    <a href="./product-suite/">Learn More</a>
+  </div>
   <div class="card">
     <h3>Learn</h3>
-    <p>Learn Tangerine through our practical courses</p>
+    <p>Access the Tangerine Academy</p>
     <a href="https://moodle.tangerinecentral.org/course/index.php?categoryid=14">Learn More</a>
   </div>
   <div class="card">
@@ -94,17 +109,16 @@ title: Home
   <div class="  full">
     <h3>Core Functionality & Form Building</h3>
     <p>
-        <ul><li>Flexible form building </li>
-            <li>Diverse questioning types </li>
-            <li>Point and click interface </li>
-            <li>Customizable design</li>
-            <li>Product Suite</li>
+        <ul><li><a class='link' href="./editor/getting-started-editor/create-new-form/">Flexible form building</a> </li>
+            <li><a class='link' href="./editor/getting-started-editor/input-types/">Diverse questioning types </a> </li>
+            <li><a class='link' href="./editor/advanced-form-programming/custom-apps/">Customizable design </a> </li>
+            <li><a class='link' href="./product-suite/">Product Suite</a></li>
         </ul> </p>
 
   </div>
   <div class="  full">
     <h3>Data Collection Methods</h3>
-    <p><ul><li>Offline data collection via app</li>
+    <p><ul><li><a class='link' href="./data-collector/deployment/">Offline data collection via app</a></li>
             <li>Online forms </li>
            </ul> </p>
 
@@ -112,8 +126,8 @@ title: Home
   <div class="  full">
     <h3>Data Quality & Management</h3>
    <p>
-        <ul><li>Data validation and quality control  </li>
-        <li>Conditional logic workflows  </li>
+        <ul><li><a class='link' href="./editor/getting-started-editor/validation/">Data validation and quality control</a> </li>
+        <li><a class='link' href="./editor/getting-started-editor/skip-logic/">Conditional logic workflows</a>  </li>
             <li>Data security and privacy  </li>
         </ul> </p>
 
@@ -121,26 +135,24 @@ title: Home
   <div class="  full">
     <h3>User & System Management</h3>
    <p>
-        <ul><li>Data validation and quality control  </li>
-        <li>User management and roles  </li>
-            <li>Multilingual support  </li>
+        <li><a class='link' href="./editor/getting-started-editor/user-management/">User and roles management</a></li>
+            <li><a class='link' href="./editor/advanced-form-programming/translations/">Multilingual support  </a></li>
         </ul> </p>
 
   </div>
   <div class="  full">
     <h3>Advanced Features & Automation</h3>
    <p>
-        <ul><li>Automated workflows  </li>
-        <li>Custom scripting  </li>
-            <li>Custom app interfaces  </li>
-            <li>Predefined content sets  </li>
+        <ul><li><a class='link' href="./editor/case-module//">Automated workflows</a>   </li>
+         <li>Custom scripting  </li>
+             <li><a class='link' href="./editor/advanced-form-programming/content-sets/">Predefined content sets</a>  </li>
         </ul> </p>
 
   </div>
     <div class="  full">
     <h3>Foundational Aspect</h3>
    <p>
-        <ul><li>Free and reliable platform  </li>
+        <ul><li>Free and reliable platform </li>
             <li>In use since 2012  </li>
             <li>Hundreds of data collections  </li>
         </ul> </p>
@@ -153,10 +165,11 @@ title: Home
 ## How it works
 
 In Tangerine, the workflow is comprised of 4 steps:
-1. Design your data collection forms in your favorite editor (Word, Excel, etc)
-2. Digitize your forms and  create an app for deployment, 
-3. Install the app onto the device, conduct your data collection and upload your form results from the tablet
-4. Access your data on the backend by exporting a CSV file
+
+1.  Design your data collection forms in your favorite editor (Word, Excel, etc)
+2.  Digitize your forms and  create an app for deployment, 
+3.  Install the app onto the device, conduct your data collection and upload your form results from the tablet
+4.  Access your data on the backend by exporting a CSV file
 
 ![How it works](how-it-works.png)
 
@@ -164,3 +177,4 @@ In Tangerine, the workflow is comprised of 4 steps:
 ## How to Contribute Documentation
 
 [Contribute Documentation](CONTRIBUTING.md)
+

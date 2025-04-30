@@ -15,6 +15,7 @@ Next, you deploy your app and install it on a mobile device or use it in the Chr
 -   [Location list import](../input-types/#location)
 -	[Skip Logic](skip-logic.md)
 -	[Validation](validation.md)
+-   [Deployment](../../data-collector/deployment)
 -   [Downloading your data](downloading-your-data.md)
 -   [User Management](user-management.md)
 
