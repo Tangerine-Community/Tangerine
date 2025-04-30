@@ -4,6 +4,7 @@
 - [Content-sets](content-sets.md)
 - [Configuration Guide](configuration.md)
 - [Custom-app](custom-apps.md)
+- [Custom scripts](custom-scripts.md)
 - [Custom  Dashboard](custom-dashboard.md)
 - [Form Versions](form-versions.md)
 - [Globals](globals.md)

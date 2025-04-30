@@ -144,8 +144,8 @@ title: Home
   <div class="  full">
     <h3>Advanced Features & Automation</h3>
    <p>
-        <ul><li><a class='link' href="./editor/case-module//">Automated workflows</a>   </li>
-         <li>Custom scripting  </li>
+        <ul><li><a class='link' href="./editor/case-module/">Automated workflows</a>   </li>
+         <li><a class='link' href="./editor/advanced-form-programming/custom-scripts/">Custom scripting</a>   </li>
              <li><a class='link' href="./editor/advanced-form-programming/content-sets/">Predefined content sets</a>  </li>
         </ul> </p>
 

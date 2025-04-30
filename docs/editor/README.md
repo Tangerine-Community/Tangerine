@@ -22,6 +22,7 @@ Next, you deploy your app and install it on a mobile device or use it in the Chr
 
 - [Local Content Development with Tangerine Preview](advanced-form-programming/local-content-development.md)
 - [Configuration Guide](advanced-form-programming/configuration.md)
+- [Custom scripts](advanced-form-programming/custom-scripts.md)
 - [Content-sets](advanced-form-programming/content-sets.md)
 - [Custom-app](advanced-form-programming/custom-apps.md)
 - [Custom Dashboard](advanced-form-programming/custom-dashboard.md)
