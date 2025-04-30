@@ -17,7 +17,7 @@
 ## Group Configuration
 - [Installing Multiple Tangerine apps on the same tablet](./install-multiple-apks-config.md)
 - [Integrate groups content in git](./integrate-group-with-github.md)
-- [Configuration notes](./configuration-notes.md)
+- [Configuration notes](../../editor/advanced-form-programming/configuration/)
 
 ## Android Devices
 [Rescuing a Full Tangerine Tablet](./rescuing-a-full-Tangerine-tablet.md)
