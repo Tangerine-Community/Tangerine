@@ -66,7 +66,7 @@ Create config.sh and change all required settings.
 cp config.defaults.sh config.sh 
 ```
 
-Configure the platform - look at the next section for configuraion options. Once conifgured execute the start command.
+Configure the platform - look at the next section for configuration options. Once configured execute the start command.
 ```
 vi config.sh 
 ```
@@ -94,16 +94,16 @@ This configuration allows us to ensure secure connections, but it also allows us
 
 There are two mandatory usernames and passwords that we must establish. Those are the **T_USER1** and **T_USER1_PASSWORD** which is the primary admin user whose password cannot be updated from the interface. The other user is the database user **T_COUCHDB_USER_ADMIN_NAME** and their password **T_COUCHDB_USER_ADMIN_PASS**. Use strong passwords for both users. 
 
-To update the CouchDB password after your site has been setup, you have to follow these steps: - [CouchDB Password Update](./couchdb-password.md)
 
-If we want to change the T_USER1_PASSWORD we can update it directly in the config.sh file and then rebuild the container using the start.sh script. The database administrator password cannot be changed directly. Follow the procedure described in CouchDB-> Change Password in the technical documentation to update the sofa password. 
+
+If we want to change the T_USER1_PASSWORD we can update it directly in the config.sh file and then rebuild the container using the start.sh script. The database administrator password cannot be changed directly. To update the CouchDB password after your site has been setup and start.sh run, you must follow these steps: - [CouchDB Password Update](./couchdb.md)
 
 **T_USER1="user1"** - do not change and leave as user1
 **T_USER1_PASSWORD="STRONG_PASS"**
 **T_COUCHDB_USER_ADMIN_NAME="admin"** – do not change and leave as admin
 **T_COUCHDB_USER_ADMIN_PASS="STRONG_PASS"**
 
-If you are using the MySQL module, you must also set the username and password for this user. 
+If you are using the MySQL module, you must also set the username and password for this user. [MySQL Setup](./mysql-js.md)
 **T_MYSQL_USER="admin"** - make no changes 
 **T_MYSQL_PASSWORD="STRONG_PASS"**
 
@@ -114,7 +114,8 @@ The upload token used in the default sync method is the authentication token tha
 If you update this token after a site has been started, you must also update it in each app-config.json file for each pool that already exists on the server. The app-config configuration is 'uploadToken'
 
 ### Default Modules
-Enable desired modules. By degault we only have csv, Insert 'class' for Teach or 'mysql-js' for a MySQL module.
+Enable desired modules. By default, we only have csv, Insert 'class' for Teach or 'mysql-js' for a MySQL module. Case modules must include both case and sync-protocol-2
+
 
 **T_MODULES="['csv' ]"**
 
@@ -137,7 +138,7 @@ There are two configurations for the listening ports. One is for the couch datab
 **T_PORT_MAPPING="-p 80:80"** - not using NGINX
 
 ### CSV Generation Settings
-We use the default settings for CSV generation, where the delay in csv database creationis a maximum of 300000 milliseconds (5 min). The other option available to us is batch size for csv processing. This setting allows us to modify the number of records that will be fragmented during csv generation. If the data volumes number in the thousands, you may want to increase them from 50 to 500.
+We use the default settings for CSV generation, where the delay in csv database creation a maximum of 300000 milliseconds (5 min). The other option available to us is batch size for csv processing. This setting allows us to modify the number of records that will be fragmented during csv generation. If the data volumes number in the thousands, you may want to increase them from 50 to 500.
 **T_REPORTING_DELAY="300000"**
 **T_CSV_BATCH_SIZE=50**
 
@@ -164,11 +165,10 @@ Tangerine allows you to keep a historical list and links of APK files with build
     **T_ARCHIVE_PWAS_TO_DISK="false"**
 
 ### Automatic historical form versions
-Every time you update a form; Tangerine uses git to store this change in the file system. The first setting tells Tangerine to commit form changes automatically, and the second option indicates how often a commit is made (in milliseconds). When you create a release, we also create a git tag in the form repository. Note that we don't show this on the interace butyou can use the command line to find older verions of the forms
+Every time you update a form; Tangerine uses git to store this change in the file system. The first setting tells Tangerine to commit form changes automatically, and the second option indicates how often a commit is made (in milliseconds). When you create a release, we also create a git tag in the form repository. Note that we don't show this on the interface but you can use the command line to find older versions of the forms.
 
 **T_AUTO_COMMIT="true"**
 **T_AUTO_COMMIT_FREQUENCY="6000000"**
-
 
 **All other settings remain unchanged on a generic site setup**
 
@@ -221,7 +221,6 @@ Array of sources that can make requests to this server. Useful if you have an ex
 Example of use. Note that forward slashes are required before double quotes, otherwise bash filters them out and it won't be a valid JSON. T_CORS_ALLOWED_ORIGINS='[\"http://localhost:8080\"]'
 **T_CORS_ALLOWED_ORIGINS=''**
 
-
 # Cron setup
 
 To make sure that Tangerine and the server it is installed on operate correctly add the below lines to cron (crontab -e) to restart the the containers once a day but also to keep the server up to date.
@@ -244,8 +243,7 @@ If you are using nginx you have to use the below version of the cron setup
 0 3 * * * docker exec nginx certbot renew --post-hook "service nginx reload"
 ```
 
-
-# Instllation folder
+# Installation folder
 The installation folder is the one where you checkout the code and executed ./start.sh script. Generally, this is /home/ubuntu/tangerine
 
 In this folder you have:
@@ -254,10 +252,9 @@ In this folder you have:
 - The data folder – where all data used by Tangerine is saved
    - Archives
     - Client
-    - Couchdb - were the database is
+    - Couchdb - where the database is
      - Groups - where all groups are
 - The default content sets in content-sets
-
 
 # NGINX setup
 
@@ -271,10 +268,9 @@ What we have to do:
 
 For detailed NGINX setup to to [Configuring Nginx as SSL proxy server for Tangerine](./tangerine-nginx-ssl.md) 
 
-
 # Tangeirne upgrades
 
-For specific upgrade instrucitons follow each release documentation. Generic instrcutions are available here: [Server Upgrade Instrcutions](./upgrade-instructions.md) 
+For specific upgrade instructions follow each release documentation. Generic instructions are available here: [Server Upgrade Instructions](./upgrade-instructions.md) 
 
 # Maintenance and helper scripts
 
@@ -290,7 +286,7 @@ Take a moment to explore the info command inside your tangerine container. Some 
 
 Other scripts used for maintenance testing and update are available from the info command.
 
-# Bakcup Strategies
+# Backup Strategies
 
 What needs to be backed up?
 - The database folder
@@ -305,7 +301,7 @@ Setup couchdb replication from the couchdb interface
 Open http://localhost:5984/_utils/index.html on the server and find the replication link. Setup the replication as described here
 - Server image copies – create server image copies that can be restored on demand.
 
-Use a combination of folder sync and replication to backup your site or create hot swap copies
+Use a combination of folder sync and replication to back up your site or create hot swap copies
 
 # Recovery
 
@@ -321,3 +317,5 @@ Steps to follow in data recovery
 - Copy and paste the data folder if you are restoring from a physical backup
 - Execute the start.sh script 
 - Generate any apk or pwa for groups that are currently in data collection.
+
+
