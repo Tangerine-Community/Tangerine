@@ -117,7 +117,7 @@ Using the same steps you can create a Test release. We recommend that you use Te
 
     This update approach will not only apply any instrument/form edits, new forms, or form deletions, but also any **updates to the Tangerine application** made in the meantime and applied to your group (if any).
 
-Create an Online Release
+Create an Online Survey Release
 ------------------------
 Creating a deployment release is the last step before your form can be filled in on a tablet or a computer. Go to your group and click Deploy->Release Online Survey. Here you will see a list of forms that have been publish and those that can be published. On the image below we see that one form is listed under Published Surveys and other forms are under Unpublished Surveys. 
 

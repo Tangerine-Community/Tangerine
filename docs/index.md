@@ -119,7 +119,7 @@ title: Home
   <div class="  full">
     <h3>Data Collection Methods</h3>
     <p><ul><li><a class='link' href="./data-collector/deployment/">Offline data collection via app</a></li>
-            <li>Online forms </li>
+            <li><a class='link' href="./data-collector/deployment/#create-an-online-survey-release">Online forms</a> </li>
            </ul> </p>
 
   </div>
@@ -128,7 +128,7 @@ title: Home
    <p>
         <ul><li><a class='link' href="./editor/getting-started-editor/validation/">Data validation and quality control</a> </li>
         <li><a class='link' href="./editor/getting-started-editor/skip-logic/">Conditional logic workflows</a>  </li>
-            <li>Data security and privacy  </li>
+            <li><a class='link' href="./data-security/">Data security and privacys</a>    </li>
         </ul> </p>
 
   </div>
@@ -136,7 +136,8 @@ title: Home
     <h3>User & System Management</h3>
    <p>
         <li><a class='link' href="./editor/getting-started-editor/user-management/">User and roles management</a></li>
-            <li><a class='link' href="./editor/advanced-form-programming/translations/">Multilingual support  </a></li>
+        <li><a class='link' href="./editor/advanced-form-programming/translations/">Multilingual support  </a></li>
+        <li><a class='link' href="./editor/advanced-form-programming/translations/">Multilingual support  </a></li>
         </ul> </p>
 
   </div>
