@@ -7,7 +7,7 @@ On the main group listing page, click "+" button in the bottom right corner to c
 
 <img src="../media/plusButton.png" width="30">
 
-A group can be [configured](../../system-administrator/configuration-notes.md#new-group-configuration) to display a drop-down 
+A group can be [configured](../../advanced-form-programming/content-sets/) to display a drop-down 
 to display available content-sets for which to configure the new group.
 
 <img src="../media/content-sets-dropdown.png" width="300"/>
