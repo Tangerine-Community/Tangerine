@@ -48,29 +48,22 @@
       </div>
       <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a Spreadsheet Template available for a form, it will be displayed in the form's Spreadsheet Template dropdown." | translate }}</div>
     </div>
-    <table class="form-list materialish">
-      <tr class="table-header new-csv-header">
-        <td>
-          <mat-checkbox name="toggle-select-all-forms" (change)="toggleSelectAllForms($event)"></mat-checkbox>
-        </td>
-        <td>
-          Form Title
-        </td>
-        <td>
-          Spreadsheet Template
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3"><h3 class="tangy-foreground-secondary">Active Forms</h3></td>
-      </tr>
-      <tr *ngFor="let form of activeForms" >
-        <td>
-          <mat-checkbox [checked]="allFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
-        </td>
-        <td>
-          {{form|formTitleFromInfo}}
-        </td>
-        <td>
+    <h2 class="tangy-foreground-secondary">Active Forms</h2>
+    <table mat-table class="form-list" [dataSource]="activeForms" >
+      <!-- toggle Column -->
+      <ng-container matColumnDef="toggle">
+        <th mat-header-cell *matHeaderCellDef><mat-checkbox name="toggle-select-all-forms" (change)="toggleSelectAllForms($event, 'active')"></mat-checkbox></th>
+        <td mat-cell *matCellDef="let form"> <mat-checkbox [checked]="allActiveFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox> </td>
+      </ng-container>
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Form Title </th>
+        <td mat-cell *matCellDef="let form"> {{form.title|formTitleFromInfo|unsanitizeHtml}} </td>
+      </ng-container>
+      <!-- Template Column -->
+      <ng-container matColumnDef="template">
+        <th mat-header-cell *matHeaderCellDef> Spreadsheet Template </th>
+        <td mat-cell *matCellDef="let form">
           <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
             <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
               <mat-option value="" selected>{{ "All data" | translate }}</mat-option>
@@ -78,18 +71,27 @@
             </mat-select>
           </mat-form-field>
         </td>
-      </tr>
-      <tr>
-        <td colspan="3"><h3 class="tangy-foreground-secondary">Archived Forms</h3></td>
-      </tr>
-      <tr *ngFor="let form of archivedForms" >
-        <td>
-          <mat-checkbox [checked]="allFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
-        </td>
-        <td>
-          {{form|formTitleFromInfo}}
-        </td>
-        <td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <h2 class="tangy-foreground-secondary">Archived Forms</h2>
+    <table mat-table class="form-list" [dataSource]="archivedForms">
+      <!-- toggle Column -->
+      <ng-container matColumnDef="toggle">
+        <th mat-header-cell *matHeaderCellDef><mat-checkbox name="toggle-select-all-forms" (change)="toggleSelectAllForms($event, 'archived')"></mat-checkbox></th>
+        <td mat-cell *matCellDef="let form"> <mat-checkbox [checked]="allArchivedFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox> </td>
+      </ng-container>
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Form Title </th>
+        <td mat-cell *matCellDef="let form"> {{form.title|formTitleFromInfo|unsanitizeHtml}} </td>
+      </ng-container>
+      <!-- Template Column -->
+      <ng-container matColumnDef="template">
+        <th mat-header-cell *matHeaderCellDef> Spreadsheet Template </th>
+        <td mat-cell *matCellDef="let form">
           <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
             <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
               <mat-option value="" selected>{{ "All data" | translate }}</mat-option>
