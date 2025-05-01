@@ -92,7 +92,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
     {
       columnDef: 'title',
       header: 'Name',
-      cell: (form: FormSyncSetting) => `${form.title}`,
+      cell: (form: FormSyncSetting) => `${form.title}`, // TODO: pipe through formTitleFromInfo
     },
     {
       columnDef: 'pull',
