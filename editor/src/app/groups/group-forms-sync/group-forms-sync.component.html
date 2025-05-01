@@ -1,70 +1,20 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<mat-list class="drag-list">
-  <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index">
-    <mat-list class="tangy-full-width" *cdkDragPreview>
-      <mat-list-item>
-        <span>{{index+1}}</span>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
-        <span class="tangy-spacer-drag"></span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">print</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-          </a>
-        </span>
-      </mat-list-item>
-    </mat-list>
-    <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
-    <span>
-      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
-    </span>
-    <mat-divider></mat-divider>
-  </mat-list-item>
-</mat-list>
-<h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
-<mat-list class="drag-list" cdkDropList>
-  <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag
-    [cdkDragDisabled]="!isGroupAdminUser">
-    <mat-list class="tangy-full-width" *cdkDragPreview>
-      <mat-list-item>
-        <span>{{index+1}}</span>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
-        <span class="tangy-spacer-drag"></span>
+<h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
+<table mat-table [dataSource]="activeForms" class="mat-elevation-z8">
+  <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+    <th mat-header-cell *matHeaderCellDef>
+      {{column.header}}
+    </th>
+    <td mat-cell *matCellDef="let row" >
+      <ng-template #falseTemp>
         <span>
           <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, row.id)"
                           value="{{row.couchdbSyncSettings.pull ? 'on'  : ''}}"></tangy-checkbox>
         </span>
-      </mat-list-item>
-    </mat-list>
-    <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
+      </ng-template>
+      <span *ngIf="column.columnDef !== 'pull'; else falseTemp">{{column.cell(row)}}</span>
+    </td>
+  </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
