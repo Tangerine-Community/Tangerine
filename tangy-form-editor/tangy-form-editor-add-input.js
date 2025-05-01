@@ -110,6 +110,8 @@ class TangyFormEditorAddInput extends PolymerElement {
             <mwc-button icon="grid_on"on-click="addThis" id="tangy-untimed-grid-widget" >Untimed Grid</mwc-button><br>
             <mwc-button icon="fence" on-click="addThis" id="tangy-gate-widget" >Conditional Gate</mwc-button><br>
             <mwc-button icon="auto_read_play" on-click="addThis" id="tangy-prompt-box-widget">Prompt Box</mwc-button><br>
+            <mwc-button icon="settings_voice" on-click="addThis" id="tangy-audio-recording-widget">Audio Recording</mwc-button><br>
+            <mwc-button icon="play_arrow" on-click="addThis" id="tangy-audio-playback-widget">Audio Playback</mwc-button><br>
           </div>
         </div>
       </div>

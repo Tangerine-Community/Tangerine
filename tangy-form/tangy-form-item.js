@@ -5,19 +5,6 @@ import '@polymer/paper-card/paper-card.js'
 import './style/tangy-common-styles.js'
 import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
 import { TangyPromptUtils } from './util/tangy-prompt-utils.js'
-import '@polymer/polymer/lib/elements/dom-repeat.js';
-
-// import { createWorker } from 'tesseract.js';
-// const worker = createWorker({
-//   logger: m => console.log(m),
-// });
-// const worker = createWorker({
-//   // corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-//   // corePath: 'tesseract-core.wasm.js',
-//   // workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
-//   // workerPath: "worker.min.js",
-//   logger: m => console.log(m),
-// });
 
 /**
  * `tangy-form-item`
@@ -53,8 +40,7 @@ export class TangyFormItem extends PolymerElement {
       open: t('open'),
       close: t('close'),
       save: t('save'),
-      submit: t('submit'),
-      reset: t('reset')
+      submit: t('submit')
     }
     this.hadDiscrepancies = []
     this.hadWarnings = []
@@ -786,37 +772,86 @@ export class TangyFormItem extends PolymerElement {
     this
       .querySelectorAll('[name]')
       .forEach(input => inputs.push(input.getModProps && window.useShrinker ? input.getModProps() : input.getProps()))
-    let score = 0
+    
+    let scoreSum = 0
+    let percent = 0
+    let denominatorSum = 0
+    let tangyTimedPercents = [];
     this.inputs = inputs
-
     if (this.querySelector('[name]')) {
       const tangyFormItem = this.querySelector('[name]').parentElement
       if(tangyFormItem.hasAttribute('scoring-section')) {
-        const selections = tangyFormItem.getAttribute('scoring-fields') || []
-        if(selections.length>0){
-          const selectionsArray = selections.split(',')
-        function findObjectByKey(array, key, value) {
-          for (let i = 0; i < array.length; i++) {   if (array[i] == key) {return array[i];}
-          } return null;
-        }
-        
-        this.inputs.forEach(input => {
-          const a = findObjectByKey(selectionsArray, input.name)
-          if (a != null){
-            let value;
-            if (input.tagName === 'TANGY-TIMED') {
-              //each grid present is scored as "number of correct items"/"number of total items" *100
-              const correct = numberOfCorrectItems(input);
-              const total = input.value.length
-              value = Math.round((correct/total) * 100).toString();
-            } else {
-              value = getValue(input.name);
+        /*
+         * Per the documentation:
+         * - custom scoring always returns a percent
+         * - users are supposed to only have one type of input per scoring section
+         * - if there is a tangy-timed input, the score is the average of the percents of each grid. All other scores are ignored.
+         */
+        if (tangyFormItem.hasAttribute('custom-scoring-logic') && tangyFormItem.getAttribute('custom-scoring-logic').trim().length > 0) {
+          scoreSum = this.customScore
+          percent = this.customScore
+          denominatorSum = 100
+        } else {
+          const selections = tangyFormItem.getAttribute('scoring-fields') || []
+          if (selections.length > 0) {
+            const selectionsArray = selections.split(',')
+            function findObjectByKey(array, key, value) {
+              for (let i = 0; i < array.length; i++) {   if (array[i] == key) {return array[i];}
+              } return null;
             }
-            score += sumScore(value)}
-        })
+            this.inputs.forEach(input => {
+              const a = findObjectByKey(selectionsArray, input.name)
+              if (a != null) {
+                let value = 0;
+                let score = 0;
+                let denominator = 0;
+                if (input.tagName === 'TANGY-TIMED') {
+                  //each grid present is scored as "number of correct items"/"number of total items" *100 aka a percent
+                  const correct = numberOfCorrectItems(input);
+                  const total = input.value.length
+                  value = Math.round((correct/total) * 100).toString();
+                  tangyTimedPercents.push(value);
+                } else if (input.tagName === 'TANGY-CHECKBOX') {
+                  // if the input is a checkbox, the score is 1 if checked, 0 if not
+                  value = isChecked(input.name) ? 1 : 0
+                  score += value
+                  denominator = 1
+                } else if (Array.isArray(input.value)) {
+                  // the score is the sum of the values and the denominator is the max value or length of the array
+                  value = getValue(input.name);
+                  score += sumScore(value)
+                  denominator =  maxValue(input.value)
+                } else if (input.tagName === 'TANGY-INPUT' && input.type === 'number') {
+                  // if the input is a number, the score is the value and the denominator is the max
+                  value = parseInt(input.value)
+                  score += value
+                  denominator = parseInt(input.max)
+                } else {
+                  // default to the input value and increment the denominator
+                  value = getValue(input.name);
+                  score += sumScore(value)
+                  denominator = 1
+                }
+                scoreSum += score
+                denominatorSum += denominator
+              }
+            })
+            if (tangyTimedPercents.length > 0) {
+              percent = Math.round(tangyTimedPercents.reduce((a, b) => parseInt(a) + parseInt(b)) / tangyTimedPercents.length)
+              scoreSum = percent
+              denominatorSum = 100
+            } else {
+              percent = Math.round((scoreSum/denominatorSum) * 100)
+            }
+          }
         }
-        if(tangyFormItem.hasAttribute('custom-scoring-logic')&&tangyFormItem.getAttribute('custom-scoring-logic').trim().length>0){
-          score = this.customScore
+        function maxValue(inputValues) {
+          if (inputValues.some(value => isNaN(value.name))) {
+            return inputValues.length;
+          }
+
+          const values = inputValues.map(value => { return parseInt(value.name) });
+          return Math.max(...values)
         }
         function sumScore(value) {
           let s = 0
@@ -830,8 +865,18 @@ export class TangyFormItem extends PolymerElement {
         }
         const scoreEl = document.createElement('tangy-input')
         scoreEl.name = `${tangyFormItem.getAttribute('id')}_score`
-        scoreEl.value = score
+        scoreEl.value = scoreSum
         this.inputs = [...inputs, scoreEl.getModProps && window.useShrinker ? scoreEl.getModProps() : scoreEl.getProps()]
+
+        const countEl = document.createElement('tangy-input')
+        countEl.name = `${tangyFormItem.getAttribute('id')}_score_denominator`
+        countEl.value = denominatorSum
+        this.inputs = [...this.inputs, countEl.getModProps && window.useShrinker ? countEl.getModProps() : countEl.getProps()]
+
+        const percentEl = document.createElement('tangy-input')
+        percentEl.name = `${tangyFormItem.getAttribute('id')}_score_percent`
+        percentEl.value = percent
+        this.inputs = [...this.inputs, percentEl.getModProps && window.useShrinker ? percentEl.getModProps() : percentEl.getProps()]
       }
     }
     if (window.devtools && window.devtools.open) {
@@ -943,8 +988,10 @@ export class TangyFormItem extends PolymerElement {
 
   back() {
     this.sectionPromptQueue.stopAndClearQueue();
-    this.submit()
-    this.dispatchEvent(new CustomEvent('ITEM_BACK'))
+    if (this.validate()) {
+      this.submit()
+      this.dispatchEvent(new CustomEvent('ITEM_BACK'))
+    }
   }
 
   goTo(itemId, skipValidation = false) {

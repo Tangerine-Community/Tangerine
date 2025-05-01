@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## v7.20.2
+
+- Bump tangy-form to 4.48.2 with fixes to Tangy Audio Recording and Playback widgets
+
+## v7.20.1
+
+- Bump tangy-form to 4.48.1 with fixes to Tangy Audio Recording and Playback widgets
+
+## v7.20.0
+
+- Bump tangy-form to 4.48.0
+
+## v7.19.0
+
+- Create Tangy Audio Recording and Tangy Audio Playback widgets
+- Bump tangy-form to 4.47.0
+
+## v7.18.2
+
+- Bump tangy-form to 4.46.1
+
+## v7.18.1
+
+- Bump tangy-form to 4.46.0
+
 ## v7.18.0
 
 - Add editor widgets for Tangy Prompt Box and updates to Tangy Radio Blocks

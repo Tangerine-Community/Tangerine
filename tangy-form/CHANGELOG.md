@@ -1,5 +1,47 @@
 # CHANGELOG
 
+## v4.48.2
+
+- Updates and fixes for `tangy-audio-recording`
+
+## v4.48.0, v4.48.1
+
+- Update translation-web-component and use it to update translations on the fly (lang and direction)
+
+The text and style for tangy-form and it's elements will be set to 'ltr' or 'rtl' as required. This also fixes issues with refreshing
+translations pulled using the combTranslation function. 
+
+## v4.47.0
+
+- Add `tangy-audio-recording` and `tangy-audio-playback` inputs
+
+Two new inputs are available for recording and playing back audio. Recorded audio is saved as a media file separate from the form response and available for upload to a server through the media uploads during the sync process. The audio playback input allows users to listen to audio files that are part of the form.
+
+```html
+<tangy-audio-recording name="test-audio" label="Record Audio"></tangy-audio-recording>
+<tangy-audio-playback name="test-playback" label="Audio Playback" src="assets/sounds/fewtimes_Eng.mp3"></tangy-audio-playback>
+```
+
+## v4.46.1
+
+Calculate section score percent and denominator based on type of input:
+- TANGY-TIMED: each grid present is scored as "number of correct items"/"number of total items" *100 aka a percent
+- TANGY-CHECKBOX: score is 1 if checked, 0 if not; denominator is 1 per checkbox
+- Inputs with Array values (TANGY-CHECKBOXES, TANGY-RADIO-BUTTONS): score is the value selected in the array; denominator is the max value of the array.
+- TANGY-INPUT with `type=number` and `max=X` attributes: score is the input value; denominator is the input.max value.
+- DEFAULT: score is the value; denominator is 1
+
+## v4.46.0
+
+Section Scoring Updates:
+- Add `<section_id>_percent` and `<section_id>_denominator` to the form item outputs.
+- Prevent scoring of both tangy-timed, custom-scoring and regular scoring in the same section.
+
+Rules:
+- custom scoring always returns a percent
+- users should only use one type of input per scoring section
+- if there is a tangy-timed input, the score is the average of the percents of each grid. All other scores are ignored.
+
 ## v4.45.4
 
 Fix missing function parens

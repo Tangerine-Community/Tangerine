@@ -32,6 +32,8 @@ import './widget/tangy-signature-widget.js'
 import './widget/tangy-toggle-widget.js'
 import './widget/tangy-photo-capture-widget'
 import './widget/tangy-video-capture-widget'
+import './widget/tangy-audio-playback-widget.js'
+import './widget/tangy-audio-recording-widget.js'
 
 /**
  * `tangy-form-item-editor`
