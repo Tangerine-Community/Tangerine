@@ -84,7 +84,7 @@ title: Home
     <a href="./get-involved">Learn More</a>
   </div>
     <div class="card">
-    <h3>Prodcut Suite </h3>
+    <h3>Product Suite </h3>
     <p>Select from pre-build tested products</p>
     <a href="./product-suite/">Learn More</a>
   </div>
@@ -136,7 +136,6 @@ title: Home
     <h3>User & System Management</h3>
    <p>
         <li><a class='link' href="./editor/getting-started-editor/user-management/">User and roles management</a></li>
-        <li><a class='link' href="./editor/advanced-form-programming/translations/">Multilingual support  </a></li>
         <li><a class='link' href="./editor/advanced-form-programming/translations/">Multilingual support  </a></li>
         </ul> </p>
 
