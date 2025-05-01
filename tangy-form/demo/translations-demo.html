@@ -9,6 +9,7 @@
     <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/devtools-detect/index.js"></script>
     <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script type="module" src="../node_modules/translation-web-component/t-select.js"></script>
 
     <custom-style>
       <style>
@@ -48,24 +49,7 @@
   </head>
   <body>
     <h3>Inputs Demo</h3>
-    <div class="vertical-section-container centered">
-        <button onclick="changeLanguage('en')">
-          Enable English
-        </button>
-        <button onclick="changeLanguage('fr')">
-          Enable French 
-        </button>
-      </div>  
-      <script>
-        window.changeLanguage = async function (languageCode) {
-          document.documentElement.lang = languageCode;
-          document.body.dispatchEvent(new CustomEvent('lang-change'));
-          const response = await fetch(`./translation.${languageCode}.json`)
-          const translation = await response.json()
-          window.translation = translation
-          document.body.dispatchEvent(new CustomEvent('lang-ready'));
-        }
-      </script>
+    <t-select basePath="./" label="Language:" pathToTranslationDefinitions="./translations.json"></t-select>
     <tangy-form id="my-form" title="My Form">
               
         <tangy-form-item id="item1" title="Item 1">
@@ -76,14 +60,18 @@
                 label="
                     <t-lang en>English label.</t-lang>
                     <t-lang fr>French label.</t-lang>
+                    <t-lang JO_ar>العلامة العربية</t-lang>
                 "
                 hint-text="
                     <t-lang en>English hint-text.</t-lang>
                     <t-lang fr>French hint-text.</t-lang>
+                    <t-lang JO_ar>تلميح عربي</t-lang>
                 "
                 error-text="
                     <t-lang en>English error-text.</t-lang>
                     <t-lang fr>French error-text.</t-lang>
+                    <t-lang JO_ar>خطأ عربي</t-lang>
+                    
                 "
                 required>
             </tangy-checkbox>
@@ -94,14 +82,17 @@
                 label="
                     <t-lang en>English label.</t-lang>
                     <t-lang fr>French label.</t-lang>
+                    <t-lang JO_ar>العلامة العربية</t-lang>
                 "
                 hint-text="
                     <t-lang en>English hint-text.</t-lang>
                     <t-lang fr>French hint-text.</t-lang>
+                    <t-lang JO_ar>تلميح عربي</t-lang>
                 "
                 error-text="
                     <t-lang en>English error-text.</t-lang>
                     <t-lang fr>French error-text.</t-lang>
+                    <t-lang JO_ar>خطأ عربي</t-lang>
                 "
                 required>
                 <option 
@@ -109,10 +100,12 @@
                     hint-text="
                         <t-lang en>English hint-text.</t-lang>
                         <t-lang fr>French hint-text.</t-lang>
+                        <t-lang JO_ar>تلميح عربي</t-lang>
                     "
                 >
                     <t-lang en>English label.</t-lang>
                     <t-lang fr>French label.</t-lang>
+                    <t-lang JO_ar>العلامة العربية</t-lang>
                 </option>
                 <option value="A">A</option>
                 <option value="B">B</option>
