@@ -1,5 +1,13 @@
 ## Content Sets 
-Content Sets are groups of forms and configuration you can use as a template for new groups.
+
+Content Sets are groups of forms and configuration you can use as a template for new group creation. Tangerine already comes with some predefined content sets:
+
+- custom-app - is a custom app group starter set
+- default - is the regular Tangerine group
+- teach and attendance - are two versions of a teach set that has been preconfigured.
+- case module and case-module-starter - are two sets that showcase the case module
+
+  
 
 ## Anatomy of a Content Set
 
@@ -36,7 +44,7 @@ If using Content set 2, this build process is not necessary. However, it is an a
 
 ## Creating a new Content Set
 
-Create a new content set by copying a group's content into the content sets folder. You have to update the app-config.json file and rename it to app-config-default.json. In this file, if using sync1, you must update the `uploadToken` and put the correct `homeUrl` for your app. Copy this folder under the content-sets folder
+Create a new content set by copying a group's content into the content-sets folder. You have to update the app-config.json file and rename it to app-config-default.json. In this file, if using sync1, you must update the `uploadToken` and put the correct `homeUrl` for your app. Copy this folder under the content-sets folder
 
 ## Enable content set dropdown in new group creation
 
