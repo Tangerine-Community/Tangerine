@@ -19,7 +19,46 @@
 >
 </paper-fab>
 
-<div class="indent tad-lower">
+<h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
+<mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropActive($event)">
+  <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index" cdkDrag
+    [cdkDragDisabled]="!canManageForms">
+    <mat-list class="tangy-full-width" *cdkDragPreview>
+      <mat-list-item>
+        <span>{{index+1}}</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
+        <span class="tangy-spacer-drag"></span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+          </a>
+        </span>
+        <span>
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+          </a>
+        </span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+          </a>
+        </span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
+          </a>
+        </span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
+          </a>
+        </span>
+      </mat-list-item>
+    </mat-list>
+    <span>{{index+1}}</span>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
 
   <mat-accordion>
     <mat-expansion-panel  (opened)="panelOpenState = true"
@@ -141,6 +180,68 @@
         >
           delete
         </i>
+<<<<<<< HEAD
+=======
+      </button>
+    </span>
+
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+        (click)="onArchiveFormClick(groupId, form.id)"
+      >
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
+          class="material-icons mat-32 tangy-location-list-icon">archive</i>
+      </button>
+    </span>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-list>
+<h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
+<mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropArchived($event)">
+  <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag>
+    <mat-list class="tangy-full-width" *cdkDragPreview>
+      <mat-list-item>
+        <span>{{index+1}}</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
+        <span class="tangy-spacer-drag"></span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+          </a>
+        </span>
+        <span>
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+          </a>
+        </span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+          </a>
+        </span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
+          </a>
+        </span>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
+          </a>
+        </span>
+      </mat-list-item>
+    </mat-list>
+    <span>{{index+1}}</span>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
+
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <a mat-icon-button
+        [routerLink]="'/tangy-form-editor/'+groupId+'/'+form.id">
+        <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+>>>>>>> origin/release/v3.32.1
       </a>
     </span>
 

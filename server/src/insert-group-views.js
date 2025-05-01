@@ -3,6 +3,16 @@ const clog = require('tangy-log').clog
 const views = require(`./group-views.js`)
 const dbConnection = require('./db')
 
+/**
+ * Insert views into a database.
+ * @param {string} databaseName - The name of the database to insert the views into.
+ * 
+ * The params object is used to pass parameters to the views. The evalFunctionWithParams function is used to replace the parameters in the views with the values in the params object. Note, the functions shown in the fauxton will have the parameters replaced with the values in the params object.
+ */
+const params = {
+  T_USER_SHORT_CODE_LENGTH: process.env.T_USER_SHORT_CODE_LENGTH || 6
+}
+
 module.exports = async function insertGroupViews(databaseName) {
   let db = new dbConnection(databaseName)
   let designDoc = {}
@@ -17,7 +27,7 @@ module.exports = async function insertGroupViews(databaseName) {
         _id: `_design/${prop}`,
         views: {
           [prop]: {
-            map: view.toString()
+            map: evalFunctionWithParams(view)
           }
         }
       }
@@ -26,8 +36,8 @@ module.exports = async function insertGroupViews(databaseName) {
         _id: `_design/${prop}`,
         views: {
           [prop]: {
-            ...view.map ? { map: view.map.toString() } : {},
-            ...view.reduce ? {reduce: view.reduce.toString() } : {}
+            ...view.map ? { map: evalFunctionWithParams(view.map) } : {},
+            ...view.reduce ? {reduce: evalFunctionWithParams(view.reduce) } : {}
           }
         }
       }
@@ -48,5 +58,9 @@ module.exports = async function insertGroupViews(databaseName) {
     if (view.database) {
       db = new dbConnection(databaseName)
     }
+  }
+
+  function evalFunctionWithParams(view) {
+    return view.toString().replace('T_USER_SHORT_CODE_LENGTH', params.T_USER_SHORT_CODE_LENGTH)
   }
 }
