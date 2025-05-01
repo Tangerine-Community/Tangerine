@@ -60,18 +60,11 @@
           <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, row.id)"
                           value="{{row.couchdbSyncSettings.pull ? 'on'  : ''}}"></tangy-checkbox>
         </span>
-<<<<<<< HEAD
-      </ng-template>
-      <span *ngIf="column.columnDef !== 'pull'; else falseTemp">{{column.cell(row)}}</span>
-    </td>
-  </ng-container>
-=======
       </mat-list-item>
     </mat-list>
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
->>>>>>> origin/release/v3.32.1
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
