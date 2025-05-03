@@ -56,7 +56,7 @@ async function generateCsvDataSets(filename, sharedCsvTemplateId) {
   }
   for (let group of state.groups) {
     await writeState(state)
-    await generateCsvDataSet(group.id, group.formIds, group.outputPath, '*', '*', false, true, true)
+    await generateCsvDataSet(group.id, group.formIds, group.outputPath, '*', '*','*', '*',false, true, true)
     group.complete = true
     await writeState(state)
   }

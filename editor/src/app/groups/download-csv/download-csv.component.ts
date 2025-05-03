@@ -17,8 +17,10 @@ export class DownloadCsvComponent implements OnInit, OnDestroy {
 
   months = [];
   years = [];
-  selectedMonth = '*';
-  selectedYear = '*';
+  fromYear = '*';
+  fromMonth = '*';
+  toYear = '*';
+  toMonth = '*';
   processing = false;
   stateUrl;
   downloadUrl;
@@ -63,13 +65,17 @@ export class DownloadCsvComponent implements OnInit, OnDestroy {
   }
 
   async process() {
-    if ((this.selectedMonth === '*' && this.selectedYear !== '*') || (this.selectedMonth !== '*' && this.selectedYear === '*')) {
-      alert('You must choose a month and a year.')
+    if ((this.fromMonth === '*' && this.fromYear !== '*') || (this.fromMonth !== '*' && this.fromYear === '*')) {
+      alert('You must choose a start month and year.')
+      return
+    }
+    if ((this.toMonth === '*' && this.toYear !== '*') || (this.toMonth !== '*' && this.toYear === '*')) {
+      alert('You must choose an end month and year.')
       return
     }
     this.processing = true
     try {
-      const result: any = await this.groupsService.downloadCSV(this.groupName, this.formId, this.selectedYear, this.selectedMonth, this.excludePII);
+      const result: any = await this.groupsService.downloadCSV(this.groupName, this.formId, this.fromYear, this.fromMonth, this.toYear, this.toMonth, this.excludePII);
       this.stateUrl = result.stateUrl;
       this.downloadUrl = result.downloadUrl;
       // TODO call download status immediately then after every few second, Probably use RXJS to ensure we only use the latest values
