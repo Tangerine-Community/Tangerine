@@ -21,6 +21,7 @@ Next, you deploy your app and install it on a mobile device or use it in the Chr
 ## Advanced Form Programming Guides
 
 - [Local Content Development with Tangerine Preview](advanced-form-programming/local-content-development.md)
+- [Renaming Section IDs](advanced-form-programming/rename-section-ids.md)
 - [Configuration Guide](advanced-form-programming/configuration.md)
 - [Custom scripts](advanced-form-programming/custom-scripts.md)
 - [Content-sets](advanced-form-programming/content-sets.md)
@@ -32,7 +33,7 @@ Next, you deploy your app and install it on a mobile device or use it in the Chr
 - [Form Versions](advanced-form-programming/form-versions.md)
 - [Reserved words in Tangerine](advanced-form-programming/reserved-words.md)
 - [Translations](advanced-form-programming/translations.md)
-- [Form Versions](advanced-form-programming/form-versions.md)
+- [Custom Fonts](advanced-form-programming/custom-fonts.md)
 - [Tangerine Form Developer's Cookbook](../editor/form-developers-cookbook/README.md)
 
   

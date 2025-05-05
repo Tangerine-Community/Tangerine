@@ -1,6 +1,7 @@
 # Advanced Form Programming Guides
 
 - [Local Content Development with Tangerine Preview](local-content-development.md)
+- [Renaming Section Ids](rename-section-ids.md)
 - [Content-sets](content-sets.md)
 - [Configuration Guide](configuration.md)
 - [Custom-app](custom-apps.md)
@@ -13,4 +14,5 @@
 - [Form Versions](form-versions.md)
 - [Reserved words in Tangerine](reserved-words.md)
 - [Translations](translations.md)
+- [Custom fonts](custom-fonts.md)
 - [Tangerine Form Developer's Cookbook](../form-developers-cookbook/README.md)

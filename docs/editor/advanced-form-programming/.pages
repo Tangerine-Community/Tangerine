@@ -2,6 +2,7 @@ title: "Advanced Form Programming"
 arrange:
     - README.md
     - local-content-development.md
+    - rename-section-ids.md
     - content-sets.md
     - custom-scripts.md
     - configuration.md
