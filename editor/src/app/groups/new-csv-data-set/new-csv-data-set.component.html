@@ -58,7 +58,7 @@
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef> Form Title </th>
-        <td mat-cell *matCellDef="let form"> {{form.title|formTitleFromInfo|unsanitizeHtml}} </td>
+        <td mat-cell *matCellDef="let form"> {{form|formTitleFromInfo}} </td>
       </ng-container>
       <!-- Template Column -->
       <ng-container matColumnDef="template">
@@ -86,7 +86,7 @@
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef> Form Title </th>
-        <td mat-cell *matCellDef="let form"> {{form.title|formTitleFromInfo|unsanitizeHtml}} </td>
+        <td mat-cell *matCellDef="let form"> {{form|formTitleFromInfo}} </td>
       </ng-container>
       <!-- Template Column -->
       <ng-container matColumnDef="template">

@@ -101,7 +101,7 @@
       </a>
     </span>
     <span class="tangy-spacer edit">
-      <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form.title|formTitleFromInfo|unsanitizeHtml" title="{{'Edit'|translate}}">
+      <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml" title="{{'Edit'|translate}}">
       </a>
     </span>
     
@@ -168,7 +168,7 @@
       </a>
     </span>
       <span class="tangy-spacer edit">
-      <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form.title|formTitleFromInfo|unsanitizeHtml" title="{{'Edit'|translate}}">
+      <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml" title="{{'Edit'|translate}}">
       </a>
     </span>
 

@@ -1,79 +1,120 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<div style="margin-left: 15px;">
-  <h2>Instructions: </h2>
+<div class="indent tad-lower">
+<mat-accordion>
+  <mat-expansion-panel  (opened)="panelOpenState = true"
+                        (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h4>Instructions</h4>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <p>
+      In the <strong>Published Surveys</strong> section, use the link <i class="material-icons tangy-location-list-icon">link</i> to share the survey with users. Use the <i class="material-icons tangy-location-list-icon">close</i> button to "Un-publish" an online survey.
+      The <i class="material-icons tangy-location-list-icon">lock</i> button appears for surveys that require a Device User and Access Code.
+    </p>
 
-  <div>
-    In the <strong>Published Surveys</strong> section, use the link
-    <button class="info-button">
-      <i class="material-icons tangy-location-list-icon">link</i>
-    </button> 
-    to share the survey with users.
-      Use the
-      <button class="info-button">
-        <i class="material-icons tangy-location-list-icon">unpublished</i>
-      </button>
-      button to "Un-publish" an online survey.
-      The 
-      <button class="info-button">
-        <i class="material-icons tangy-location-list-icon">lock</i>
-      </button> button appears for surveys that require a Device User and Access Code.
-  </div>
-
-  <div>
-    In the <strong>Unpublish Surveys</strong> section, click the
-    <button class="info-button">
-      <i class="material-icons tangy-location-list-icon">published_with_changes</i>
-    </button>
-    button to "Publish" an online survey. It will then be listed in the Published Surveys section.
-    To 'Publish' a survey and require a Device User to provide an Access Code, click the 
-    <button class="info-button">
-      <i class="material-icons tangy-location-list-icon">lock</i>
-    </button> button.
-  </div>
-
-  <div>
-
-  </div>
-
+    <p>
+      In the <strong>Unpublish Surveys</strong> section, click the <i class="material-icons tangy-location-list-icon">publish</i>
+      button to "Publish" an online survey. It will then be listed in the Published Surveys section.
+      To 'Publish' a survey and require a Device User to provide an Access Code, click the <i class="material-icons tangy-location-list-icon">lock</i> button.
+    </p>
+    </mat-expansion-panel>
+  </mat-accordion>
+  
 </div>
-<h2 class="tangy-foreground-secondary">{{'Published Surveys'|translate}}</h2>
-<mat-list class="drag-list">
-  <mat-list-item class="drag-item" *ngFor="let form of publishedSurveys; let index=index">
-    <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
-    <span *ngIf="form.locked">
-      <button mat-icon-button class="lock-button">
-        <i class="material-icons mat-32 tangy-location-list-icon">lock</i>
-      </button>
-    </span>
-    <span>{{form.updatedOn|date :'medium'}}
-    </span>
 
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'" style="width: 5em">
-      <button mat-icon-button (click)="unPublishSurvey(form.id)" class="unpublished-button">
-        <i class="material-icons mat-32 tangy-location-list-icon">unpublished</i>
-      </button>
-    </span>
-    <span class="link"><a href="/releases/prod/online-survey-apps/{{group._id}}/{{form.id}}/#/form/{{form.id}}" target="_new"> <i class="material-icons mat-32 tangy-location-list-icon">link</i></a></span>
-  </mat-list-item>
-</mat-list>
+<h2 class="tangy-foreground-secondary">{{'Published Surveys'|translate}}</h2>
+<table mat-table [dataSource]="publishedSurveys" class="mat-elevation-z8">
+
+  <!-- Index Column -->
+  <ng-container matColumnDef="index">
+    <th mat-header-cell *matHeaderCellDef>#</th>
+    <td mat-cell *matCellDef="let form; let index = index">{{ index + 1 }}</td>
+  </ng-container>
+
+  <!-- Title Column -->
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Title' | translate }}</th>
+    <td mat-cell *matCellDef="let form">
+      <span class="tangy-spacer" [innerHTML]="form | formTitleFromInfo | unsanitizeHtml"></span>
+    </td>
+  </ng-container>
+
+  <!-- Locked Column -->
+  <ng-container matColumnDef="locked">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Locked' | translate }}</th>
+    <td mat-cell *matCellDef="let form">
+      <i *ngIf="form.locked" class="material-icons tangy-location-list-icon">lock</i>
+    </td>
+  </ng-container>
+
+  <!-- Updated On Column -->
+  <ng-container matColumnDef="updatedOn">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Updated On' | translate }}</th>
+    <td mat-cell *matCellDef="let form">{{ form.updatedOn | date: 'medium' }}</td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | translate }}</th>
+    <td mat-cell *matCellDef="let form">
+      <span *appHasAPermission="let i; group: group._id; permission: 'can_manage_forms'">
+        <button mat-icon-button (click)="unPublishSurvey(form.id)">
+          <i class="material-icons tangy-location-list-icon">close</i>
+        </button>
+      </span>
+      <span>
+        <a href="/releases/prod/online-survey-apps/{{ group._id }}/{{ form.id }}/#/form/{{ form.id }}" target="_new">
+          <i class="material-icons tangy-location-list-icon">link</i>
+        </a>
+      </span>
+    </td>
+  </ng-container>
+
+  <!-- Table Header and Rows -->
+  <tr mat-header-row *matHeaderRowDef="['index', 'title', 'locked', 'updatedOn', 'actions']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['index', 'title', 'locked', 'updatedOn', 'actions']"></tr>
+</table>
 
 <h2 class="tangy-foreground-secondary">{{'Unpublished Surveys'|translate}}</h2>
-<mat-list class="drag-list">
-  <mat-list-item class="drag-item" *ngFor="let form of unPublishedSurveys; let index=index">
-    <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
-    <span >{{form.updatedOn|date :'medium'}}
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button (click)="publishSurvey(form.id, form.title, false)">
-        <i class="material-icons mat-32 tangy-location-list-icon">published_with_changes</i>
-      </button>
-      <button mat-icon-button (click)="publishSurvey(form.id, form.title, true)">
-        <i class="material-icons mat-32 tangy-location-list-icon">lock</i>
-      </button>
-    </span>
-    </span>
-  </mat-list-item>
-</mat-list>
+<table mat-table [dataSource]="unPublishedSurveys" class="mat-elevation-z8">
+
+  <!-- Index Column -->
+  <ng-container matColumnDef="index">
+    <th mat-header-cell *matHeaderCellDef>#</th>
+    <td mat-cell *matCellDef="let form; let index = index">{{ index + 1 }}</td>
+  </ng-container>
+
+  <!-- Title Column -->
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Title' | translate }}</th>
+    <td mat-cell *matCellDef="let form">
+      <span class="tangy-spacer" [innerHTML]="form | formTitleFromInfo | unsanitizeHtml"></span>
+    </td>
+  </ng-container>
+
+  <!-- Updated On Column -->
+  <ng-container matColumnDef="updatedOn">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Updated On' | translate }}</th>
+    <td mat-cell *matCellDef="let form">{{ form.updatedOn | date: 'medium' }}</td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | translate }}</th>
+    <td mat-cell *matCellDef="let form">
+      <span *appHasAPermission="let i; group: group._id; permission: 'can_manage_forms'">
+        <button mat-icon-button (click)="publishSurvey(form.id, form.title, false)">
+          <i class="material-icons tangy-location-list-icon">publish</i>
+        </button>
+        <button mat-icon-button (click)="publishSurvey(form.id, form.title, true)">
+          <i class="material-icons tangy-location-list-icon">lock</i>
+        </button>
+      </span>
+    </td>
+  </ng-container>
+
+  <!-- Table Header and Rows -->
+  <tr mat-header-row *matHeaderRowDef="['index', 'title', 'updatedOn', 'actions']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['index', 'title', 'updatedOn', 'actions']"></tr>
+</table>
