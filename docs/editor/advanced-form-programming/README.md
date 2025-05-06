@@ -2,6 +2,7 @@
 
 - [Local Content Development with Tangerine Preview](local-content-development.md)
 - [Renaming Section Ids](rename-section-ids.md)
+- [Dynamic Values of Questions](dynamic-values.md)
 - [Content-sets](content-sets.md)
 - [Configuration Guide](configuration.md)
 - [Custom-app](custom-apps.md)

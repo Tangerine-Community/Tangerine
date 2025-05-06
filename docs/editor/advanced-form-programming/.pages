@@ -3,6 +3,7 @@ arrange:
     - README.md
     - local-content-development.md
     - rename-section-ids.md
+    - dynamic-values.md
     - content-sets.md
     - custom-scripts.md
     - configuration.md
