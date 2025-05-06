@@ -13,6 +13,12 @@ This is the current process used to merge changes from v3 into v4. It involves t
 3. Resolve any merge conflicts that arise. This may involve manually editing files to ensure that the changes from both branches are correctly integrated.
   - Changes to most Angular component files will merge automatically, but some files may require manual resolution.
   - Watch out for changes to the `package.json` file. Most of the time you will want to keep the "current change" aka the v4 change. However, if the v3 change is a new dependency that is not in v4, you will want to keep the v3 change.
+
+  __Incomplete list of things to watch out for:__
+  - `package.json` - watch out for new dependencies
+  - `angular.json` - watch out for new dependencies
+  - `html` files - `<mat-list>` was swapped out for `<table mat-table>`
+
 4. Once all conflicts are resolved, commit the changes:
    ```bash
    git add .
