@@ -1,11 +1,13 @@
 ## Backups
 
-Data managers can take backups of the data on a device using the Export Data feature. Log in as the "admin" user on the device to export data for all users. The Export Data feature is in the dropdown menu in the top-right corner after log-in. 
+Data managers can take backups of the data on a device using the **Export Data** feature. Log in as the "admin" user on the device to export data for all users. The Export Data feature is in the dropdown menu in the top-right corner after log-in. 
 
 The backup files will be saved in the `/storage/self/primary/Documents/Tangerine/backups/` directory on the device.
 
 
 ## Copy device backups to a computer
+
+You can copy the backups by sending them over email from the indicated location but also by using the adb Android utlities
 
 Transfering the backup requres the [Android Debug Bridge](https://developer.android.com/tools/adb) installed on the computer. Make sure to add the command `adb` to your executable PATH environment variable. 
 

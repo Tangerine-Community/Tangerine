@@ -3,7 +3,7 @@
 ## Upgrade
 If there has been a security update to CouchDB 2.x, all you must do is rerun the start.sh command and the new image for CouchDB will be downloaded and run.
 
-## Change password
+## Change password for admin user on CouchDB
 
 ```bash
 # Shutdown tangerine and couchdb

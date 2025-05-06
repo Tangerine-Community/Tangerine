@@ -1,5 +1,7 @@
 # MySQL Module (Legacy)
 
+<b>On newer versions of Tangerine Please use MySQL-JS module instead </b>
+
 ## Enabling MySQL module
 
 This module is the legacy module starting with the release of Tangerine v3.26.0. If you are running a version prior to v3.26.0, you should consider switching to the new [MySQL-JS Module](https://github.com/Tangerine-Community/Tangerine/blob/main/docs/system-administrator/mysql-js.md) for improved performance. 

@@ -1,50 +1,86 @@
 # Different Input Types
 
-## Item Editor
-The item editor screen is similar for many of the item types. It usually contains the following elements:
+After clicking the Insert Here button when inside your section, you will see a list of all question types available to you:
+
+<img src="../media/inputs1.png" width="570"> 
+
+All questions come in 7 groups
+
+ - Inputs - used for text or number inputs
+ - Date/Time - used for date and time inputs
+ - Lists - used for multiple/single answer selection question
+ - Boolean - used to indicate that something was checked
+ - Location - used to collect GPS location and provide Location dropdown based on the location list
+ - Content Display - used to display formatted HTML text or images to the screen
+ - Speciality - used in various settings to collect signatures, consent forms, grids, and other types of inputs.
+
+## Section item Editor
+The section item editor screen is similar for many of the item types. It usually contains the following common elements:
 
 <img src="../media/inputVar.png" width="570"> 
 
-Variable name: This name has to be unique for any instrument/form, as this will be used for the CSV data output as column header with each observation/child assessed/interview being a row. Avoid special characters and spaces, use lowercase only (e.g., "age").
+- Variable name: This name has to be unique for any instrument/form, as this will be used for the CSV data output as column header with each observation/child assessed/interview being a row. Avoid special characters and spaces, use lowercase only (e.g., "age").
 
-Label: This will be the item label/name that will be displayed to the user (e.g. "How old are you?")
+- Label: This will be the item label/name that will be displayed to the user (e.g. "How old are you?")
 
-Question number: If you input a number in here, you will see that the entire questions is moved to the right and the question number stands out when looking at the page. Use this if you are looking for a visual effect like this.
+- Question number: If you input a number in here, you will see that the entire questions is moved to the right and the question number stands out when looking at the page. Use this if you are looking for a visual effect like this.
 
-Hint Text: This field allows you to add text that acts as a hint for the user (e.g., "Enter child's age or year of birth, if known")
+- Hint Text: This field allows you to add text that acts as a hint for the user (e.g., "Enter child's age or year of birth, if known")
 
 Toggle (On/Off) settings per question
 
-Required: Selecting this checkbox marks the element as a required field. This ensures that users will enter a value before proceeding to other instrument sections or finalizing the instrument/form.
+- Required: Selecting this checkbox marks the element as a required field. This ensures that users will enter a value before proceeding to other instrument sections or finalizing the instrument/form.
 
-Disabled: Selecting this checkbox marks the element as inactive. The item is visible to the user on the tablet, but its value cannot be changed.
+- Disabled: Selecting this checkbox marks the element as inactive. The item is visible to the user on the tablet, but its value cannot be changed.
 
-Hidden: Selecting this checkbox makes the element inactive AND invisible on the tablet.
+- Hidden: Selecting this checkbox makes the element inactive AND invisible on the tablet.
 
-PII - Personally Identifiable Information. This setting marks the input as PII which lets you remove this field from the CSV export file when this option is selected. Easily share data by de-identifying it whn using this option.
+- PII - Personally Identifiable Information. This setting marks the input as PII which lets you remove this field from the CSV export file when this option is selected. Easily share data by de-identifying it whn using this option.
 
 You will have access to two more tabs allowing you to add Skip Logic and Validation to your questions.
 
 Conditional Display tab
 
-**Skip if** -  Use this field to define logic for the input to be omitted if the condition is true.
+- **Skip if** -  Use this field to define logic for the input to be omitted if the condition is true.
 
-**Show if** - Use this field to define logic for the input to be displayed when the condition is true.
+- **Show if** - Use this field to define logic for the input to be displayed when the condition is true.
 
 
 [Find examples of skip logic here ](skip-logic.md)
 
 Validation tab
 
-**Warn if** - fail the user submission with a warning only once. This is to alert the user that perhaps they are entering something out of the defined boundaries. The warn if logic will allow the user to proceed if they click the Next/Submit button a second time.
+- **Warn if** - fail the user submission with a warning only once. This is to alert the user that perhaps they are entering something out of the defined boundaries. The warn if logic will allow the user to proceed if they click the Next/Submit button a second time.
 
-**Warning Text** - The warning text to be displayed to the user when the condition is triggered.
+- **Warning Text** - The warning text to be displayed to the user when the condition is triggered.
 
-**Valid if** - define logic to contain a valid definition of the input
+- **Valid if** - define logic to contain a valid definition of the input
 
-**Error text** -  the text to be displayed when the above condition is not met.
+- **Error text** -  the text to be displayed when the above condition is not met.
 
 [Find examples of validation logic here ](validation.md)
+
+## Inputs
+
+- Text - use this input to ask the user to type in some text. Here the user can type in anything. Check out this input's configuration options Text, Email, Date, Time Inputs Configuration
+
+- Number - use this input to ask the user to type in some number. Note that this input doesn't allow text to be inserted into the field. On tablets the number keyboard will open automatically. This input also allows us to specify a minimum and maximum numbers under the Validation tab Check out this input's configuration options under Number Input Configuration
+
+- Email - use this input to allow the user to only enter email addresses.
+  
+<img src="../media/inputs2.png" width="570"> 
+
+
+- Date and Time
+
+**Date** - The date input allows us to select a date from a calendar input.  
+
+**Partial Date** - is a special date that allows us to collect the date with some missing elements. We can mark the day as Unknown, or the year as Unknown.   
+
+**Time** - this input allows us to select the time. 
+
+<img src="../media/inputs3.png" width="570"> 
+
 
 ## GPS Item
 Use the GPS item to record the location (longitude & latitude) of the user while filling in the instrument/form.
@@ -264,6 +300,30 @@ When done adding all answer options, hit "SUBMIT".
 On the tablet this HTML container item will look like this:
 
 <img src="../media/htmlContainerView.png" width="570"> 
+
+
+## Repeatable Group 
+
+The repeatable group is very useful when you don't know how many times you'd need to ask the same questions. 
+
+<img src="../media/inputs4.png" width="570"> 
+
+
+## Speciality Inputs
+
+**Signature** - this input allows the data assessor to collect a signature. This can be a signature for consent or delivery of materials. 
+
+**Consent** - this input allows a consent form to be included in your survey. Consent forms should be on single page. Clicking No on a consent form terminates the current form. 
+
+**QR Code scanner** - this input allows you to scan QR codes, Data matrix codes, or barcodes like ISBN numbers. We use this for student number or to collect book inventory.  
+
+**EF Touch** - this is the Executive Function input. It allows to perform tests measure EF. Please contact us if you'd like a demo of this function. Check out this input's configuration options under EF Touch Configuration
+
+**ACASI** - this is the audio computer assisted self interview input. It includes sounds and images, allowing the assessor to hand over the tablet to the participant. The participant then listens to the audio and answers the questions in a private setting.  
+
+**Timed Grid** - Timed grids are very specific to the EGRA/EGMA subtest. Timed grids can be used for word, invented works, paragraph reading and other tests where the time is of importance. The grid contains a time expiration in seconds, but we can also track an intermediate number to see where the student was reading at the Xth second.  
+
+**Untimed Grid** - similar to display as timed grids, the untimed grid doesn't provide a stopwatch. 
 
 
 ## Copying Items
