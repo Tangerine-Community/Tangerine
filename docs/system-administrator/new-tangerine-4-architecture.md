@@ -120,7 +120,21 @@ cp -r pwa-tools/updater-app/build/default builds/pwa && \
 cp -r dev builds/pwa/release-uuid/app
 ```
 
-Now after you make changes, run the copy script and this will update the builds dir when you generate an apk or pwa.
+Whenever you make changes, run that copy script to update the builds dir when you generate an apk or pwa.
+
+## Modifying the tangy-form lib
+
+If you made updates to the tangy-form lib, docker exec into the apk-generator container: 
+
+`docker exec -it apk-generator bash`
+
+```
+cd tangy-form
+npm install
+npm start
+```
+
+Next, run the commands described in "Modifying the client app" to build the app and copy the built app to the builds dir so that the updated code will be available for APK's and PWA's.
 
 ## Server
 
