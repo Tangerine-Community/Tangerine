@@ -23,6 +23,7 @@ export class ReleaseOnlineSurveyComponent implements OnInit {
   publishedSurveys;
   unPublishedSurveys;
   dialogRef:any
+  panelOpenState: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private groupService: GroupsService,
