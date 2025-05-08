@@ -4,6 +4,9 @@ updates:
   directory: "/"
   schedule:
     interval: daily
+  # Raise pull requests for version updates
+  # to this code against the target-branch
+  target-branch: "release/v4.2.0"
   open-pull-requests-limit: 10
   ignore:
   - dependency-name: webpack
