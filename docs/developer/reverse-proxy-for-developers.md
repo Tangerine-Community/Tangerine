@@ -10,17 +10,24 @@ Here's a nice primer on creating a self-signed SSL certificate: https://deliciou
 
 In the following example, the code creates a key and cert for a local dev server named tangy.test. Note that this script does not have the `-des3` switch, which forces the use of a password, because the script is intended for use with local development servers.
 
+First, generate the key:
+
 `openssl genrsa -out tangy.test.key 2048`
+
+Generate the CSR file:
+`openssl req -new -key tangy.test.key -out tangy.test.csr`
+
+Next, generate your root certificate file:
+
+`openssl req -x509 -new -nodes -key tangy.test.key -sha256 -days 1825 -out tangy.test.pem`
 
 You'll answer a bunch of questions. The most important one is the Common Name (e.g. server FQDN or YOUR name). Enter the name of your local dev server here, e.g. tangy.test.
 
-`openssl req -new -key tangy.test.key -out tangy.test.csr`
-
-You should now have two files: myCA.key (your private key) and myCA.pem (your root certificate).
+You should now have three files: tangy.test.key (your private key), tangy.test.csr, and tangy.test.pem (your root certificate).
 
 # Adding the Root Certificate to macOS Keychain
 
-`sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" myCA.pem`
+`sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" tangy.test.pem`
 
 The tutorial has examples of adding the root certs to other devices, which might be handy for Android and IOS development.
 
@@ -40,11 +47,10 @@ DNS.1 = tangy.test
 
 The final step: 
 
-`openssl x509 -req -in tangy.test.csr -CA myCA.pem -CAkey myCA.key \
--CAcreateserial -out tangy.test.crt -days 825 -sha256 -extfile tangy.test.ext`
+`openssl x509 -req -in tangy.test.csr -CA tangy.test.pem -CAkey tangy.test.key -CAcreateserial -out tangy.test.crt -days 825 -sha256 -extfile tangy.test.ext`
 
-We now have three files: tangy.test.key (the private key), tangy.test.csr (the certificate signing request, or csr file),
-and tangy.test.crt (the signed certificate).
+We now have four files: tangy.test.key (the private key), tangy.test.csr (the certificate signing request, or csr file), 
+tangy.test.pem (your root certificate), and tangy.test.crt (the signed certificate).
 We can configure local web servers to use HTTPS with the private key and the signed certificate.
 
 # Using local-ssl-proxy
