@@ -93,12 +93,6 @@ export class DashboardComponent implements OnInit {
     await this.classFormService.initialize();
     this.classes = await this.getMyClasses();
     this.getValue = this.dashboardService.getValue
-    const enabledClasses = this.classes.map(klass => {
-      if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
-        return klass
-      }
-    });
-    // this.enabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
     this.enabledClasses = await this.dashboardService.getEnabledClasses();
     
     // let classMenu = []

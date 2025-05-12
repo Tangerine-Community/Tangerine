@@ -60,51 +60,54 @@ import localeEsGt from '@angular/common/locales/es-GT';
 registerLocaleData(localeEsGt);
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    ClassRoutingModule,
-    MatTabsModule,
-    MatInputModule,
-    MatMenuModule,
-    MatListModule,
-    MatCardModule,
-    CdkTableModule,
-    MatTableModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    TangyFormsModule,
-    MatDialogModule,
-    MatChipsModule,
-    MatProgressBarModule,
-    FormsModule,
-    MatBottomSheetModule,
-    // CalendarModule.forRoot({
-    //   provide: DateAdapter,
-    //   useFactory: adapterFactory,
-    // }),
-  ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent, BehaviorCheckComponent, StudentDetailsComponent],
-  entryComponents: [
-    StudentDetailsComponent
-  ],
-  providers: [UserService, ClassFormService, DashboardService, {
-    provide: MatPaginatorIntl,
-    useFactory: (translate) => {
-      const service = new MatPaginationIntlService();
-      service.injectTranslateService(translate);
-      return service;
-    },
-    deps: [TranslateService]
-  }, { provide: Window, useValue: window }]
+    imports: [
+        CommonModule,
+        SharedModule,
+        ClassRoutingModule,
+        MatTabsModule,
+        MatInputModule,
+        MatMenuModule,
+        MatListModule,
+        MatCardModule,
+        CdkTableModule,
+        MatTableModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        TangyFormsModule,
+        MatDialogModule,
+        MatChipsModule,
+        MatProgressBarModule,
+        FormsModule,
+        MatBottomSheetModule,
+        // CalendarModule.forRoot({
+        //   provide: DateAdapter,
+        //   useFactory: adapterFactory,
+        // }),
+    ],
+    declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent, BehaviorCheckComponent, StudentDetailsComponent],
+    entryComponents: [
+        StudentDetailsComponent
+    ],
+    exports: [
+        DashboardComponent
+    ],
+    providers: [UserService, ClassFormService, DashboardService, {
+        provide: MatPaginatorIntl,
+        useFactory: (translate) => {
+            const service = new MatPaginationIntlService();
+            service.injectTranslateService(translate);
+            return service;
+        },
+        deps: [TranslateService]
+    }, {provide: Window, useValue: window}]
 })
 export class ClassModule {
 }
