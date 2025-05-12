@@ -118,8 +118,10 @@ export class AppConfig {
 
   showQueries:boolean
   showCaseReports:boolean
-  // Determines wether or not the Issues tab is shown on the case module's home screen.
+  // Determines whether or not the Issues tab is shown on the case module's home screen.
   showIssues:boolean
+  // Determines if the Class Dashboard is shown on the case module's home screen.
+  showClassDashboard:boolean
   barcodeSearchMapFunction:string
   // Determines if a "Create Issue" button appears when viewing submitted Event Forms.
   allowCreationOfIssues:boolean

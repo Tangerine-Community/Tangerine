@@ -10,6 +10,7 @@ import { SearchModule } from './../core/search/search.module';
 import { CaseModule } from './../case/case.module';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ClassModule } from "../class/class.module";
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -24,7 +25,8 @@ import { CommonModule } from '@angular/common';
     SearchModule,
     SharedModule,
     MatTabsModule,
-    CommonModule
+    CommonModule,
+    ClassModule
   ],
   providers: [
     {

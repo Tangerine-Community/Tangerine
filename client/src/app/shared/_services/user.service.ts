@@ -411,12 +411,35 @@ export class UserService {
   }
 
   async getUserProfile(username?: string) {
+    let userProfile;
     username = username
       ? username
       : this.getCurrentUser()
     const userAccount = <UserAccount>await this.getUserAccount(username)
     const userDb = await this.getUserDatabase(username)
-    const userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
+    
+    if (window.location.hostname !== 'localhost') {
+      userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
+    } else {
+      // If we are developing locally, generate a new user profile stub
+      const id = localStorage.getItem('currentUser')
+      userProfile = new TangyFormResponseModel({
+        form: {
+          id: id
+        },
+        items: [
+          {
+            id: 'item1',
+            inputs: [
+              {
+                name: 'role',
+                value: 'dataCollector'
+              }
+            ]
+          }
+        ]
+      })
+    }
     return userProfile
   }
 

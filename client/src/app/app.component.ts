@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
   numberOfClicks = 0 // Counting clicks to escape kiosk mode.
   exitClicks = 5 // If not defined in app-config.json, use this value
 
-  showClassNavBar = false;  // Currently only true if this is a class project - appConfig.homeUrl === 'dashboard'
+  showClassNavBar = false;  // Currently only true if this is a class project - appConfig.homeUrl === 'dashboard' or app-config.showClassDashboard
   
   constructor(
     private userService: UserService,
@@ -232,7 +232,7 @@ export class AppComponent implements OnInit {
       this.checkStorageUsage();
       setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
     }
-    if (this.appConfig.homeUrl === 'dashboard' || this.appConfig.homeUrl === 'attendance-dashboard') {
+    if (this.appConfig.homeUrl === 'dashboard' || this.appConfig.homeUrl === 'attendance-dashboard' || this.appConfig.showClassDashboard) {
       this.showClassNavBar = true;
     }
     this.ready = true;
