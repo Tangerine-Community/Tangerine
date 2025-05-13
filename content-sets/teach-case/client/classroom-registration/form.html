@@ -1,0 +1,104 @@
+<tangy-form
+  id="registration-role-1"
+  title="Role 1 Registration"
+  on-open="
+    if (!caseService.getVariable('status')) {
+      caseService.setVariable('status', 'screening')
+    }
+  "
+  on-change="
+    if (getValue('consent').includes('yes')) {
+      itemEnable('item2')
+      itemDisable('item3')
+    } else {
+      itemDisable('item2')
+      itemEnable('item3')
+    }
+  "
+  on-submit="
+    if (getValue('enrollment_date') && caseService.getVariable('status') === 'screening') {
+      const participantRole1 = caseService.createParticipant('role-1')
+      caseService.setParticipantData(participantRole1.id, 'participant_id', getValue('participant_id'))
+      caseService.setParticipantData(participantRole1.id, 'first_name', getValue('first_name'))
+      caseService.setParticipantData(participantRole1.id, 'last_name', getValue('last_name'))
+      caseService.setVariable('participant_id', getValue('participant_id'))
+      caseService.setVariable('first_name', getValue('first_name'))
+      caseService.setVariable('last_name', getValue('last_name'))
+      caseService.setVariable('status', 'enrolled')
+      let role2ParticipantNumber = 1
+      while (role2ParticipantNumber <= parseInt(getValue('number_of_role_2_participants_to_enroll'))) {
+        const participantRole2 = caseService.createParticipant('role-2')
+        caseService.setParticipantData(participantRole2.id, 'participant_id', `${getValue('participant_id')}-${role2ParticipantNumber}`)
+        role2ParticipantNumber++
+      }
+      // The parameters for caseService.createNotification() are label, description, link, icon (see https://material.io/icons), background color, 
+      // whether or not to persist more than once (true or false), and wether or not this notification should enforce attention and warn when 
+      // navigating away from the case (true or false).
+      caseService.createNotification(
+        `Registration success!`, 
+        `
+          Thank you for registering 
+            ${caseService.getParticipantData(participantRole1.id, 'first_name')}
+            ${caseService.getParticipantData(participantRole1.id, 'last_name')}.
+
+          We have created ${parseInt(getValue('number_of_role_2_participants_to_enroll'))} additional participants for you.
+          Please complete their registration forms.
+        `,
+        ``,
+        `thumb_up`,
+        `#b2fba5`,
+        false,
+        false
+      )
+    }
+  "
+>
+  <tangy-form-item
+    id="item1"
+    title="Screening"
+    on-open="
+      if (!getValue('screening_date')) {
+        inputs.screening_date.value = moment().format('YYYY-MM-DD')
+      }
+    "
+  >
+    <tangy-input name="first_name" label="First name" required></tangy-input>
+    <tangy-input name="last_name" label="Last name" required></tangy-input>
+    <tangy-input name="screening_date" type="date" label="Screening date" inner-label=" " disabled></tangy-input>
+    <tangy-radio-buttons name="consent" label="Does participant consent to participate?">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </tangy-radio-buttons>
+    <tangy-signature name="signature" label="Participant's signature for consent." skip-if="getValue('consent') !== 'yes'" required></tangy-signature>
+  </tangy-form-item>
+  <tangy-form-item
+    id="item2"
+    title="Registration"
+    on-open="
+      if (!inputs.enrollment_date.value) {
+        inputs.enrollment_date.value = moment().format('YYYY-MM-DD')
+      }
+    "
+    on-change="
+      if (inputs.qr.value) {
+        const data = JSON.parse(inputs.qr.value)
+        inputs.participant_id.value = data.participant_id
+      }
+    "
+  >
+    <tangy-qr name="qr" label="Scan a new participant card" required></tangy-qr>
+    <tangy-input name="participant_id" label="Participant ID" disabled></tangy-input>
+    <tangy-input name="enrollment_date" label="Enrollment Date" type="date" disabled></tangy-input>
+    <tangy-input name="number_of_role_2_participants_to_enroll" type="number" label="How many participant of type Role 2 would you like to enroll in this case?" required></tangy-input>
+  </tangy-form-item>
+  <tangy-form-item id="item3" title="Does not qualify">
+    <tangy-box name="does_not_qualify_message">
+      They do not qualify. Continue to finish the form.
+    </tangy-box>
+  </tangy-form-item>
+  <tangy-form-item id="item4" title="Conclude">
+    <tangy-box name="conclusion_message">
+      Thank you for your time. This form may now be submitted.
+    </tangy-box>
+  </tangy-form-item>
+</tangy-form>
