@@ -1,7 +1,7 @@
 [
   {
-    "id": "case-type-1",
-    "name": "Case Type 1",
-    "src": "./assets/case-type-1.json"
+    "id": "teach-case",
+    "name": "Teach Case",
+    "src": "./assets/teach-case.json"
   }
 ]
