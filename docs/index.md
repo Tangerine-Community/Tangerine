@@ -71,7 +71,7 @@ title: Home
 <div class="card">
     <h3>Get Started Quickly</h3>
     <p>End user documentation</p>
-    <a href="./getting-started">Learn More</a>
+    <a href="./editor">Learn More</a>
   </div>
     <div class="card">
     <h3>Setup your own Platform</h3>
