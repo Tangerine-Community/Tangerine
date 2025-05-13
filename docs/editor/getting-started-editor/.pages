@@ -1,6 +1,6 @@
 title: "Getting Started with Editor"
-arrange:
-    - editor-overview.md
+nav:
+    - README.md
     - create-new-group.md
     - create-new-form.md
     - edit-form.md
@@ -8,4 +8,8 @@ arrange:
     - input-types.md
     - skip-logic.md
     - validation.md
+    - calculated-inputs.md
+    - downloading-your-data.md
+    - Deployment: ../../data-collector/deployment
+    - user-management.md
     
