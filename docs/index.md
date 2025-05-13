@@ -68,15 +68,10 @@ title: Home
 # Getting started with Tangerine
 
 <div class="card-container">
-<div class="card">
-    <h3>Get Started Quickly</h3>
+  <div class="card">
+    <h3>Quick Start Guide</h3>
     <p>End user documentation</p>
     <a href="./editor">Learn More</a>
-  </div>
-    <div class="card">
-    <h3>Setup your own Platform</h3>
-    <p>System Administrator setup your site</p>
-    <a href="./system-administrator/installation">Learn More</a> 
   </div>
   <div class="card">
     <h3>Get Involved </h3>
@@ -93,14 +88,21 @@ title: Home
     <p>Access the Tangerine Academy</p>
     <a href="https://moodle.tangerinecentral.org/course/index.php?categoryid=14">Learn More</a>
   </div>
+</div>
+
+## Hosting
+
+<div class="card-container">
   <div class="card">
     <h3>Sign up for Hosted Service</h3>
-    <p>Sign up for a hosted plan</p>
+    <p>Sign up for a hosted plan with Tangerine Subscription</p>
     <a href="https://www.tangerinecentral.org/pricing">Learn More</a>
   </div>
-  
-
-  
+  <div class="card">
+    <h3>Setup your own Platform</h3>
+    <p>Guide for setting up your site locally, on-prem or through a cloud service provider</p>
+    <a href="./system-administrator/installation">Learn More</a>
+  </div>
 </div>
 
 ## Key Features

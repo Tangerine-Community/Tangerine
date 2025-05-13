@@ -62,13 +62,13 @@ Tangerine is a diverse data collection tool that offers pre-build solutions for 
 <div class="card-container">
 <div class="full">
     <h3>Tangerine</h3>
-    <p>Tangerine offers electronic data collection solution tailored for mobile devices such as netbooks, tablets, and smartphones. It helps facilitate seamless data recording for instruments such as the Early Grade Reading Assessment (EGRA), Early Grade Mathematics Assessment (EGMA), and Snapshot of School Management Effectiveness (SSME) surveys. Household surveys in Agriculture, and any type of data collection in other sectors. </p>
+    <p>Tangerine offers electronic data collection solution tailored for mobile devices such as netbooks, tablets, and smartphones. It helps facilitate seamless data recording for instruments such as the Early Grade Reading Assessment (EGRA), Early Grade Mathematics Assessment (EGMA), and Snapshot of School Management Effectiveness (SSME) surveys. Household surveys in Agriculture and Health, and any type of data collection in other sectors. </p>
       <a href="https://www.tangerinecentral.org/tangerine">Learn More</a>
 
   </div>
 <div class="full">
     <h3>Tangerine: Case</h3>
-    <p>Tangerine facilitates both cross-sectional and longitudinal studies using a Case-Event data model. Each study participant, whether it's a patient, household, or lab sample, receives a unique identifier for consistent and secure tracking throughout the study. The Tangerine: Case places a strong emphasis on data security by equipping you with tools to safeguard against unauthorized access to sensitive protected health information (PHI) and personally identifiable information (PII).  </p>
+    <p>Tangerine facilitates both cross-sectional and longitudinal studies using a Case-Event data model. Each study participant, whether it's a patient, household, or lab sample, receives a unique identifier for consistent and secure tracking throughout the study. Tangerine: Case places a strong emphasis on data security by equipping you with tools to safeguard against unauthorized access to sensitive protected health information (PHI) and personally identifiable information (PII).  </p>
        <a href="https://www.tangerinecentral.org/health">Learn More</a>
 
    
@@ -90,7 +90,7 @@ Tangerine is a diverse data collection tool that offers pre-build solutions for 
 
   <div class="full">
     <h3>Tangerine: Learn</h3>
-    <p>Give the tablet to the child and let them go through the assessment on their own pace. Setup group session with children to perform an EGRA or EGMA type Self-Administered Evaluation. The custom-app functionality of Tangerine allows you to present an app that is child friendly</p>
+    <p>Used in classrooms to give the tablet to the child and let them go through the assessment on their own pace. Setup group session with children to perform an EGRA or EGMA type Self-Administered Evaluation. The custom-app functionality of Tangerine allows you to present an app that is child friendly</p>
     <a href="https://shared.rti.org/content/introducing-self-administered-egra-and-egma-sa-egra-sa-egma-0">Learn More</a>
     
    
