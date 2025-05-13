@@ -1,0 +1,143 @@
+{
+  "id": "teach-case",
+  "formId": "teach-case-manifest",
+  "name": "Classroom Case Definition",
+  "description": "This is a classroom case definition.",
+  "caseRoles": [
+    {
+      "id": "teacher-role",
+      "label": "Teacher",
+      "templateListItem": "Forms the teacher"
+    },
+    {
+      "id": "school-admin-role",
+      "label": "School Administrator",
+      "templateListItem": "Forms for the school administrator"
+    },
+    {
+      "id": "student-register-role",
+      "type": "list",
+      "list": "student-register-list",
+      "label": "Student Register",
+      "templateListItem": "Forms for a group of students, like attendance, behavior and scoring"
+    }
+  ],
+  "templateCaseTitle": "${getVariable('classrooom_id') ? `${getVariable('classrooom_id')}` : '...'}",
+  "templateCaseDescription": "${getVariable('classrooom_id') ? `Info: ${getVariable('classrooom_id')}&nbsp;&nbsp;&nbsp;&nbsp; Location: ${getVariable('location')}` : '...'}",
+  "templateCaseEventListItemIcon": "${caseEvent.complete ? 'event_available' : 'event_note'}",
+  "templateCaseEventListItemPrimary": "<span>${T.case.getVariable(`${caseEvent.id}-title`) ? T.case.getVariable(`${caseEvent.id}-title`) : caseEventDefinition.name}</span>",
+  "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
+  "templateEventFormListItemIcon": "",
+  "templateEventFormListItemPrimary": "<span>${eventForm?.data?.title ? eventForm.data.title : eventFormDefinition.name}</span>",
+  "templateEventFormListItemSecondary": "Status: ${!eventForm.complete ? 'Incomplete' : 'Complete'}",
+  "templateBreadcrumbText": "${caseService.getVariable('classrooom_id') ? ` ${caseService.getVariable('classrooom_id')}` :  ` ${caseService.case._id.substring(0,6)}`}",
+  "startFormOnOpen": {
+    "eventId": "registration-event",
+    "eventFormId": "classroom-registration"
+  },
+  "eventDefinitions": [
+    {
+      "id": "registration-event",
+      "name": "Registration",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "classroom-registration",
+          "formId": "classroom-registration",
+          "forCaseRole": "",
+          "name": "Teacher Registration",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "student-registration",
+          "formId": "student-registration",
+          "forCaseRole": "role-2",
+          "name": "Student Registration",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false 
+        }
+      ]
+    },
+    {
+      "id": "daily-activities-event",
+      "name": "Dailty Activities",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "attendance",
+          "formId": "attendance",
+          "forCaseRole": "student-register-role",
+          "name": "Daily Attendance",
+          "required": true,
+          "repeatable": true,
+          "withList": "student-register-list",
+          "allowOnlineSurvey": true
+
+        },
+        {
+          "id": "scoring",
+          "formId": "scoring",
+          "forCaseRole": "student-register-role",
+          "name": "Dailty Scoring",
+          "autoPopulate": true,
+          "required": false,
+          "repeatable": true
+        }
+      ]
+    },
+    {
+      "id": "grade-one-math",
+      "name": "Grade 1 Semester 1 Math Curriculum",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "week-1-math",
+          "formId": "math",
+          "forCaseRole": "student-register-role",
+          "name": "Week 1 Math Assessment",
+          "required": true,
+          "repeatable": true
+        },
+        {
+          "id": "week-2-math",
+          "formId": "math",
+          "forCaseRole": "student-register-role",
+          "name": "Week 2 Math Assessment",
+          "autoPopulate": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "grade-one-english",
+      "name": "Grade 1 Semester 1 English Curriculum",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "week-1-english",
+          "formId": "english",
+          "forCaseRole": "student-register-role",
+          "name": "Week 1 English Assessment",
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "week-2-english",
+          "formId": "english",
+          "forCaseRole": "student-register-role",
+          "name": "Week 2 English Assessment",
+          "autoPopulate": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    }
+  ]
+}
