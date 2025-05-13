@@ -53,7 +53,7 @@
         {
           "id": "student-registration",
           "formId": "student-registration",
-          "forCaseRole": "role-2",
+          "forCaseRole": "",
           "name": "Student Registration",
           "autoPopulate": true,
           "required": true,
@@ -73,10 +73,7 @@
           "forCaseRole": "student-register-role",
           "name": "Daily Attendance",
           "required": true,
-          "repeatable": true,
-          "withList": "student-register-list",
-          "allowOnlineSurvey": true
-
+          "repeatable": true
         },
         {
           "id": "scoring",
@@ -97,7 +94,7 @@
       "eventFormDefinitions": [
         {
           "id": "week-1-math",
-          "formId": "math",
+          "formId": "grade-1-math-asssessment",
           "forCaseRole": "student-register-role",
           "name": "Week 1 Math Assessment",
           "required": true,
@@ -105,7 +102,7 @@
         },
         {
           "id": "week-2-math",
-          "formId": "math",
+          "formId": "grade-1-math-asssessment",
           "forCaseRole": "student-register-role",
           "name": "Week 2 Math Assessment",
           "autoPopulate": true,
@@ -122,7 +119,7 @@
       "eventFormDefinitions": [
         {
           "id": "week-1-english",
-          "formId": "english",
+          "formId": "grade-1-english-assessment",
           "forCaseRole": "student-register-role",
           "name": "Week 1 English Assessment",
           "required": false,
@@ -130,7 +127,7 @@
         },
         {
           "id": "week-2-english",
-          "formId": "english",
+          "formId": "grade-1-english-assessment",
           "forCaseRole": "student-register-role",
           "name": "Week 2 English Assessment",
           "autoPopulate": true,
