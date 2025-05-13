@@ -26,6 +26,6 @@
   * [Code](https://github.com/Tangerine-Community/Tangerine)
   * [Releases](https://github.com/Tangerine-Community/Tangerine/releases)
   * [Technical Chat](https://gitter.im/Tangerine-Community/Tangerine)
-  * [Community Forum](http://talk.tangerinecentral.org/)
+  * [Tangerine Academy](https://moodle.tangerinecentral.org/course/index.php?categoryid=14)
   * [Tangerine Central](http://www.tangerinecentral.org/)
 

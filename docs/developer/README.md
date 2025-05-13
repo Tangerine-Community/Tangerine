@@ -20,8 +20,8 @@
 - [debugging_node_apps.md](debugging_node_apps.md)
 
 ## Managing Deployments
-- [Upgrades](upgrades.md)
-- [Installing Multiple Tangerine apps on the same tablet](install-multiple-apks-config.md)
+- [Upgrades](../system-administrator/upgrades.md)
+- [Installing Multiple Tangerine apps on the same tablet](../system-administrator/install-multiple-apks-config.md)
 - [Deleting Records](deletion-strategy.md)
 
 ## Testing
@@ -38,8 +38,8 @@
 ## Troubleshooting
 - [Docker Network Issues](docker-network-issues.md)
 
-
-
+## Administration
+- [Deleting Records](deletion-strategy.md)
 
 
 
