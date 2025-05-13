@@ -103,7 +103,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       tangyForm.response = formResponse;
     }
 
-    if (this.caseService) {
+    if (this.caseId && this.caseService) {
       tangyForm.addEventListener('TANGY_FORM_UPDATE', async (event) => {
         let response = event.target.store.getState()
         this.throttledSaveResponse(response)

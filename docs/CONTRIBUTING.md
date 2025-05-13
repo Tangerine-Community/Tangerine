@@ -42,8 +42,3 @@ Now you have everything installed, get started viewing content by running the fo
 mkdocs serve
 ```
 
-## Contribution Guide
-
-TODO: Replace this video with an updated version to reflect the new process
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/EyQz44EvdZI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
