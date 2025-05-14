@@ -31,6 +31,8 @@ Two new inputs are available for recording and playing back audio.
 
 Users can set the language of the tablet to Modern Standard Arabic (MSA) by selecting the 'Arabic' in the client and add `t-lang ar` tags to text labels in forms
 
+- [3811](https://github.com/Tangerine-Community/Tangerine/pull/3811) Documentation Overhaul
+
 __Libraries and Dependencies__
 - [translation-web-component](https://github.com/Tangerine-Community/translation-web-component): Update `t-select` with a `currentLanguageDirection` property to enable RTL support.
 - tangy-form: Updates and fixes for Audio Recording and Playback inputs
