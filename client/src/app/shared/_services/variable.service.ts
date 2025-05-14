@@ -46,15 +46,20 @@ export class VariableService {
   }
 
   async set(name, value) {
-    let variable = {
+    let orig, revision;
+    let variable: { _id: string, _rev?: string } = {
       _id: name
     }
     try {
-       variable = await this.db.get(name)
+      orig = await this.db.get(name)
+      revision = orig._rev
     } catch (error) {
       if (error.status && error.status !== 404) {
         console.log("error: " + JSON.stringify(error))
       }
+    }
+    if (revision) {
+      variable._rev = revision
     }
     try {
       await this.db.put({

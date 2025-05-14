@@ -1068,7 +1068,7 @@ export class DashboardService {
     const appConfig = await this.appConfigService.getAppConfig();
     let studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields || []
     if (studentRegistrationFields.length == 0) {
-      console.log("No student registration fields found in appConfig - need to populate appConfig.teachProperties?.studentRegistrationFields - using defaults")
+      // console.log("No student registration fields found in appConfig - need to populate appConfig.teachProperties?.studentRegistrationFields - using defaults")
       studentRegistrationFields = ["student_name", "student_surname", "phone", "classId"]
     }
 
