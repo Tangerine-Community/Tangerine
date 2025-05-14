@@ -1,13 +1,16 @@
-arrange:
-    - index.md
-    - about.md
-    - guides.md
-    - getting-started.md
-    - whats-new.md
-    - navigation.md 
-    - CONTRIBUTING.md
-    - editor
-    - data-collector
-    - data-manager 
-    - developer
-    - system-administrator
+nav:
+   - index.md
+   - Get Started:  
+      - Form Editor: editor
+      - Data Collector: data-collector
+      - System Administrator: system-administrator
+
+
+   - Get Involved:
+      - developer
+   - Product Suite: ./product-suite 
+   - Learn: https://moodle.tangerinecentral.org/course/index.php?categoryid=14
+   - Setup your Platform: system-administrator/installation
+   - Sign up: https://www.tangerinecentral.org/pricing
+
+   - about.md

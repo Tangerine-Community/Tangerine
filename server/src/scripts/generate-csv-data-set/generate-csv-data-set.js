@@ -3,10 +3,16 @@ const spawn = require('child_process').spawn
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra');
 const sanitize = require('sanitize-filename');
-const axios = require('axios')
+const axios = require('axios');
+const jsdom = require("jsdom");
 const writeFile = util.promisify(fs.writeFile);
 const log = require('tangy-log').log
-
+const { JSDOM } = jsdom;
+class NodeJSDOMParser {
+  parseFromString(s, contentType = 'text/html') {
+    return new JSDOM(s, {contentType}).window.document;
+  }
+}
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
     username: process.env.T_USER1,
@@ -31,7 +37,13 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
     let csvTemplate
     if (csvTemplateId) {
       const url = `${process.env.T_COUCHDB_ENDPOINT}/${dbName.replace('-reporting', '')}-csv-templates/${csvTemplateId}`
-      csvTemplate = (await axios.get(url)).data
+      try {
+        const response = await axios.get(url)
+        csvTemplate = response?.data
+      } catch (e) {
+        log.debug(`Could not find csv template with id ${csvTemplateId}`)
+        return 0
+      }
     }
     const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
     const sleepTimeBetweenBatches = 0
@@ -41,8 +53,8 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
     } else {
       cmd += ` '' '' `
     }
+    log.debug(`generate-csv ${csvTemplate ? `with headers from ${csvTemplateId}` : ''}: ${cmd}`)
     cmd = `${cmd} ${csvTemplate ? `"${csvTemplate.headers.join(',')}"` : ''}`
-    log.debug("generate-csv: " + cmd)
     const maxBuffer = 1024 * 1024 * 100;
     exec(cmd, { maxBuffer }).then(status => {
       resolve(status)
@@ -98,14 +110,19 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     } else {
       state.csvs.find(csv => csv.formId === formId).inProgress = true
       await writeState(state)
-      const formTitle = formInfo
-        ? formInfo.title.replace(/ /g, '_')
-        : formId
+      let formTitle;
+      if(!formInfo.title) formTitle = formId;
+      if(!formInfo.title.includes('t-lang')) formTitle = formInfo.title.replace(/ /g, '_');
+      if(formInfo.title.includes('t-lang')) {
+        const titleDomString = new NodeJSDOMParser().parseFromString(formInfo.title, 'text/html')
+        const formTitleEnglish = titleDomString.querySelector('t-lang[en]')
+        formInfo.title = formTitleEnglish ? formTitleEnglish.textContent : titleDomString.querySelector('t-lang').textContent
+        formTitle = formInfo.title.replace(/ /g, '_')
+      }
       const groupFormname = sanitize(groupLabel + '-' + formTitle, options)
       const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
       const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
       const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
-      log.debug("About to generateCsv in generate-csv-data-set.js")
       generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
       while (!await fs.pathExists(csvStatePath)) {
         await sleep(1*1000)
