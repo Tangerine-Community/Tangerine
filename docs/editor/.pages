@@ -1,7 +1,8 @@
 title: "Forms Editor"
-arrange:
+nav:
+    - README.md
     - getting-started-editor
     - advanced-form-programming
     - form-developers-cookbook
-    - README.md
+    - case-module
     

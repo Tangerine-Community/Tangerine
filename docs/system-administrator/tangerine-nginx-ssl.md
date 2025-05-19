@@ -14,7 +14,7 @@ First open config.sh and change the port mapping of Tangerine
 T_PORT_MAPPING="-p 8080:80"
 ```
 
-Rebuild the container by running ./start.sh
+Rebuild the tangerine  container by running ./start.sh
 
 ## Pull nginx docker image and install certbot inside the nginx container
 
@@ -91,7 +91,9 @@ docker commit nginx nginx/nginx:configuredNginx
 
 ```
 
-### Note that your nginx container is now linked to your tangerine container. Every time you execute start.sh for tangerine you have to start a new nginx continer to udpate the link. TO recreate using the saved image run 'docker run -p 80:80 -p 443:443 --link tangerine:tangerine --restart always --name nginx -d nginx/nginx:configuredNginx'
-
+ <b>Note that your nginx container is now linked to your tangerine container. </b>Every time you execute start.sh for tangerine you have to start a new nginx continer to udpate the link. To recreate using the saved image run 
+ ``` 
+ docker run -p 80:80 -p 443:443 --link tangerine:tangerine --restart always --name nginx -d nginx/nginx:configuredNginx
+ ```
 
 Point your DNS to the actual server 

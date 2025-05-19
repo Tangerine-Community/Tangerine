@@ -2,6 +2,13 @@
 
 The Custom Case Reports features enables the developer to create custom reports or a dashboard. This feature is accessible using a tab when viewing a case. To enable this feature, add `showCaseReports: true` to the group's app-config.json. 
 
+## Develop custom reports for Client 
+
+- [LitElement Documentation](https://lit-element.polymer-project.org/)
+- [LitElement Examples](https://github.com/open-wc/lit-demos)
+- [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+
+
 ## Demo and description of this feature's assets
 
 This demo is based on the [case module content set](https://github.com/Tangerine-Community/Tangerine/tree/release/v3.11.0/content-sets/case-module); therefore, you might want to install that in order to follow the demo.

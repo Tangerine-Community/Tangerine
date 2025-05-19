@@ -10,7 +10,8 @@ For example: An installation has two Forms, Form A and Form B. Only Form A is co
 
 ## Enabling Sync Protocol 2 for new Groups
 
-Note: Sync Protocol 2 is usually automatically enabled for new groups; however, these instructions show how to manually configure it.
+!!! note 
+    Sync Protocol 2 is usually automatically enabled for new groups; however, these instructions show how to manually configure it.
 
 1. Enable Sync Protocol 2 before creating a new group by editing `config.sh` by adding `"sync-protocol-2"` to `T_MODULES`. 
 2. Create a new group.

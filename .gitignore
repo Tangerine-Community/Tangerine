@@ -63,3 +63,4 @@ scripts/apk-build.sh
 .angular
 .secrets
 ._.DS_Store
+/.lh

@@ -9,7 +9,7 @@
       <mat-label>Form</mat-label>
       <select matNativeControl required (change)="onFormIdSelect($event)" [(ngModel)]="formId" name="formId">
         <option value="" selected></option>
-        <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo.title}}</option>
+        <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo|formTitleFromInfo}}</option>
       </select>
     </mat-form-field> 
     <h2 *ngIf="formId">Included Columns</h2>
