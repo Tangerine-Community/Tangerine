@@ -1,4 +1,4 @@
-Updating the App
+App Update
 ----------------------------------------------------------------------------------------------
 
 The app update in Tangerine can bring up new content or updates. to your forms but it can also update the version of the app you are currently using. 

@@ -211,4 +211,5 @@ It may happen that you need to show a question only to advanced students. In tho
 
 This call will force a question to be displayed only when the rate of reading was higher than 35 workds per minute.
 
-NOTE: All of the above functions can also be used to show or a hide an entire section page.
+!!! note 
+    All of the above functions can also be used to show or a hide an entire section page.
