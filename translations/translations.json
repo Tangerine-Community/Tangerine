@@ -5,15 +5,20 @@
     "languageDirection": "ltr"
   },
   {
+    "label": "عربي (Arabic)",
+    "languageCode": "ar",
+    "languageDirection": "rtl"
+  },
+  {
     "label": "Bengali",
     "languageCode": "bn",
     "languageDirection": "ltr"
   },
   {
-   "label": "Dari",
-   "languageCode": "faprs",
-   "languageDirection": "rtl"
- },
+    "label": "Dari",
+    "languageCode": "faprs",
+    "languageDirection": "rtl"
+  },
   {
     "label": "English",
     "languageCode": "en",
@@ -45,15 +50,15 @@
     "languageDirection": "ltr"
   },
   {
-   "label": "Pashto",
-   "languageCode": "ps",
-   "languageDirection": "rtl"
- },
- {
-  "label": "Portuguese",
-  "languageCode": "pt",
-  "languageDirection": "ltr"
-},
+    "label": "Pashto",
+    "languageCode": "ps",
+    "languageDirection": "rtl"
+  },
+  {
+    "label": "Portuguese",
+    "languageCode": "pt",
+    "languageDirection": "ltr"
+  },
   {
     "label": "Russian",
     "languageCode": "ru",
@@ -69,15 +74,14 @@
     "languageCode": "tg",
     "languageDirection": "ltr"
   },
-
   {
     "label": "Urdu",
     "languageCode": "ur",
     "languageDirection": "rtl"
   },
   {
-    "label": "Vietnamese",    
-    "languageCode": "vn",    
-    "languageDirection": "ltr"  
+    "label": "Vietnamese",
+    "languageCode": "vn",
+    "languageDirection": "ltr"
   }
 ]
