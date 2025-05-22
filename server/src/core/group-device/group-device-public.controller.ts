@@ -118,9 +118,18 @@ export class GroupDevicePublicController {
       const device = await this.groupDeviceService.register(groupId, deviceId)
       return device
     } catch (error) {
-      log.error('Error registering device')
-      console.log(error)
-      return 'There was an error.'
+      const errorDetails = {
+        "message" : error.message,
+        "groupId" : groupId,
+        "deviceId" : deviceId,
+        "error" : error
+      }
+      log.error(errorDetails)
+      throw new HttpException({
+        status: HttpStatus.NOT_ACCEPTABLE,
+        error: error.message,
+        errorDetails,
+      }, HttpStatus.NOT_ACCEPTABLE);
     }
   }
 

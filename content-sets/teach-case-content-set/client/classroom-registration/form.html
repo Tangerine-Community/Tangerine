@@ -1,0 +1,76 @@
+
+      <tangy-form id="classroom-registration" title="Classroom Registration" category="null"
+        
+        
+        
+        fullscreen-nav-align="top"
+        
+        on-open="
+          
+          
+        
+        "
+        exit-clicks=""
+        cycle-sequences=""
+        on-change="
+          
+          
+        
+        "
+        on-submit="
+          
+          caseService.setVariable('classroom_id', getValue('classroom_id'))
+          caseService.setVariable('grade', getValue('grade'))
+
+          if (caseService.case.participants.length == 0) {
+            participant_id = caseService.createParticipant('teacher-role')
+          }
+        
+        "
+        on-resubmit="
+          
+          caseService.setVariable('classroom_id', getValue('classroom_id'))
+          caseService.setVariable('grade', getValue('grade'))
+
+        
+        "
+      >
+        
+          <tangy-form-item id="item_9412f699-ecbb-48f9-a816-dad053bf70ff" 
+            title="Item 1"
+            
+            
+            
+            
+            
+            
+            
+            
+            scoring-fields=""
+            custom-scoring-logic=""
+            on-open="
+              
+              
+            
+            "
+            on-change="
+              
+              
+            
+            "
+            category="
+              
+              
+            
+            "
+          >
+            <template>
+              
+              <tangy-input name="classroom_id" label="Classroom ID"></tangy-input>
+              <tangy-input type="number" min="1" max="12" name="grade" label="Grade"></tangy-input>
+            
+            </template>
+          </tangy-form-item>
+        
+      </tangy-form>
+    

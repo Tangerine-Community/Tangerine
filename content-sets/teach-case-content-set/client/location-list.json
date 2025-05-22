@@ -1,0 +1,104 @@
+{
+  "locationsLevels": [
+    "region",
+    "district",
+    "school",
+    "grade"
+  ],
+  "locations": {
+    "B7BzlR6h": {
+      "label": "Region 1",
+      "id": "B7BzlR6h",
+      "children": {
+        "rrCuQT12": {
+          "label": "District A",
+          "id": "rrCuQT12",
+          "children": {
+            "RJghrv5d": {
+              "label": "School 1",
+              "id": "RJghrv5d",
+              "level": "school",
+              "parent": "rrCuQT12",
+              "children": {
+                "aUYNtVMz": {
+                  "label": "Grade 1",
+                  "id": "aUYNtVMz",
+                  "level": "grade",
+                  "parent": "RJghrv5d",
+                  "children": {},
+                  "descendantsCount": 0
+                },
+                "Ul4SMJaZ": {
+                  "label": "Grade 2",
+                  "id": "Ul4SMJaZ",
+                  "level": "grade",
+                  "parent": "RJghrv5d",
+                  "children": {},
+                  "descendantsCount": 0
+                }
+              },
+              "descendantsCount": 0
+            },
+            "K0xhy1Su": {
+              "label": "School 2",
+              "id": "K0xhy1Su",
+              "level": "school",
+              "parent": "rrCuQT12",
+              "children": {
+                "9bpot1DO": {
+                  "label": "Grade 1",
+                  "id": "9bpot1DO",
+                  "level": "grade",
+                  "parent": "K0xhy1Su",
+                  "children": {},
+                  "descendantsCount": 0
+                },
+                "gsoOZ3td": {
+                  "label": "Grade 2",
+                  "id": "gsoOZ3td",
+                  "level": "grade",
+                  "parent": "K0xhy1Su",
+                  "children": {},
+                  "descendantsCount": 0
+                }
+              },
+              "descendantsCount": 0
+            }
+          },
+          "level": "district",
+          "parent": "B7BzlR6h",
+          "descendantsCount": 2
+        },
+        "Iiauxebz": {
+          "label": "District B",
+          "id": "Iiauxebz",
+          "level": "district",
+          "parent": "B7BzlR6h",
+          "children": {
+            "cGhjwNAw": {
+              "label": "School 3",
+              "id": "cGhjwNAw",
+              "level": "school",
+              "parent": "Iiauxebz",
+              "children": {},
+              "descendantsCount": 0
+            },
+            "LBwCju2s": {
+              "label": "School 4",
+              "id": "LBwCju2s",
+              "level": "school",
+              "parent": "Iiauxebz",
+              "children": {},
+              "descendantsCount": 0
+            }
+          },
+          "descendantsCount": 2
+        }
+      },
+      "level": "region",
+      "parent": "root",
+      "descendantsCount": 4
+    }
+  },
+  "metadata": {}
+}

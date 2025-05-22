@@ -25,3 +25,6 @@ cursor: pointer;
 form {
   margin: 15px;
 }
+.tangy-foreground-primary {
+  padding-left: 1rem;
+}

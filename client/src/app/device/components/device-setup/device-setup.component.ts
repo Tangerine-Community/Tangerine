@@ -79,33 +79,41 @@ export class DeviceSetupComponent implements OnInit {
       }})
       // On device registration complete.
       this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
-        const device = await this.deviceService.register(deviceDoc._id, deviceDoc.token)
-        // Note that device.token has been reset so important to use the device record
-        // that register returned.
-        let replicationStatus:ReplicationStatus = <ReplicationStatus>{
-          info: ''
-        };
-        // await this.syncService.addDeviceSyncMetadata();
-        const deviceInfo = await this.deviceService.getAppInfo()
-        replicationStatus.deviceInfo = deviceInfo
-        const connection = navigator['connection']
-        const effectiveType = connection.effectiveType;
-        const downlink = connection.downlink;
-        const downlinkMax = connection.downlinkMax;
-        replicationStatus.effectiveConnectionType = effectiveType
-        replicationStatus.networkDownlinkSpeed = downlink
-        replicationStatus.networkDownlinkMax = downlinkMax
-        const userAgent = navigator['userAgent']
-        replicationStatus.userAgent = userAgent
-        replicationStatus.message = "device setup"
-        await this.deviceService.didUpdate(device._id, device.token, replicationStatus)
-        await this.userService.installSharedUserDatabase(device)
-        await this.userService.createAdmin(password, <LockBoxContents>{
-          device
-        })
-        await this.userService.login('admin', password)
-        this.step = STEP_SYNC
-        this.stepDeviceSync.sync()
+        let device;
+        try {
+          device = await this.deviceService.register(deviceDoc._id, deviceDoc.token);
+          // Note that device.token has been reset so important to use the device record
+          // that register returned.
+          let replicationStatus:ReplicationStatus = <ReplicationStatus>{
+            info: ''
+          };
+          // await this.syncService.addDeviceSyncMetadata();
+          const deviceInfo = await this.deviceService.getAppInfo()
+          replicationStatus.deviceInfo = deviceInfo
+          const connection = navigator['connection']
+          const effectiveType = connection.effectiveType;
+          const downlink = connection.downlink;
+          const downlinkMax = connection.downlinkMax;
+          replicationStatus.effectiveConnectionType = effectiveType
+          replicationStatus.networkDownlinkSpeed = downlink
+          replicationStatus.networkDownlinkMax = downlinkMax
+          const userAgent = navigator['userAgent']
+          replicationStatus.userAgent = userAgent
+          replicationStatus.message = "device setup"
+          await this.deviceService.didUpdate(device._id, device.token, replicationStatus)
+          await this.userService.installSharedUserDatabase(device)
+          await this.userService.createAdmin(password, <LockBoxContents>{
+            device
+          })
+          await this.userService.login('admin', password)
+          this.step = STEP_SYNC
+          this.stepDeviceSync.sync()
+        } catch (e) {
+          console.log(e)
+          console.log(e.error)
+          alert(e.error?.error)
+        }
+        
       })
       // On device sync.
       this.stepDeviceSync.done$.subscribe(async (value) => {
