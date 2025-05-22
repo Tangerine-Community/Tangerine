@@ -13,6 +13,7 @@ export class LocationList {
   locationsLevels:Array<any>
   locations:Object
   metadata:Object
+  forms:Array<any>
 
   constructor(data) {
     Object.assign(this, data)

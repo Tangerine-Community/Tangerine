@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const util = require('util')
 const readDir = util.promisify(require('fs').readdir)
+const readdirSync = require('fs').readdirSync
 const log = require('tangy-log').log
 
 /*
@@ -34,6 +35,19 @@ module.exports = async (req, res) => {
       }
       return locationData
     }
+    // if it has forms, it is probably a curriculum file
+    if (!!fileData.forms) {
+      const locationName = fileData.name ? fileData.name : path.parse(filePath).name
+      const fileId = fileData.id ? fileData.id : locationName
+
+      locationData = {
+        id: fileId,
+        name: locationName,
+        path: filePath,
+        ...fileData
+      }
+      return locationData
+    }
   
   }
 
@@ -50,19 +64,26 @@ module.exports = async (req, res) => {
 
     const locationsDir = path.join(groupDir, 'locations')
     if (fs.existsSync(locationsDir)) {
-      const list = await readDir(locationsDir, {withFileTypes: true})
-      if (list && list.length > 0) {
-        for (let dirent of list) {
-          const fileName = dirent.name
-          if (path.extname(fileName) == ".json") {
-            const fullPath = path.join(locationsDir, fileName)
-            const filePath = `locations/${fileName}`
-            const data = getLocationListData(fullPath, filePath)
-            if (data) {
-              locationLists.push(data)
-            }
+      console.log("locationsDir:" + locationsDir)
+      try {
+        const list = await readdirSync(locationsDir, { withFileTypes: true })
+        if (list && list.length > 0) {
+          for (let dirent of list) {
+        const fileName = dirent.name
+        console.log("fileName: " + fileName)
+        if (path.extname(fileName) == ".json") {
+          const fullPath = path.join(locationsDir, fileName)
+          const filePath = `locations/${fileName}`
+          console.log("fullPath: " + fullPath)
+          const data = getLocationListData(fullPath, filePath)
+          if (data) {
+            locationLists.push(data)
           }
         }
+          }
+        }
+      } catch (err) {
+        log.error(`Error reading files in locations directory: ${err}`)
       }
     }
     return res.send(locationLists)
