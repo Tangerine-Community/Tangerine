@@ -22,6 +22,9 @@ export interface AppInfo {
   buildId:string
   assignedLocation:string
   versionTag:string
+  curriculum: string[];
+  grades:[];
+  school: any;
 }
 
 @Injectable({
@@ -51,12 +54,25 @@ export class DeviceService {
   }
 
   async initialize() {
+    let curriculum, grades, school;
     const appConfig = await this.appConfigService.getAppConfig()
     const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
     const buildChannel = window.location.hostname !== 'localhost' ? await this.getBuildChannel() : 'localhost'
     const device = await this.getDevice()
+    const grade = device.assignedLocation['grade'];
     const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
+
+    if (grade) {
+      const location = flatLocationList.locations.find(node => node.id === grade)
+      if (location) {
+        curriculum = location.forms;
+      }
+      const parentId = location.parent;
+      school = flatLocationList.locations.find(node => node.id === parentId)
+      grades = flatLocationList.locations.filter(node => node.parent === parentId)
+    }
+
     const encryptionLevel = (window['isCordovaApp'] && window['sqlCipherRunning'])
       ? _TRANSLATE('in-app')
       : 'OS'
@@ -83,7 +99,10 @@ export class DeviceService {
       buildId,
       deviceId: device._id,
       assignedLocation,
-      versionTag
+      versionTag,
+      curriculum,
+      grades,
+      school
     }
   }
 
@@ -99,35 +118,7 @@ export class DeviceService {
     const appConfig = await this.appConfigService.getAppConfig()
     let device:Device
     if (isTest) {
-      // Pick a location out of the location list.
-      const locationList = await this.appConfigService.getLocationList()
-      const flatLocationList = Loc.flatten(locationList)
-      const pickedLocation = [...flatLocationList.locationsLevels]
-        // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
-        .reverse()
-        .reduce((locationArray, level, i) => {
-          return [
-            i === 0
-              ? flatLocationList.locations.find(node => node.level === level)
-              : flatLocationList.locations.find(node => node.id === locationArray[0].parent),
-            ...locationArray
-          ]
-        }, [])    
-        // Transform the array of location nodes into a location object where the keys are the level and the values are the node IDs.
-        .reduce((location, node) => {
-          return {
-            ...location,
-            [node.level]: node.id
-          }
-        }, {})
-      // @TODO Assign a location.
-      device = <Device>{
-        _id: id,
-        token,
-        key: 'test',
-        assignedLocation: pickedLocation,
-        syncLocations: [pickedLocation]
-      }
+      device = await this.generateTestDevice(id, token);
     } else {
       device = <Device>await this
         .httpClient
@@ -144,15 +135,8 @@ export class DeviceService {
   async getDevice():Promise<Device> {
     try {
       if (window.location.hostname === 'localhost') {
-        return <Device>{
-          _id: 'device1',
-          collection: 'Device',
-          token: 'token1',
-          key: 'test',
-          version: 'sandbox',
-          claimed: true,
-          syncLocations: []
-        }
+        const device = await this.generateTestDevice('device1', 'token1');
+        return device;
       }
       const locker = this.lockBoxService.getOpenLockBox()
       this.device = locker.contents.device
@@ -255,4 +239,42 @@ export class DeviceService {
     }
   }
 
+  async generateTestDevice(id, token): Promise<Device> {
+    let device: Device
+    // Pick a location out of the location list.
+    const locationList = await this.appConfigService.getLocationList()
+    const flatLocationList = Loc.flatten(locationList)
+    const pickedLocation = [...flatLocationList.locationsLevels]
+      // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
+      .reverse()
+      .reduce((locationArray, level, i) => {
+        return [
+          i === 0
+            ? flatLocationList.locations.find(node => node.level === level)
+            : flatLocationList.locations.find(node => node.id === locationArray[0].parent),
+          ...locationArray
+        ]
+      }, [])
+      // Transform the array of location nodes into a location object where the keys are the level and the values are the node IDs.
+      .reduce((location, node) => {
+        return {
+          ...location,
+          [node.level]: node.id
+        }
+      }, {})
+    // @TODO Assign a location.
+    device = <Device>{
+      _id: id,
+      token,
+      key: 'test',
+      assignedLocation: pickedLocation,
+      syncLocations: [pickedLocation],
+      collection: 'Device',
+      version: 'sandbox',
+      claimed: true,
+    }
+    return device;
+  }
 }
+
+
