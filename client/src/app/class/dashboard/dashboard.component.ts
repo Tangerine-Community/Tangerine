@@ -1,6 +1,4 @@
-import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {DashboardService} from '../_services/dashboard.service';
 import {PageEvent} from '@angular/material/paginator';
 import {ClassFormService} from '../_services/class-form.service';
@@ -8,10 +6,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
-import {TangyFormService} from '../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import {VariableService} from "../../shared/_services/variable.service";
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import { DeviceService } from 'src/app/device/services/device.service';
+import {BehaviorSubject, Subject, Subscription} from "rxjs";
 
 export interface StudentResult {
   id: string;
@@ -30,8 +29,8 @@ export interface StudentResponse {
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-
-  
+  enabledClassesSubscription: Subscription;
+  currArraySubscription: Subscription;
   classes; students; 
   enabledClasses; // filter out classes that have the 'archive' property.
   currentClassId; currentClassIndex;
@@ -80,6 +79,7 @@ export class DashboardComponent implements OnInit {
     private tangyFormsInfoService: TangyFormsInfoService,
     private variableService: VariableService,
     private route: ActivatedRoute,
+    private deviceService: DeviceService,
   ) { }
 
   getClassTitle(classResponse:TangyFormResponse) {
@@ -87,30 +87,23 @@ export class DashboardComponent implements OnInit {
     return gradeInput.value
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     let classIndex
     (<any>window).Tangy = {};
-    await this.classFormService.initialize();
-    this.classes = await this.getMyClasses();
+    // this.classes = await this.getMyClasses();
     this.getValue = this.dashboardService.getValue
-    this.enabledClasses = await this.dashboardService.getEnabledClasses();
+    // Subscribe to the enabledClasses$ observable before you init it.
+    this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe(async (enabledClasses) => {
+      this.enabledClasses = enabledClasses
+      console.log('enabledClasses: ' + JSON.stringify(this.enabledClasses))
+    })
+    this.currArraySubscription = this.dashboardService.currArray$.subscribe(async (currArray) => {
+      this.currArray = currArray
+      console.log('currArray: ' + JSON.stringify(this.currArray))
+    })
+    await this.classFormService.initialize();
+    await this.dashboardService.initialize();
     
-    // let classMenu = []
-    // for (const classDoc of this.enabledClasses) {
-    //   const grade = this.getValue('grade', classDoc.doc)
-    //   let klass = {
-    //     id: classDoc.id,
-    //     name: grade,
-    //     curriculum: []
-    //   }
-    //   // find the options that are set to 'on'
-    //   const classArray = await this.populateCurrentCurriculums(classDoc);
-    //   if (classArray) {
-    //     this.currArray = classArray
-    //     klass.curriculum = this.currArray
-    //     classMenu.push(klass)
-    //   }
-    // }
     if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
 
       this.route.queryParams.subscribe(async params => {
@@ -124,13 +117,31 @@ export class DashboardComponent implements OnInit {
         }
         curriculumId = __vars.curriculumId;
         this.selectedClass = currentClass;
-        const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-        this.currArray = currArray
+        // const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+        // this.currArray = currArray
+        
+        // const currArray = [];
+        // if (curriculumArray) {
+        //   for (const formId of curriculumArray) {
+        //     const form = {}
+        //     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId);
+        //     if (formInfo) {
+        //       form['label'] = formInfo.title;
+        //       form['labelSafe'] = sanitize(formInfo.title.replace(/\s+/g, ''));
+        //       form['name'] = formId;
+        //       form['value'] = 'on';
+        //       currArray.push(form);
+        //     }
+        //   };
+        // this.currArray = currArray
+        // }
         // When app is initialized, there is no curriculumId, so we need to set it to the first one.
-        if (!curriculumId && currArray?.length > 0) {
-          curriculumId = currArray[0].name
+        if (!curriculumId && this.currArray?.length > 0) {
+          curriculumId = this.currArray[0].name
         }
-        this.curriculum = currArray.find(x => x.name === curriculumId);
+        // const curriculum = this.currArray.find(x => x.name === curriculumId);
+        const curriculum = this.currArray.find(formId => formId === curriculumId);
+        this.curriculum = curriculum;
         const currentClassId = currentClass.id;
         this.classTitle = this.getClassTitle(currentClass)
         await this.initDashboard(classIndex, currentClassId, curriculumId, true);
@@ -186,14 +197,14 @@ export class DashboardComponent implements OnInit {
         this.currentItemId = null;
       }
 
-      this.currArray = await this.populateCurrentCurriculums(currentClass);
+      // this.currArray = await this.populateCurrentCurriculums(currentClass);
       if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
         const curriculum = this.currArray[0];
-        curriculumId = curriculum.name;
+        curriculumId = curriculum;
       }
       this.curriculumId = curriculumId;
       await this.variableService.set('class-curriculumId', curriculumId);
-      this.curriculum = this.currArray.find(x => x.name === curriculumId);
+      // this.curriculum = this.currArray.find(x => x.name === curriculumId);
       await this.populateFormsMetadata(curriculumId);
 
       if (!currentItemId || currentItemId === '') {
@@ -291,7 +302,7 @@ export class DashboardComponent implements OnInit {
     // this.currentClassId = this.selectedClass.id;
     this.students = await this.getMyStudents(classId);
     const item = this.curriculumFormsList.find(x => x.id === itemId);
-    const results = await this.getResultsByClass(classId, this.curriculum.name, [item], item);
+    const results = await this.getResultsByClass(classId, this.curriculum, [item], item);
     this.studentsResponses = [];
     const formsTodisplay = {};
     this.curriculumFormsList.forEach(form => {
@@ -312,13 +323,6 @@ export class DashboardComponent implements OnInit {
       }
     }
     this.allStudentResults = await this.dashboardService.getAllStudentResults(this.students, this.studentsResponses, this.curriculumFormsList, this.curriculum);
-  }
-
-  // Triggered by dropdown selection in UI.
-  async populateCurriculum (classIndex, curriculumId) {
-    const currentClass = this.enabledClasses[classIndex];
-    const currentClassId = currentClass.id;
-    await this.initDashboard(classIndex, currentClassId, curriculumId, true);
   }
 
   selectReport(reportId) {
@@ -476,15 +480,15 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  async getMyClasses() {
-    try {
-      const classes = await this.dashboardService.getMyClasses();
-      // console.log("this.classes:" + JSON.stringify(this.classes))
-      return classes;
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  // async getMyClasses() {
+  //   try {
+  //     const classes = await this.dashboardService.getMyClasses();
+  //     // console.log("this.classes:" + JSON.stringify(this.classes))
+  //     return classes;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   async getMyStudents(selectedClass: any) {
     try {
@@ -522,4 +526,16 @@ export class DashboardComponent implements OnInit {
   //     }
   //   }
   // }
+
+    ngOnDestroy() {
+    // avoid memory leaks here by cleaning up after ourselves. If we
+    // don't then we will continue to run our initialiseInvites()
+    // method on every navigationEnd event.
+    if (this.enabledClassesSubscription) {
+      this.enabledClassesSubscription.unsubscribe();
+    }
+    if (this.currArraySubscription) {
+      this.currArraySubscription.unsubscribe();
+    }
+  }
 }

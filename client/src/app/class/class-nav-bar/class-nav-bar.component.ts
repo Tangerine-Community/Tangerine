@@ -89,13 +89,6 @@ export class ClassNavBarComponent implements OnInit {
     return gradeInput?.value
   }
 
-  // Triggered by dropdown selection in UI.
-  async populateCurriculum(classIndex, curriculumId) {
-    const currentClass = this.enabledClasses[classIndex];
-    const currentClassId = currentClass.id;
-    this.allStudentResults = await this.dashboardService.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
-  }
-
   ngOnDestroy() {
     // avoid memory leaks here by cleaning up after ourselves. If we
     // don't then we will continue to run our initialiseInvites()

@@ -16,6 +16,7 @@ import {sanitize} from "sanitize-filename-ts";
 import {Subject} from "rxjs";
 import {ClassFormService} from "./class-form.service";
 import {AppConfigService} from "../../shared/_services/app-config.service";
+import { AppInfo, DeviceService } from 'src/app/device/services/device.service';
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -30,8 +31,8 @@ export class DashboardService {
     private userService: UserService,
     private tangyFormsInfoService : TangyFormsInfoService,
     private variableService: VariableService,
-    private classFormService: ClassFormService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private deviceService: DeviceService,
   ) {}
 
   db: UserDatabase;
@@ -41,17 +42,31 @@ export class DashboardService {
   currentClassId
   currentItemId
   currArray
+  deviceInfo: AppInfo;
   
   // Some properties that will be shared with window.T:
   selectedClass
   formList
   enabledClasses
   allStudentResults: StudentResult[];
+  curriculumFormsList: TangyFormResponse[]
 
   // public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses());
   public readonly enabledClasses$: Subject<any> = new Subject();
   public readonly selectedClass$: Subject<any> = new Subject();
   public readonly selectedCurriculumId$: Subject<any> = new Subject();
+  public readonly currArray$: Subject<any> = new Subject();
+
+  async initialize() {
+    // this.db = await this.getUserDB();
+    // this.formList = await this.getFormList();
+    this.deviceInfo = await this.deviceService.getAppInfo()
+    this.currArray = await this.getCurrArray();
+    this.enabledClasses = await this.getEnabledClasses();
+    this.enabledClasses$.next(this.enabledClasses);
+    this.selectedClass$.next(this.selectedClass);
+    this.currArray$.next(this.currArray);
+  }
 
   async getUserDB() {
     return await this.userService.getUserDatabase();
@@ -68,26 +83,76 @@ export class DashboardService {
     return formHtml;
   }
 
-  async getMyClasses() {
-    this.db = await this.getUserDB();
-    const result = await this.db.query('tangy-form/responsesByFormId', {
-      key: 'class-registration',
-      include_docs: true
-    });
-    return result.rows;
+  /**
+   * Manually construct enabled classes from locations
+   * Queries the view tangy-class/responsesByClassIdCurriculumId to get the list of curricula for the selected class.
+   * @returns 
+   */
+  async getMyClasses() {    
+    const curriculumValueProperty = []
+    if (this.currArray) {
+      for (const formId of this.currArray) {
+        const item = {
+          "name": formId,
+          "value": "on"
+        }
+        curriculumValueProperty.push(item)
+      }
+    }
+    const enabledClasses = []
+    const grades = this.deviceInfo.grades;
+    const school = this.deviceInfo.school;
+    grades.forEach((grade, index) => {
+      const formResponse = {
+        id: school.id,
+        key: "class-registration",
+        doc: {
+          _id: school.id,
+          items: [
+            {
+              inputs: [
+                {
+                  "name": "school_name",
+                  "label": school.label,
+                  "value": "School Foo"
+                },
+                {
+                  "name": "school_year",
+                  "label": "School year",
+                  "value": "2025"
+                },
+                {
+                  "name": "grade",
+                  "label": grade['label'],
+                  "value": grade['label']
+                },
+                {
+                  "name": "curriculum",
+                  "value": curriculumValueProperty,
+                  "label": "Curriculum"
+                }
+              ]
+            }
+          ]
+        }
+      }
+      enabledClasses.push(formResponse)
+    })
+    return enabledClasses;
   }
 
   async getEnabledClasses() {
     const classes = await this.getMyClasses();
-    const enabledClasses = classes.map(klass => {
-      if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
-        return klass
-      }
-    });
-    const filteredEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
-    this.enabledClasses = filteredEnabledClasses
-    this.enabledClasses$.next(filteredEnabledClasses)
-    return filteredEnabledClasses
+    return classes;
+  }
+
+  async getCurrArray() {
+    const curriculum = this.deviceInfo.curriculum;
+    const grades = this.deviceInfo.grades;
+    const curriculumArray = typeof curriculum === 'string'
+        ? (curriculum as string).split(',').map(s => s.trim())
+        : [];
+    return curriculumArray;
   }
 
   async getBehaviorForms() {
@@ -1083,7 +1148,7 @@ export class DashboardService {
       curriculumFormsList.forEach((form) => {
         const formResult = {};
         formResult['formId'] = form.id;
-        formResult['curriculum'] = curriculum.name;
+        formResult['curriculum'] = curriculum;
         formResult['title'] = form.title;
         formResult['src'] = form.src;
         if (studentsResponses[student.id]) {
@@ -1248,109 +1313,6 @@ export class DashboardService {
     return list
     // await this.populateFeedback(curriculumId);
   }
-  
-  // async addBehaviorRecords(studentResult, studentId) {
-  //   const formsList = [
-  //     {
-  //       formId: 'form-internal-behaviour',
-  //       curriculum: 'form-internal-behaviour',
-  //       title: 'Comportamientos internalizantes',
-  //       src: './assets/form-internal-behaviour/form.html'
-  //     },
-  //     // {
-  //     //   formId: 'form-external-behaviour',
-  //     //   curriculum: 'form-external-behaviour',
-  //     //   title: 'Comportamientos externalizantes',
-  //     //   src: './assets/form-external-behaviour/form.html'
-  //     // }
-  //   ]
-  //   formsList.forEach((form) => {
-  //     const formResult = {};
-  //     formResult['formId'] = form.formId;
-  //     formResult['curriculum'] = form.curriculum;
-  //     formResult['title'] = form.title;
-  //     formResult['src'] = form.src;
-  //     studentResult['forms'][form.formId] = formResult;
-  //   })
-  //
-  //   const responses = await this.classFormService.getResponsesByStudentId(studentId);
-  //   for (const response of responses as any[]) {
-  //     // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
-  //     const respFormId = response.doc.form.id;
-  //     // if (respClassId === this.classId && respCurrId === this.curriculum) {
-  //     //   this.formResponse = response.doc;
-  //     // }
-  //     // studentResult['forms'][respFormId] = response.doc;
-  //     if (studentResult['forms'][respFormId]) {
-  //       studentResult['forms'][respFormId]['response'] = response.doc;
-  //     }
-  //
-  //     const responseDoc = response.doc
-  //     switch (respFormId) {
-  //       case 'form-internal-behaviour':
-  //         const usingScorefield = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
-  //         const intScore = usingScorefield.value
-  //         studentResult['behavior']['internal'] = intScore
-  //         studentResult['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
-  //       //   break
-  //       // case 'form-external-behaviour':
-  //       //   const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
-  //       //   const extScore = usingScorefield2.value
-  //       //   studentResult['behavior']['external'] = extScore
-  //       //   studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
-  //       //   break
-  //     }
-  //   }
-  // }
-
-  async initDashboard(classIndex: number, currentClassId: string, curriculumId: string, resetVars: boolean, enabledClasses) {
-    if (typeof enabledClasses === 'undefined') {
-      enabledClasses = await this.getEnabledClasses();
-    }
-    this.enabledClasses = enabledClasses
-    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
-      let currentClass, currentItemId = '';
-      if (resetVars) {
-        await this.variableService.set('class-classIndex', classIndex.toString());
-        await this.variableService.set('class-currentClassId', currentClassId);
-        await this.variableService.set('class-curriculumId', curriculumId);
-      }
-      this.currentClassIndex = 0;
-      const __vars = await this.initExposeVariables(classIndex, curriculumId);
-      classIndex = __vars.classIndex;
-      currentItemId = __vars.currentItemId;
-      currentClassId = __vars.currentClassId;
-      curriculumId = __vars.curriculumId;
-      currentClass = __vars.currentClass;
-
-      if (currentClassId && currentClassId !== '') {
-        this.currentClassId = currentClassId;
-      } else {
-        this.currentClassId = currentClass.id;
-        await this.variableService.set('class-currentClassId', this.currentClassId);
-      }
-      if (currentItemId && currentItemId !== '') {
-        this.currentItemId = currentItemId;
-      } else {
-        this.currentItemId = null;
-      }
-      const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
-      const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-
-      this.formList = await this.populateFormsMetadata(curriculumId, curriculumFormsList, currentClass);
-
-      if (!currentItemId || currentItemId === '') {
-        const initialForm = curriculumFormsList[0];
-        this.currentItemId = initialForm.id;
-      }
-      window['T'].classDashboard.selectedClass = this.selectedClass
-      window["T"].classDashboard.formList = this.formList
-      window["T"].classDashboard.enabledClasses = this.enabledClasses
-      
-      const allStudentResults = await this.selectSubTask(this.currentItemId, this.currentClassId, curriculumId, curriculumFormsList);
-      return allStudentResults
-    }
-  }
 
   async initExposeVariables(classIndex: number, curriculumId: string) {
     let currentItemId: string
@@ -1378,7 +1340,7 @@ export class DashboardService {
       currentClass = this.enabledClasses[this.currentClassIndex].doc
     }
     
-    this.currArray = await this.populateCurrentCurriculums(currentClass);
+    // this.currArray = await this.populateCurrentCurriculums(currentClass);
     if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
       const curriculum = this.currArray[0];
       curriculumId = curriculum.name;
@@ -1476,14 +1438,6 @@ export class DashboardService {
     });
     return allStudentResults;
   }
-
-  // Triggered by dropdown selection in UI.
-  async populateCurriculum (classIndex, curriculumId) {
-    const currentClass = this.enabledClasses[classIndex];
-    const currentClassId = currentClass.id;
-    this.allStudentResults = await this.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
-  }
-
 
   async setCurrentClass() {
     await this.variableService.set('class-classIndex', null);
