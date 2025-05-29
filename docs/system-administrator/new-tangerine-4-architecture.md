@@ -102,9 +102,9 @@ Since that command was run with an "&" at the end - instructing the shell to run
 ✔ Index html generation complete.
 ```
 
-This will show if the compilation is successful.
+This will show if the compilation is successful. Press the return key to return to the command line.
 
-## The first time you run this, you'll get an error and will need to install the node_modules
+## The first time you run this, you might get an error (probably not) and may need to install the node_modules manually
 cd /tangerine/tangy-form
 npm install
 ## End first time setup
@@ -120,7 +120,7 @@ cp -r pwa-tools/updater-app/build/default builds/pwa && \
 cp -r dev builds/pwa/release-uuid/app
 ```
 
-Whenever you make changes, run that copy script to update the builds dir when you generate an apk or pwa.
+Whenever you make changes, run that copy script to update the builds dir before you generate an apk or pwa.
 
 ## Modifying the tangy-form lib
 
