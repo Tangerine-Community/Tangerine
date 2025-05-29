@@ -54,24 +54,14 @@ export class DeviceService {
   }
 
   async initialize() {
-    let curriculum, grades, school;
+    let grade, curriculum, grades, school;
     const appConfig = await this.appConfigService.getAppConfig()
+    const homeUrl = appConfig.homeUrl;
     const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
     const buildChannel = window.location.hostname !== 'localhost' ? await this.getBuildChannel() : 'localhost'
     const device = await this.getDevice()
-    const grade = device.assignedLocation['grade'];
     const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
-
-    if (grade) {
-      const location = flatLocationList.locations.find(node => node.id === grade)
-      if (location) {
-        curriculum = location.forms;
-      }
-      const parentId = location.parent;
-      school = flatLocationList.locations.find(node => node.id === parentId)
-      grades = flatLocationList.locations.filter(node => node.parent === parentId)
-    }
 
     const encryptionLevel = (window['isCordovaApp'] && window['sqlCipherRunning'])
       ? _TRANSLATE('in-app')
@@ -87,6 +77,24 @@ export class DeviceService {
         ? device.assignedLocation.value.map(value => ` ${value.level}: Restored-${value.value}`).join(', ')
         : 'N/A'
     }
+
+    if (assignedLocation != 'N/A') {
+      console.log("homeUrl: ", homeUrl)
+      const gradeLevel = device.assignedLocation.value.find(loc => loc.level === 'grade');
+      if (gradeLevel) {
+        grade = gradeLevel.value;
+      }
+    }
+    if (grade) {
+      const location = flatLocationList.locations.find(node => node.id === grade)
+      if (location) {
+        curriculum = location.forms;
+      }
+      const parentId = location.parent;
+      school = flatLocationList.locations.find(node => node.id === parentId)
+      grades = flatLocationList.locations.filter(node => node.parent === parentId)
+    }
+
     const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
     const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
     this.appInfo = <AppInfo>{
