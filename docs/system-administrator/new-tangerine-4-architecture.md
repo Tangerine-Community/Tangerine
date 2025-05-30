@@ -122,6 +122,8 @@ cp -r dev builds/pwa/release-uuid/app
 
 Whenever you make changes, run that copy script to update the builds dir before you generate an apk or pwa.
 
+Note: Sometimes you have to re-run the `ng build --watch` command because it dies or gets killed.
+
 ## Modifying the tangy-form lib
 
 If you made updates to the tangy-form lib, docker exec into the apk-generator container: 
