@@ -78,23 +78,23 @@ export class DeviceService {
         : 'N/A'
     }
 
-    if (assignedLocation != 'N/A') {
-      console.log("homeUrl: ", homeUrl)
+    if (homeUrl == 'dashboard' && assignedLocation != 'N/A') {
+      console.log("populating grade, grades, and curriculum for homeUrl: ", homeUrl)
       const gradeLevel = device.assignedLocation.value.find(loc => loc.level === 'grade');
       if (gradeLevel) {
         grade = gradeLevel.value;
       }
-    }
-    if (grade) {
-      const location = flatLocationList.locations.find(node => node.id === grade)
-      if (location) {
-        curriculum = location.forms;
+      if (grade) {
+        const location = flatLocationList.locations.find(node => node.id === grade)
+        if (location) {
+          curriculum = location.forms;
+        }
+        const parentId = location.parent;
+        school = flatLocationList.locations.find(node => node.id === parentId)
+        grades = flatLocationList.locations.filter(node => node.parent === parentId)
       }
-      const parentId = location.parent;
-      school = flatLocationList.locations.find(node => node.id === parentId)
-      grades = flatLocationList.locations.filter(node => node.parent === parentId)
     }
-
+    
     const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
     const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
     this.appInfo = <AppInfo>{
