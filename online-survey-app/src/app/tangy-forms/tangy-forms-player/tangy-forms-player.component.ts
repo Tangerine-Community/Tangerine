@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsService } from 'src/app/shared/_services/forms-service.service';
 import { CaseService } from 'src/app/case/services/case.service';
 import { TangyFormService } from '../tangy-form.service';
-
+import { XapiService } from 'src/app/case/services/xapi.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -34,7 +34,8 @@ export class TangyFormsPlayerComponent implements OnInit {
   
   constructor(
     private route: ActivatedRoute, 
-    private formsService: FormsService, 
+    private formsService: FormsService,
+    private xapiService: XapiService,
     private router: Router, 
     private httpClient:HttpClient,
     private caseService: CaseService,
@@ -48,6 +49,35 @@ export class TangyFormsPlayerComponent implements OnInit {
         this.eventFormId = this.route.snapshot.paramMap.get('form');
     });
   }
+
+  async send() {
+    const statement = {
+      actor: {
+        objectType: 'Agent',
+        name: 'John Doe',
+        mbox: 'mailto:john.doe@example.com'
+      },
+      verb: {
+        id: 'http://adlnet.gov/expapi/verbs/completed',
+        display: { 'en-US': 'completed' }
+      },
+      object: {
+        id: 'http://example.com/angular-xapi-course',
+        objectType: 'Activity',
+        definition: {
+          name: { 'en-US': 'Angular xAPI Course' },
+          description: { 'en-US': 'Learning xAPI in Angular' }
+        }
+      }
+    };
+    await this.xapiService.sendStatement(statement);
+  }
+
+  //  async send(formData?: any) {
+  //   console.log('send called', formData, this.response, this.templateId, this.caseId, this.caseEventId);
+  //   const statement = this.xapiService.buildXapiStatementFromForm(formData, this.response, this.templateId, this.caseId, this.caseEventId);
+  //   await this.xapiService.sendStatement(statement);
+  // }
 
   async ngOnInit(): Promise<any> {
     this.window = window;
@@ -117,7 +147,7 @@ export class TangyFormsPlayerComponent implements OnInit {
 
       tangyForm.addEventListener('after-submit', async (event) => {
         event.preventDefault();
-
+        await this.send();
         let response = event.target.store.getState()
         await this.saveResponse(response)
         if (this.caseService && this.caseService.caseEvent && this.caseService.eventForm) {
