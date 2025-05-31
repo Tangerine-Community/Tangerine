@@ -20,13 +20,15 @@ const params = {
   groupConfigurationDoc: process.argv[3]
 }
 
-function getData(dbName, formId, skip, batchSize, year, month) {
+function getData(dbName, formId, skip, batchSize, fromYear, fromMonth, toYear, toMonth) {
   console.log("Getting data in batch.js. dbName: " + dbName + " formId: " + formId)
   const limit = batchSize
   return new Promise((resolve, reject) => {
     try {
-      const key = (year && month) ? `${formId}_${year}_${month}` : formId
-      const target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      const startKey = (fromYear && fromMonth) ? `${formId}_${fromYear}_${fromMonth}` : formId
+      const endKey = (toYear && toMonth) ? `${formId}_${toYear}_${toMonth}` : formId
+      const target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?startkey="${startKey}"&endkey="${endKey}"&include_docs=true&skip=${skip}&limit=${limit}`
+      process.stderr.write(target)
       axios.get(target)
         .then(response => {
           resolve(response.data.rows.map(row => row.doc))
@@ -88,7 +90,7 @@ function handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters) 
 
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
-  const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
+  const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.fromYear, state.fromMonth, state.toYear, state.toMonth)
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
   if (docs.length === 0) {

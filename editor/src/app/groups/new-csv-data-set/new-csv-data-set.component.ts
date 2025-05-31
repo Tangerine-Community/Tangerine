@@ -27,8 +27,10 @@ export class NewCsvDataSetComponent implements OnInit {
   months = []
   years = []
   description
-  selectedMonth = '*'
-  selectedYear = '*'
+  fromYear = '*'
+  fromMonth = '*'
+  toYear = '*'
+  toMonth = '*'
   selectedForms = []
   allFormsSelected = false
   groupId = ''
@@ -110,12 +112,16 @@ export class NewCsvDataSetComponent implements OnInit {
     const forms = this.selectedForms
       .map(formId => this.templateSelections[formId] ? `${formId}:${this.templateSelections[formId]}` : formId)
       .toString()
-    if ((this.selectedMonth === '*' && this.selectedYear !== '*') || (this.selectedMonth !== '*' && this.selectedYear === '*')) {
-      alert('You must choose a month and a year.')
+    if ((this.fromMonth === '*' && this.fromYear !== '*') || (this.fromMonth !== '*' && this.fromYear === '*')) {
+      alert('You must choose a start month and year.')
+      return
+    }
+    if ((this.toMonth === '*' && this.toMonth !== '*') || (this.toMonth !== '*' && this.toMonth === '*')) {
+      alert('You must choose an end month and year.')
       return
     }
     try {
-      const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.selectedYear, this.selectedMonth, this.description, this.excludePII);
+      const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.fromYear, this.fromMonth, this.toYear, this. toMonth, this.description, this.excludePII);
       this.stateUrl = result.stateUrl;
       this.router.navigate(['../', result.id], { relativeTo: this.route })
     } catch (error) {
@@ -138,6 +144,15 @@ export class NewCsvDataSetComponent implements OnInit {
     } else{
       this.selectedForms = []
     }
+  }
+
+  canSubmit(){
+    return (
+      this.selectedForms.length < 1 ||
+      this.toYear < this.fromYear ||
+      (this.fromYear === "*" && this.toYear !== "*")||
+      (`${this.fromYear}:${this.fromMonth}` > `${this.toYear}:${this.toMonth}`)
+    );
   }
 
 }
