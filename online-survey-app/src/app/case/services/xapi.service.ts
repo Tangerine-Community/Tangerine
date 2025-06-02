@@ -75,20 +75,27 @@ export class XapiService {
     }
   };
 
-  async syncStoredStatements() {
-    const statements = await this.dbService.getAllStatements();
+  async syncStoredStatements(): Promise<void> {
+    const storedStatements = await this.dbService.getAllStatements();
     const headers = this.getHeaders();
-    for (const statement of statements) {
+    const successfullySyncedIds: number[] = [];
+
+    for (const record of storedStatements) {
       try {
-        await this.http.post(this.lrsEndpoint, statement, { headers }).toPromise();
+        await this.http.post(this.lrsEndpoint, record.data, { headers }).toPromise();
+        successfullySyncedIds.push(record.id);
       } catch (err) {
         console.error('Failed to sync a statement', err);
-        return;
+        break;
       }
     }
 
-    await this.dbService.clearStatements();
-    console.log('All offline xAPI statements synced');
+    if (successfullySyncedIds.length > 0) {
+      await this.dbService.deleteStatementsByIds(successfullySyncedIds);
+      console.log(`${successfullySyncedIds.length} statements synced and removed from IndexedDB.`);
+    } else {
+      console.log('No statements were synced.');
+    }
   }
 
   getStatementsByActor(actor: { name?: string; mbox: string }) {
