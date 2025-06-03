@@ -118,6 +118,16 @@ echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 echo "RELEASE APK: adding Android platform"
 cordova platform add $CORDOVA_ANDROID_DIRECTORY --no-telemetry
 
+PACKAGE_PATH=$(echo $PACKAGE | sed 's/\./\//g')
+
+# Copy custom MainActivity.java
+echo "RELEASE APK: Copying custom MainActivity.java"
+cp /tangerine/client/android-tools/custom/MainActivity.java $RELEASE_DIRECTORY/platforms/android/app/src/main/java/$PACKAGE_PATH/MainActivity.java
+
+# Copy custom AndroidManifest.xml
+echo "RELEASE APK: Copying custom AndroidManifest.xml"
+cp /tangerine/client/android-tools/custom/AndroidManifest.xml $RELEASE_DIRECTORY/platforms/android/app/src/main/AndroidManifest.xml
+
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android
 
