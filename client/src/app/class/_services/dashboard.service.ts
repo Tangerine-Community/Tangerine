@@ -105,20 +105,21 @@ export class DashboardService {
       }
     }
     /**
-     * assignedLocation is hierarchical based on the order in the showLevels property: 
+     * syncLocation is hierarchical based on the order in the showLevels property: 
      * region is the highest level, then district, then school, (and in this example) then grade. 
      * So, in this case, the lowest level is grade. In some instances, it is school. 
      * If the last level is school, then we are showing all grades.
      */
-    const assignedLocation:LocationConfig= this.deviceInfo.assignedLocation;
-    const showLevels = assignedLocation.showLevels;
+    const syncLocation:LocationConfig = this.deviceInfo.syncLocation;
+    // const assignedLocation:LocationConfig= this.deviceInfo.assignedLocation;
+    const showLevels = syncLocation.showLevels;
     
-    if (assignedLocation && Array.isArray(showLevels) && showLevels[showLevels.length - 1] === 'school') {
+    if (syncLocation && Array.isArray(showLevels) && showLevels[showLevels.length - 1] === 'school') {
       showAllGrades = true;
     } else {
       // If the last level is not 'school', then we are not showing all grades.
       showAllGrades = false;
-      locationNode = assignedLocation.value.find(node => node.level === 'grade');
+      locationNode = syncLocation.value.find(node => node.level === 'grade');
     }
 
     const enabledClasses = []
