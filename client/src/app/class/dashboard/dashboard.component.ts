@@ -36,6 +36,7 @@ export class DashboardComponent implements OnInit {
   currentClassId; currentClassIndex;
   currentItemId; curriculumId;
   selectedClass; selectedCurriculum;
+  curriculumInputValues: any[]; // array of curriculum input values
 
   curriculumFormsList;  // list of all curriculum forms
   curriculumForms;  // a subset of curriculumFormsList
@@ -90,7 +91,6 @@ export class DashboardComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     let classIndex
     (<any>window).Tangy = {};
-    // this.classes = await this.getMyClasses();
     this.getValue = this.dashboardService.getValue
     // Subscribe to the enabledClasses$ observable before you init it.
     this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe(async (enabledClasses) => {
@@ -117,33 +117,19 @@ export class DashboardComponent implements OnInit {
         }
         curriculumId = __vars.curriculumId;
         this.selectedClass = currentClass;
-        // const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-        // this.currArray = currArray
-        
-        // const currArray = [];
-        // if (curriculumArray) {
-        //   for (const formId of curriculumArray) {
-        //     const form = {}
-        //     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId);
-        //     if (formInfo) {
-        //       form['label'] = formInfo.title;
-        //       form['labelSafe'] = sanitize(formInfo.title.replace(/\s+/g, ''));
-        //       form['name'] = formId;
-        //       form['value'] = 'on';
-        //       currArray.push(form);
-        //     }
-        //   };
-        // this.currArray = currArray
-        // }
         // When app is initialized, there is no curriculumId, so we need to set it to the first one.
         if (!curriculumId && this.currArray?.length > 0) {
           curriculumId = this.currArray[0].name
         }
         // const curriculum = this.currArray.find(x => x.name === curriculumId);
-        const curriculum = this.currArray.find(formId => formId === curriculumId);
+
+        const curriculumInputValues = currentClass.items[0].inputs.filter(input => input.name === 'curriculum')[0].value;
+        this.curriculumInputValues = curriculumInputValues;
+        const curriculum = curriculumInputValues.find(form => form.name === curriculumId);
         this.curriculum = curriculum;
-        const currentClassId = currentClass.id;
+        const currentClassId = currentClass._id;
         this.classTitle = this.getClassTitle(currentClass)
+        // classResponse.items[0].inputs.find(input => input.name === 'grade')
         await this.initDashboard(classIndex, currentClassId, curriculumId, true);
       })
     }
@@ -290,7 +276,7 @@ export class DashboardComponent implements OnInit {
       this.formList.push(formEl);
     }
 
-    this.selectedCurriculum = this.currArray.find(x => x.name === curriculumId);
+    this.selectedCurriculum = this.curriculumInputValues.find(x => x.name === curriculumId);
     // this.selectedClass = this.enabledClasses[this.currentClassIndex];
     this.selectedClass = this.dashboardService.getSelectedClass(this.enabledClasses, this.currentClassIndex);
   }
@@ -479,16 +465,6 @@ export class DashboardComponent implements OnInit {
       console.error(error);
     }
   }
-
-  // async getMyClasses() {
-  //   try {
-  //     const classes = await this.dashboardService.getMyClasses();
-  //     // console.log("this.classes:" + JSON.stringify(this.classes))
-  //     return classes;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
 
   async getMyStudents(selectedClass: any) {
     try {

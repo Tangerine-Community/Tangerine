@@ -4,51 +4,43 @@
     </button>
   <mat-menu #classesMenu="matMenu">
     <ng-template [ngIf]="enabledClasses.length > 0">
-        <button mat-menu-item disabled class="menu-section-header">
+        <button mat-menu-item disabled class="menu-section-header" *ngIf="enabledClasses.length > 1">
           {{'Change Class'|translate}}
         </button>
-      <span *ngFor="let klass of enabledClasses; let classIndex=index"
-          class="class-dashboard-curr-button-spacer">
-      <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="!klass.ignoreCurriculumsForTracking; else noCurriculums">
-<!--    <button mat-menu-item [routerLink]="['/attendance-dashboard/']"-->
-<!--            [queryParams]={classIndex:classIndex}>-->
-        {{getClassTitle(klass.doc)}}
-      </button>
-      <mat-menu #curriculumMenu="matMenu">
-        <ng-container *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">
-          <button mat-menu-item *ngIf="curriculum.value ==='on' && useAttendanceFeature && !linkToDashboardUrl"
-                  [routerLink]="['/attendance-dashboard/']"
-                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-            {{curriculum?.label}}
-            </button>
-          <button mat-menu-item *ngIf="curriculum.value ==='on' && linkToDashboardUrl"
-                  [routerLink]="['/dashboard/']"
-                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-            {{curriculum?.label}}
-            </button>
-        </ng-container>
-      </mat-menu>
-      <ng-template #noCurriculums>
-        <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="linkToDashboardUrl; else attendanceOnly">
-          {{getClassTitle(klass.doc)}}
-      </button>
-      </ng-template>
-      <ng-template #attendanceOnly>
-        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
-                *ngIf="useAttendanceFeature"
-                [queryParams]={classIndex:classIndex}>
-            {{getClassTitle(klass.doc)}}
+      <span *ngFor="let grade of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
+        <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="!grade.ignoreCurriculumsForTracking; else noCurriculums">
+          {{getClassTitle(grade.doc)}}
         </button>
-      </ng-template>
+        <mat-menu #curriculumMenu="matMenu">
+          <ng-container *ngFor="let curriculum of curriculumInputValues;">
+            <button mat-menu-item *ngIf="curriculum.value ==='on' && useAttendanceFeature && !linkToDashboardUrl"
+                    [routerLink]="['/attendance-dashboard/']"
+                    [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
+              {{curriculum?.label}}
+              </button>
+            <button mat-menu-item *ngIf="curriculum.value ==='on' && linkToDashboardUrl"
+                    [routerLink]="['/dashboard/']"
+                    [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
+              {{curriculum?.label}}
+              </button>
+          </ng-container>
+        </mat-menu>
+        <ng-template #noCurriculums>
+          <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="linkToDashboardUrl; else attendanceOnly">
+            {{getClassTitle(grade.doc)}}
+        </button>
+        </ng-template>
+        <ng-template #attendanceOnly>
+          <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
+                  *ngIf="useAttendanceFeature"
+                  [queryParams]={classIndex:classIndex}>
+              {{getClassTitle(grade.doc)}}
+          </button>
+        </ng-template>
       </span>
     </ng-template>
 
         <mat-divider></mat-divider>
-        <button mat-menu-item
-                [routerLink]="['/class-form/']"
-                [queryParams]='classRegistrationParams'>
-          {{'Add Class'|translate}}
-        </button>
         <button mat-menu-item
                 [routerLink]="['/class-form/']"
                 [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}

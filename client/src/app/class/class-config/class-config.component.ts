@@ -24,7 +24,7 @@ export class ClassConfigComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     (<any>window).Tangy = {};
     await this.classFormService.initialize();
-    this.classes = await this.dashboardService.getMyClasses();
+    this.classes = await this.dashboardService.getSchoolGrades();
     console.log("Got classes")
   }
 

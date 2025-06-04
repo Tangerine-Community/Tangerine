@@ -1,15 +1,4 @@
 <div #container></div>
-<div class="class-config-content" *ngIf="showClassConfig">
-  <h1>{{'Class Configuration'|translate}}</h1>
-  <p>{{"Toggle a class 'off' to archive. The toggle will be white when 'off'. Click a class 'on' to enable.  The toggle will be orange when 'on'."|translate}}</p>
-  <span *ngFor="let class of classes; let classIndex=index">
-    <p>
-      <mat-slide-toggle [checked]="!class.doc.archive"
-                        (click)="toggleClass(class.id)">{{'Class'|translate}}
-        : {{getClassTitle(class.doc)}}</mat-slide-toggle>
-    </p>
-  </span>
-</div>
 <div #container>
   <paper-card heading="Device Info" class="info" *ngIf="ready">
     <div class="card-content">

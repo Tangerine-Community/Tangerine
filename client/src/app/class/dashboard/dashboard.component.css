@@ -109,6 +109,7 @@ input[type=checkbox]:not(:checked) {
 .selectedClassLabel {
   font-size: larger;
   font-weight: bold;
+  padding-top: 1rem;
   padding-bottom: 5px;
   padding-left: 5px;
   padding-right: 5px;
