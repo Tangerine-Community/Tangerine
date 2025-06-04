@@ -21,10 +21,12 @@ export interface AppInfo {
   tangerineVersion:string
   buildId:string
   assignedLocation:LocationConfig
+  syncLocation:LocationConfig
   versionTag:string
   curriculum: string[];
   grades:[];
   school: any;
+
 }
 
 @Injectable({
@@ -54,7 +56,7 @@ export class DeviceService {
   }
 
   async initialize() {
-    let grade, curriculum, grades, school, assignedLocationString;
+    let grade, curriculum, grades, school, assignedLocationString, syncLocation:LocationConfig;
     const appConfig = await this.appConfigService.getAppConfig()
     const homeUrl = appConfig.homeUrl;
     const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
@@ -94,6 +96,7 @@ export class DeviceService {
         school = flatLocationList.locations.find(node => node.id === parentId)
         grades = flatLocationList.locations.filter(node => node.parent === parentId)
       }
+      syncLocation = device.syncLocations[0] || device.assignedLocation;
     }
     
     const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
@@ -111,7 +114,8 @@ export class DeviceService {
       versionTag,
       curriculum,
       grades,
-      school
+      school,
+      syncLocation
     }
   }
 
