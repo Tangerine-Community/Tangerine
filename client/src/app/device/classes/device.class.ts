@@ -19,4 +19,5 @@ export interface LocationConfig {
 export interface LocationSelection {
   level:string
   value:string
+  label:string
 }

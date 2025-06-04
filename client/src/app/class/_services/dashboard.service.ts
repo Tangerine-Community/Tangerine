@@ -14,9 +14,9 @@ import {VariableService} from "../../shared/_services/variable.service";
 import {DateTime} from "luxon";
 import {sanitize} from "sanitize-filename-ts";
 import {Subject} from "rxjs";
-import {ClassFormService} from "./class-form.service";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import { AppInfo, DeviceService } from 'src/app/device/services/device.service';
+import { LocationConfig, LocationSelection } from 'src/app/device/classes/device.class';
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -51,7 +51,6 @@ export class DashboardService {
   allStudentResults: StudentResult[];
   curriculumFormsList: TangyFormResponse[]
 
-  // public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses());
   public readonly enabledClasses$: Subject<any> = new Subject();
   public readonly selectedClass$: Subject<any> = new Subject();
   public readonly selectedCurriculumId$: Subject<any> = new Subject();
@@ -62,9 +61,10 @@ export class DashboardService {
     // this.formList = await this.getFormList();
     this.deviceInfo = await this.deviceService.getAppInfo()
     this.currArray = await this.getCurrArray();
-    this.enabledClasses = await this.getEnabledClasses();
+    this.enabledClasses = await this.getSchoolGrades()
     this.enabledClasses$.next(this.enabledClasses);
-    this.selectedClass$.next(this.selectedClass);
+    // this.selectedClass = this.getSelectedClass(this.enabledClasses, this.currentClassIndex);
+    // this.selectedClass$.next(this.selectedClass);
     this.currArray$.next(this.currArray);
   }
 
@@ -84,65 +84,89 @@ export class DashboardService {
   }
 
   /**
-   * Manually construct enabled classes from locations
-   * Queries the view tangy-class/responsesByClassIdCurriculumId to get the list of curricula for the selected class.
-   * @returns 
+   * Manually construct a list of school grades from locations
+   * @returns a list of school grades, in the form of a formResponse doc.
    */
-  async getMyClasses() {    
+  async getSchoolGrades() {    
+    let showAllGrades = false, locationNode:LocationSelection
     const curriculumValueProperty = []
     if (this.currArray) {
       for (const formId of this.currArray) {
+        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+        const label = formInfo.title
+        const labelSafe = sanitize(formInfo.title.replace(/\s+/g, ''))
         const item = {
           "name": formId,
-          "value": "on"
+          "value": "on",
+          "label": formInfo.title,
+          "labelSafe": labelSafe
         }
         curriculumValueProperty.push(item)
       }
     }
+    /**
+     * assignedLocation is hierarchical based on the order in the showLevels property: 
+     * region is the highest level, then district, then school, (and in this example) then grade. 
+     * So, in this case, the lowest level is grade. In some instances, it is school. 
+     * If the last level is school, then we are showing all grades.
+     */
+    const assignedLocation:LocationConfig= this.deviceInfo.assignedLocation;
+    const showLevels = assignedLocation.showLevels;
+    
+    if (assignedLocation && Array.isArray(showLevels) && showLevels[showLevels.length - 1] === 'school') {
+      showAllGrades = true;
+    } else {
+      // If the last level is not 'school', then we are not showing all grades.
+      showAllGrades = false;
+      locationNode = assignedLocation.value.find(node => node.level === 'grade');
+    }
+
     const enabledClasses = []
     const grades = this.deviceInfo.grades;
     const school = this.deviceInfo.school;
     grades.forEach((grade, index) => {
-      const formResponse = {
-        id: school.id,
-        key: "class-registration",
-        doc: {
-          _id: school.id,
-          items: [
-            {
-              inputs: [
-                {
-                  "name": "school_name",
-                  "label": school.label,
-                  "value": "School Foo"
-                },
-                {
-                  "name": "school_year",
-                  "label": "School year",
-                  "value": "2025"
-                },
-                {
-                  "name": "grade",
-                  "label": grade['label'],
-                  "value": grade['label']
-                },
-                {
-                  "name": "curriculum",
-                  "value": curriculumValueProperty,
-                  "label": "Curriculum"
-                }
-              ]
-            }
-          ]
+      if (showAllGrades || !showAllGrades && grade['id'] == locationNode?.value) {
+        const formResponse = {
+          id: school.id,
+          key: "class-registration",
+          doc: {
+            _id: school.id,
+            items: [
+              {
+                inputs: [
+                  {
+                    "name": "school_name",
+                    "label": school.label,
+                    "value": "School Foo"
+                  },
+                  {
+                    "name": "school_year",
+                    "label": "School year",
+                    "value": "2025"
+                  },
+                  {
+                    "name": "grade",
+                    "label": grade['label'],
+                    "value": grade['label']
+                  },
+                  {
+                    "name": "curriculum",
+                    "value": curriculumValueProperty,
+                    "label": "Curriculum"
+                  }
+                ]
+              }
+            ]
+          }
         }
+        enabledClasses.push(formResponse)
       }
-      enabledClasses.push(formResponse)
     })
     return enabledClasses;
   }
 
   async getEnabledClasses() {
-    const classes = await this.getMyClasses();
+    const classes = await this.getSchoolGrades();
     return classes;
   }
 
@@ -1096,7 +1120,12 @@ export class DashboardService {
     return studentReportsCards
   }
 
-
+  /**
+   * Populates an array of inputs that are marked active using tangyFormsInfoService
+   * to populate the label and labelSafe properties.
+   * @param currentClass 
+   * @returns 
+   */
   async populateCurrentCurriculums(currentClass) {
     let inputs = [], fullCurrArray
     currentClass.items.forEach(item => inputs = [...inputs, ...item.inputs]);
@@ -1444,7 +1473,7 @@ export class DashboardService {
     await this.variableService.set('class-currentClassId', null);
     await this.variableService.set('class-curriculumId', null);
     await this.variableService.set('class-currentItemId', null);
-    const classes = await this.getMyClasses();
+    const classes = await this.getSchoolGrades();
     const enabledClasses = classes.map(klass => {
       if (!klass.doc.archive) {
         return klass
