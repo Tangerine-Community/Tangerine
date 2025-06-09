@@ -20,7 +20,7 @@ export class XapiService {
   }
 
   buildXapiStatementFromForm(
-  formData: Record<string, any>,
+  result: Record<string, any>,
   user: { name: string; email: string },
   activityId: string,
   activityName: string,
@@ -46,12 +46,10 @@ export class XapiService {
         description: { 'en-US': activityDesc }
       }
     },
-    result: {
-      response: JSON.stringify(formData)
-    },
+    result: {...result},
     context: {
       extensions: {
-        [extensionsUrl]: formData
+        [extensionsUrl]: result.formData
       }
     },
     timestamp: new Date().toISOString()
