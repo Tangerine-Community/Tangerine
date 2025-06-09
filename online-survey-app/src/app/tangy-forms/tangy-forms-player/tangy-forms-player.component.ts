@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, Input, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsService } from 'src/app/shared/_services/forms-service.service';
 import { CaseService } from 'src/app/case/services/case.service';
@@ -28,6 +28,9 @@ export class TangyFormsPlayerComponent implements OnInit {
   caseEventId: string;
   eventFormId: string;
   window: any;
+  startTime!: Date;
+  formSubmitted: boolean = false;
+   
 
   throttledSaveLoaded
   throttledSaveFiring
@@ -50,36 +53,71 @@ export class TangyFormsPlayerComponent implements OnInit {
     });
   }
 
-  async send() {
-    const statement = {
-      actor: {
-        objectType: 'Agent',
-        name: 'John Doe',
-        mbox: 'mailto:john.doe@example.com'
-      },
-      verb: {
-        id: 'http://adlnet.gov/expapi/verbs/completed',
-        display: { 'en-US': 'completed' }
-      },
-      object: {
-        id: 'http://example.com/angular-xapi-course',
-        objectType: 'Activity',
-        definition: {
-          name: { 'en-US': 'Angular xAPI Course' },
-          description: { 'en-US': 'Learning xAPI in Angular' }
-        }
-      }
-    };
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    if (!this.formSubmitted && this.startTime) {
+      const endTime = new Date();
+      const duration = this.msToISO8601Duration(endTime.getTime() - this.startTime.getTime());
+      const statement = {
+        actor: {
+          name: "John Doe",
+          mbox: "mailto:john.doe@example.com",
+          objectType: "Agent"
+        },
+        verb: {
+          id: "http://adlnet.gov/expapi/verbs/attempted",
+          display: { "en-US": "attempted" }
+        },
+        object: {
+          id: `http://example.com/forms/${this.formId}`,
+          objectType: "Activity",
+          definition: {
+            name: { "en-US": "Angular xAPI Form" },
+            description: { "en-US": "Form was started but not submitted" }
+          }
+        },
+        result: {
+          completion: false,
+          success: false,
+          duration: duration
+        },
+        timestamp: endTime.toISOString()
+      };
+
+      this.xapiService.sendStatement(statement).then(() => {
+        console.log('xAPI statement sent successfully');
+      }).catch((error) => {
+        console.error('Error sending xAPI statement:', error);
+      });
+    }
+  }
+
+
+  msToISO8601Duration(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `PT${hours > 0 ? hours + 'H' : ''}${minutes > 0 ? minutes + 'M' : ''}${seconds > 0 ? seconds + 'S' : ''}`;
+  }
+
+  async send(response:any) {
+    const endTime = new Date(); // Form submitted
+    const duration = this.msToISO8601Duration(endTime.getTime() - this.startTime.getTime());
+    const result = {
+      response: JSON.stringify(response),
+      duration: duration,
+      completion: this.formSubmitted
+    }
+    const statement = this.xapiService.buildXapiStatementFromForm(result, {name: "John Doe", email:"john.doe@example.com"}, response.formId,
+  'Angular xAPI Course',
+  'Learning xAPI in Angular');
     await this.xapiService.sendStatement(statement);
   }
 
-  //  async send(formData?: any) {
-  //   console.log('send called', formData, this.response, this.templateId, this.caseId, this.caseEventId);
-  //   const statement = this.xapiService.buildXapiStatementFromForm(formData, this.response, this.templateId, this.caseId, this.caseEventId);
-  //   await this.xapiService.sendStatement(statement);
-  // }
-
   async ngOnInit(): Promise<any> {
+    this.startTime = new Date();
+    this.formSubmitted = false;  
     this.window = window;
 
     // Loading the formResponse from a case must happen before rendering the innerHTML
@@ -147,8 +185,23 @@ export class TangyFormsPlayerComponent implements OnInit {
 
       tangyForm.addEventListener('after-submit', async (event) => {
         event.preventDefault();
-        await this.send();
         let response = event.target.store.getState()
+        const res:any = {};
+        this.formSubmitted = true;
+        res.formId = response._id;
+        res.collection = response.collection;
+        res.items = response.items.map((item) => {
+          return {
+            inputs: item.inputs.map((input) => {
+              return {
+                name: input.name,
+                label: input.label,
+                value: input.value
+              }
+            })
+          }
+        });
+        await this.send(res);
         await this.saveResponse(response)
         if (this.caseService && this.caseService.caseEvent && this.caseService.eventForm) {
           this.caseService.markEventFormComplete(this.caseService.caseEvent.id, this.caseService.eventForm.id)
