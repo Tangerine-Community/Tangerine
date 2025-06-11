@@ -1,0 +1,25 @@
+
+{
+  "name": {
+    "en-US": "Tangerine",
+    "hi-IN": "टेंजेरीन"
+  },
+  
+  "description": {
+    "en-US": "Tangerine® is revolutionizing the landscape of education assessment, data collection, and teacher coaching in low-income countries. Tangerine is open-source software that can be used offline to help with skills measurement, continuous and summative assessments, classroom observations, and surveys. ",
+    "hi-IN": ""
+  },
+  "license": "GPL-3.0",
+  "website": "https://www.tangerinecentral.org/",
+  "icon": "https://raw.githubusercontent.com/chimple/Tangerine/main/docs/logo.png",
+  "learningUnits": "",
+  "defaultLaunchUri": "https://www.tangerinecentral.org/",
+  "android": {
+    "packageId": "org.rti.tangerine",
+    "stores": [
+      "https://play.google.com/store/apps/details?id=org.curiouslearning.container"
+    ],
+    "sourceCode": "https://github.com/chimple/CRcontainer/tree/RESPECTify"
+  }
+}
+
