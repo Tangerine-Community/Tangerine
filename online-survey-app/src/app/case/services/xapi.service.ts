@@ -26,7 +26,7 @@ export class XapiService {
   activityName: string,
   activityDesc: string
 ): any {
-  const extensionsUrl = 'https://example.com/xapi/extensions/survey';
+  const extensionsUrl = 'https://tangerine.lrs.io/xapi/survey';
 
   const statement = {
     actor: {
@@ -90,7 +90,6 @@ export class XapiService {
 
     if (successfullySyncedIds.length > 0) {
       await this.dbService.deleteStatementsByIds(successfullySyncedIds);
-      console.log(`${successfullySyncedIds.length} statements synced and removed from IndexedDB.`);
     } else {
       console.log('No statements were synced.');
     }
