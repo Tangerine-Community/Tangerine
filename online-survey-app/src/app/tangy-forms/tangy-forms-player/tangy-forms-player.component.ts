@@ -30,6 +30,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   window: any;
   startTime!: Date;
   formSubmitted: boolean = false;
+  lang = localStorage.getItem('tangerine-language') || 'en';
    
 
   throttledSaveLoaded
@@ -66,14 +67,14 @@ export class TangyFormsPlayerComponent implements OnInit {
         },
         verb: {
           id: "http://adlnet.gov/expapi/verbs/attempted",
-          display: { "en-US": "attempted" }
+          display: { lang: "attempted" }
         },
         object: {
           id: `http://example.com/forms/${this.formId}`,
           objectType: "Activity",
           definition: {
-            name: { "en-US": "Tangy Survey Form Response" },
-            description: { "en-US": "Survey Form Assessment" }
+            name: { lang: "Tangy Survey Form Response" },
+            description: { lang: "Survey Form Assessment" }
           }
         },
         result: {
@@ -228,7 +229,6 @@ export class TangyFormsPlayerComponent implements OnInit {
       tangyForm.addEventListener('after-submit', async (event) => {
         event.preventDefault();
         let response = event.target.store.getState();
-        console.log('response3333333', response);
         const res:any = {};
         this.formSubmitted = true;
         res.formId = response._id;
