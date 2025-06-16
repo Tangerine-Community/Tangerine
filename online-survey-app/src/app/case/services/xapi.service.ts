@@ -24,10 +24,10 @@ export class XapiService {
   user: { name: string; email: string },
   activityId: string,
   activityName: string,
-  activityDesc: string
+  activityDesc: string,
+  lang: string
 ): any {
   const extensionsUrl = 'https://tangerine.lrs.io/xapi/survey';
-
   const statement = {
     actor: {
       objectType: 'Agent',
@@ -36,14 +36,14 @@ export class XapiService {
     },
     verb: {
       id: 'http://adlnet.gov/expapi/verbs/completed',
-      display: { 'en-US': 'completed' }
+      display: { [lang]: 'completed' }
     },
     object: {
       id: activityId,
       objectType: 'Activity',
       definition: {
-        name: { 'en-US': activityName },
-        description: { 'en-US': activityDesc }
+        name: { [lang]: activityName },
+        description: { [lang]: activityDesc }
       }
     },
     result: {...result},
