@@ -24,10 +24,10 @@ export class XapiService {
   user: { name: string; email: string },
   activityId: string,
   activityName: string,
-  activityDesc: string
+  activityDesc: string,
+  lang: string
 ): any {
-  const extensionsUrl = 'https://example.com/xapi/extensions/survey';
-
+  const extensionsUrl = 'https://tangerine.lrs.io/xapi/survey';
   const statement = {
     actor: {
       objectType: 'Agent',
@@ -36,14 +36,14 @@ export class XapiService {
     },
     verb: {
       id: 'http://adlnet.gov/expapi/verbs/completed',
-      display: { 'en-US': 'completed' }
+      display: { [lang]: 'completed' }
     },
     object: {
       id: activityId,
       objectType: 'Activity',
       definition: {
-        name: { 'en-US': activityName },
-        description: { 'en-US': activityDesc }
+        name: { [lang]: activityName },
+        description: { [lang]: activityDesc }
       }
     },
     result: {...result},
@@ -90,7 +90,6 @@ export class XapiService {
 
     if (successfullySyncedIds.length > 0) {
       await this.dbService.deleteStatementsByIds(successfullySyncedIds);
-      console.log(`${successfullySyncedIds.length} statements synced and removed from IndexedDB.`);
     } else {
       console.log('No statements were synced.');
     }
