@@ -30,6 +30,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   window: any;
   startTime!: Date;
   formSubmitted: boolean = false;
+  lang = localStorage.getItem('tangerine-language') || 'en';
    
 
   throttledSaveLoaded
@@ -66,20 +67,21 @@ export class TangyFormsPlayerComponent implements OnInit {
         },
         verb: {
           id: "http://adlnet.gov/expapi/verbs/attempted",
-          display: { "en-US": "attempted" }
+          display: { [this.lang]: "attempted" }
         },
         object: {
           id: `http://example.com/forms/${this.formId}`,
           objectType: "Activity",
           definition: {
-            name: { "en-US": "Angular xAPI Form" },
-            description: { "en-US": "Form was started but not submitted" }
+            name: { lang: "Tangy Survey Form Response" },
+            description: { [this.lang]: "Survey Form Assessment" }
           }
         },
         result: {
           completion: false,
           success: false,
-          duration: duration
+          duration: duration,
+          response: "Form was started but not submitted",
         },
         timestamp: endTime.toISOString()
       };
@@ -101,17 +103,58 @@ export class TangyFormsPlayerComponent implements OnInit {
     return `PT${hours > 0 ? hours + 'H' : ''}${minutes > 0 ? minutes + 'M' : ''}${seconds > 0 ? seconds + 'S' : ''}`;
   }
 
+ extractTangyResponseForXAPI(tangyResponse: any) {
+  const responses: any = {};  
+  tangyResponse.items.forEach((item: any) => {
+    item.inputs.forEach((input: any) => {
+      if (input.value) {
+        if (Array.isArray(input.value)) {
+          if (input.value.length > 0 && typeof input.value[0] === 'object') {
+            const extractedValues = input.value
+              .filter((obj: any) => obj.value && obj.value.toString().trim() !== '')
+              .map((obj: any) => ({
+                name: obj.name,
+                value: obj.value
+              }));
+            
+            if (extractedValues.length > 0) {
+              responses[input.name] = extractedValues;
+            }
+          } 
+          else {
+            const filteredArray = input.value.filter((val: any) => 
+              val !== null && val !== undefined && val.toString().trim() !== ''
+            );
+            
+            if (filteredArray.length > 0) {
+              responses[input.name] = filteredArray;
+            }
+          }
+        } 
+        else if (input.value.toString().trim() !== '') {
+          responses[input.name] = input.value;
+        }
+      }
+    });
+  });
+  return responses;
+}
+
   async send(response:any) {
-    const endTime = new Date(); // Form submitted
+    const endTime = new Date();
     const duration = this.msToISO8601Duration(endTime.getTime() - this.startTime.getTime());
+    const tangyResult = this.extractTangyResponseForXAPI(response);
     const result = {
-      response: JSON.stringify(response),
+      response: "Form submitted successfully",
       duration: duration,
-      completion: this.formSubmitted
+      completion: this.formSubmitted,
+      extensions: {
+        "https://tangerine.lrs.io/xapi/survey-response": tangyResult
+      }
     }
     const statement = this.xapiService.buildXapiStatementFromForm(result, {name: "John Doe", email:"john.doe@example.com"}, response.formId,
-  'Angular xAPI Course',
-  'Learning xAPI in Angular');
+  response.collection,
+  'Tangy Forms Submission', this.lang);
     await this.xapiService.sendStatement(statement);
   }
 
@@ -185,7 +228,7 @@ export class TangyFormsPlayerComponent implements OnInit {
 
       tangyForm.addEventListener('after-submit', async (event) => {
         event.preventDefault();
-        let response = event.target.store.getState()
+        let response = event.target.store.getState();
         const res:any = {};
         this.formSubmitted = true;
         res.formId = response._id;
