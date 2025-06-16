@@ -67,14 +67,14 @@ export class TangyFormsPlayerComponent implements OnInit {
         },
         verb: {
           id: "http://adlnet.gov/expapi/verbs/attempted",
-          display: { lang: "attempted" }
+          display: { [this.lang]: "attempted" }
         },
         object: {
           id: `http://example.com/forms/${this.formId}`,
           objectType: "Activity",
           definition: {
             name: { lang: "Tangy Survey Form Response" },
-            description: { lang: "Survey Form Assessment" }
+            description: { [this.lang]: "Survey Form Assessment" }
           }
         },
         result: {
@@ -154,7 +154,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     }
     const statement = this.xapiService.buildXapiStatementFromForm(result, {name: "John Doe", email:"john.doe@example.com"}, response.formId,
   response.collection,
-  'Tangy Forms Submission');
+  'Tangy Forms Submission', this.lang);
     await this.xapiService.sendStatement(statement);
   }
 
