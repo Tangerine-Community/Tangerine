@@ -1,5 +1,17 @@
 # What's new
 
+## v3.32.2
+
+__General Updates__
+
+- Tangy Audio Recording with Visualization
+- Introduce `autoStopMode` config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+
 ## v3.32.1
 
 __General Updates__
