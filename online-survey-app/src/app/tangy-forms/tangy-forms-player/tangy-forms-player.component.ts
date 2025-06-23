@@ -5,7 +5,8 @@ import { FormsService } from 'src/app/shared/_services/forms-service.service';
 import { CaseService } from 'src/app/case/services/case.service';
 import { TangyFormService } from '../tangy-form.service';
 import { XapiService } from 'src/app/case/services/xapi.service';
-const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+import { environment } from 'src/environments/environment';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds));
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -31,6 +32,11 @@ export class TangyFormsPlayerComponent implements OnInit {
   startTime!: Date;
   formSubmitted: boolean = false;
   lang = localStorage.getItem('tangerine-language') || 'en';
+  actor: string;
+  mailto: string;
+  endpoint: string;
+  auth: string[];
+  private onlineListener = () => this.trySync();
    
 
   throttledSaveLoaded
@@ -44,6 +50,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     private httpClient:HttpClient,
     private caseService: CaseService,
     private tangyFormService: TangyFormService
+    
   ) { 
     this.router.events.subscribe(async (event) => {
         this.formId = this.route.snapshot.paramMap.get('formId');
@@ -61,8 +68,8 @@ export class TangyFormsPlayerComponent implements OnInit {
       const duration = this.msToISO8601Duration(endTime.getTime() - this.startTime.getTime());
       const statement = {
         actor: {
-          name: "John Doe",
-          mbox: "mailto:john.doe@example.com",
+          name: this.actor,
+          mbox: this.mailto,
           objectType: "Agent"
         },
         verb: {
@@ -94,7 +101,6 @@ export class TangyFormsPlayerComponent implements OnInit {
     }
   }
 
-
   msToISO8601Duration(ms: number): string {
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -103,42 +109,42 @@ export class TangyFormsPlayerComponent implements OnInit {
     return `PT${hours > 0 ? hours + 'H' : ''}${minutes > 0 ? minutes + 'M' : ''}${seconds > 0 ? seconds + 'S' : ''}`;
   }
 
- extractTangyResponseForXAPI(tangyResponse: any) {
-  const responses: any = {};  
-  tangyResponse.items.forEach((item: any) => {
-    item.inputs.forEach((input: any) => {
-      if (input.value) {
-        if (Array.isArray(input.value)) {
-          if (input.value.length > 0 && typeof input.value[0] === 'object') {
-            const extractedValues = input.value
-              .filter((obj: any) => obj.value && obj.value.toString().trim() !== '')
-              .map((obj: any) => ({
-                name: obj.name,
-                value: obj.value
-              }));
-            
-            if (extractedValues.length > 0) {
-              responses[input.name] = extractedValues;
+  extractTangyResponseForXAPI(tangyResponse: any) {
+    const responses: any = {};  
+    tangyResponse.items.forEach((item: any) => {
+      item.inputs.forEach((input: any) => {
+        if (input.value) {
+          if (Array.isArray(input.value)) {
+            if (input.value.length > 0 && typeof input.value[0] === 'object') {
+              const extractedValues = input.value
+                .filter((obj: any) => obj.value && obj.value.toString().trim() !== '')
+                .map((obj: any) => ({
+                  name: obj.name,
+                  value: obj.value
+                }));
+              
+              if (extractedValues.length > 0) {
+                responses[input.name] = extractedValues;
+              }
+            } 
+            else {
+              const filteredArray = input.value.filter((val: any) => 
+                val !== null && val !== undefined && val.toString().trim() !== ''
+              );
+              
+              if (filteredArray.length > 0) {
+                responses[input.name] = filteredArray;
+              }
             }
           } 
-          else {
-            const filteredArray = input.value.filter((val: any) => 
-              val !== null && val !== undefined && val.toString().trim() !== ''
-            );
-            
-            if (filteredArray.length > 0) {
-              responses[input.name] = filteredArray;
-            }
+          else if (input.value.toString().trim() !== '') {
+            responses[input.name] = input.value;
           }
-        } 
-        else if (input.value.toString().trim() !== '') {
-          responses[input.name] = input.value;
         }
-      }
+      });
     });
-  });
-  return responses;
-}
+    return responses;
+  }
 
   async send(response:any) {
     const endTime = new Date();
@@ -149,12 +155,20 @@ export class TangyFormsPlayerComponent implements OnInit {
       duration: duration,
       completion: this.formSubmitted,
       extensions: {
-        "https://tangerine.lrs.io/xapi/survey-response": tangyResult
+        [`${this.endpoint}/survey-response`]: tangyResult
       }
     }
-    const statement = this.xapiService.buildXapiStatementFromForm(result, {name: "John Doe", email:"john.doe@example.com"}, response.formId,
-  response.collection,
-  'Tangy Forms Submission', this.lang);
+    const statement = this.xapiService.buildXapiStatementFromForm(result,
+      {
+        name: this.actor,
+        email: this.mailto
+      },
+      response.formId,
+      response.collection,
+      'Tangy Forms Submission',
+      this.lang,
+      this.endpoint
+    );
     await this.xapiService.sendStatement(statement);
   }
 
@@ -162,6 +176,22 @@ export class TangyFormsPlayerComponent implements OnInit {
     this.startTime = new Date();
     this.formSubmitted = false;  
     this.window = window;
+    this.route.queryParamMap.subscribe((query) => {
+      this.actor = query.get('actor') || environment.actor;
+      this.mailto = query.get('mailto') || environment.mailTo;
+      this.endpoint = query.get('endpoint') || environment.endpoint;
+      const authRaw = query.get('auth');
+
+      try {
+        this.auth = authRaw ? JSON.parse(decodeURIComponent(authRaw)) : JSON.parse(environment.auth);
+      } catch (e) {
+        console.warn('Invalid auth format in URL. Using default.');
+        this.auth = JSON.parse(environment.auth);
+      }
+
+      console.log("Auth values:", this.auth);
+
+    });
 
     // Loading the formResponse from a case must happen before rendering the innerHTML
     let formResponse;
@@ -276,8 +306,21 @@ export class TangyFormsPlayerComponent implements OnInit {
         }
       });
     }
+
+     if (navigator.onLine) {
+      this.trySync();
+    }
+
+    window.addEventListener('online', this.onlineListener);
   }
 
+  ngOnDestroy(): void {
+    window.removeEventListener('online', this.onlineListener);
+  }
+
+  private trySync(): void {
+    this.xapiService.syncStoredStatements(this.endpoint, this.auth);
+  }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
   // Everything else in between we can ignore.
