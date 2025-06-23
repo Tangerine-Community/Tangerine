@@ -191,13 +191,13 @@ export class TangyFormsPlayerComponent implements OnInit {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
         })
-        formEl.addEventListener('TANGY_MEDIA_UPDATE', async _ => {
+        formEl.addEventListener('TANGY_MEDIA_UPDATE', async event => {
 
-          // _.preventDefault()
           // Always save TANGY-VIDEO-CAPTURE to file; probably would be better to create a property for the input to declare 'always save as file'
-          if (_.target.tagName === 'TANGY-VIDEO-CAPTURE' || (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file')) {
-            let filename = _.target.name + '_' + this.response?._id
-            const domString = _.target.value
+          if (event.target.tagName === 'TANGY-VIDEO-CAPTURE' || event.target.tagName === 'TANGY-AUDIO-RECORDING' || 
+              (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file')) {
+            let filename = this.response?._id + '_' + event.target.name
+            const domString = event.target.value
             console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
             if (this.window.isCordovaApp) {
               async function getBlob() {
@@ -280,7 +280,7 @@ export class TangyFormsPlayerComponent implements OnInit {
             }
           } else {
             console.log("Saving media files to database.")
-            _.preventDefault()
+            event.preventDefault()
           }
         }, true)
       }
