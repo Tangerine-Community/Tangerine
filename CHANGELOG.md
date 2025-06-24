@@ -6,6 +6,7 @@ __General Updates__
 
 - Tangy Audio Recording with Visualization
 - Introduce `autoStopMode` config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
+- Add the Myanmar language translations
 
 __Server upgrade instructions__
 
