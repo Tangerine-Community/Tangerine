@@ -118,8 +118,8 @@ export class SyncMediaService {
       let statusMessage
       try {
         statusMessage = await this.uploadFile(file, this.appConfig, md5)
-        await new Promise(resolve => {
-          (fileEntry as FileEntry).remove(resolve)
+        await new Promise((resolve, reject) => {
+          (fileEntry as FileEntry).remove(() => resolve(undefined), (err) => reject(err));
         });
       } catch (e) {
         this.statusMessage = _TRANSLATE("ERROR: Upload failed") + " : " + JSON.stringify(e.error)
