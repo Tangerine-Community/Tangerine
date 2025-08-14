@@ -1,15 +1,15 @@
 #!/bin/sh
 
-echo "Running entrypoint-server.sh"
+echo "Running entrypoint-server.sh command in Dockerfile."
 
 cd /tangerine/server-ui/
 
-echo "DEBUG = $DEBUG";
+echo "NPM_DEV_MODE = $NPM_DEV_MODE";
 
-if [ "$DEBUG" ];
+if [ "$NPM_DEV_MODE" ];
 then
   echo "Starting server-ui in dev mode"
-  npm start:dev
+  npm run start:dev
 else
   echo "Starting server-ui in production mode."
   npm start

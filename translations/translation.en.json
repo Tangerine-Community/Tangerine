@@ -448,5 +448,7 @@
   "yes": "yes",
   "yes, continue": "Yes, continue",
   "✓ Yay! You are up to date.": "✓ Yay! You are up to date.",
-  "✓ Yay, You are up to date.": "✓ Yay, You are up to date."
+  "✓ Yay, You are up to date.": "✓ Yay, You are up to date.",
+  "Location Lists allow you to define sets of locations that appear as drop down lists. Each location list can be used as inputs in forms or to assign locations to devices.": "Location Lists allow you to define sets of locations that appear as drop down lists. Each location list can be used as inputs in forms or to assign locations to devices.",
+  "For Class: To create a curriculum, first setup a location-list that is appropriate for a school. It must have “School” and “Grade” levels (for example, a Class group could have Region, District, School, and Grade levels). Navigate to the Grade level and click the “Create Curriculum” button to select the relevant forms for a Grade.": "For Class: To create a curriculum, first setup a location-list that is appropriate for a school. It must have “School” and “Grade” levels (for example, a Class group could have Region, District, School, and Grade levels). Navigate to the Grade level and click the “Create Curriculum” button to select the relevant forms for a Grade.Boop"
 }

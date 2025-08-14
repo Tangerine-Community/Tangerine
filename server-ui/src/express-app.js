@@ -81,19 +81,19 @@ app.use('/client', express.static('/tangerine/client/dev'));
   app.use('/', function (req, res, next) {
     // console.log("server assets: " + req.url)
     const params = JSON.stringify(req.params)
-    console.log("server-ui route: / : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
+    // console.log("server-ui route: / : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
     return express.static('/tangerine/editor/dist/tangerine-editor').apply(this, arguments);
   });
 
   // app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
   app.use('/app/:group/', function (req, res, next) {
     const params = JSON.stringify(req.params)
-    console.log("server-ui route: /app/:group/ : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
+    // console.log("server-ui route: /app/:group/ : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
     return express.static('/tangerine/editor/dist/tangerine-editor').apply(this, arguments);
   });
   app.use('/app/:group/assets/', function (req, res, next) {
     const params = JSON.stringify(req.params)
-    console.log("server-ui route: /app/:group/assets : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
+    // console.log("server-ui route: /app/:group/assets : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
     let contentPath = `/tangerine/groups/${req.params.group}/client`
     return express.static(contentPath).apply(this, arguments);
   });

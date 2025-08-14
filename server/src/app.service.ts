@@ -32,18 +32,35 @@ export class AppService {
 
   async start() {
     this.config = this.configService.config()
-    try {
-      await this.appDb.get('installed')
-      this.installed = true
-    }
-    catch(e) {
-      await this.install()
-      this.installed = true
-    }
-    await this.startModules()
-    this.keepAliveReportingWorker()
-    this.keepAliveSessionSweeper()
     
+    // Wait for the database to become reachable
+    let dbReachable = false;
+    while (!dbReachable) {
+      log.info('Checking if the database is reachable...');
+      try {
+        const doc = await this.appDb.info();
+        if (!doc || !doc.db_name) {
+          throw new Error('Database info is not valid: ' + JSON.stringify(doc));
+        } else {
+          log.info('Database is reachable. Document found: ' + JSON.stringify(doc));
+          dbReachable = true;
+        }
+      } catch (e) {
+        log.info('Waiting for the database to become reachable...' + e);
+        await sleep(3000); // Wait for 3 seconds before retrying
+      }
+    }
+    log.info('Database is reachable. Continuing with app startup...')
+
+    try {
+      await this.appDb.get('installed');
+    } catch (e) {
+      await this.install();
+      this.installed = true;
+    }
+    await this.startModules();
+    this.keepAliveReportingWorker();
+    this.keepAliveSessionSweeper();
   }
 
   async startModules() {
@@ -79,7 +96,7 @@ export class AppService {
   }
 
   async install() {
-    log.info('Installing...')
+    log.info('Installing dbs...')
     // log.info('Creating _users database...')
     // log.info(`${this.config.couchdbEndpoint}/_users`)
     // await createSitewideDatabase('_users')
