@@ -2,9 +2,9 @@
 
 cd /tangerine/apk-generator/
 
-echo "DEBUG = $DEBUG";
+echo "NPM_DEV_MODE = $NPM_DEV_MODE";
 
-if [ "$DEBUG" ];
+if [ "$NPM_DEV_MODE" ];
 then
   echo "Starting server-ui in dev mode"
   npm start:dev

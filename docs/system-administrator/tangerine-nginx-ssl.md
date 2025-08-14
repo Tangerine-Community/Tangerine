@@ -1,5 +1,7 @@
 # Configuring Nginx as SSL proxy server for Tangerine
 
+This information is out-of-date; updated info on providing an HTTPS reverse proxy is in the [Tangerine documentation](https://tangerinecentral.org/docs/system-administrator/tangerine-nginx-ssl/).
+
 ## Update
 
 Issue [#3147](https://github.com/Tangerine-Community/Tangerine/pull/3147) describes the start-ssl.sh script that automates installation of the SSL certificates 

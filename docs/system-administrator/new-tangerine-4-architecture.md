@@ -32,6 +32,10 @@ If migrating from an older version of Tangerine, rename config.sh to config.env.
 
 All of the shell scripts for launching Tangerine are in the root directory. The two scripts `develop-docker-compose.sh` and `start-docker-compose.sh` start the cascade to build and run the docker containers. 
 
+# Development
+
+[local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy) is very useful for development. It allows you to proxy requests from port 80 to HTTPS. This is an alternative to using a reverse proxy tunnel service such as ngrok.io or tunnelto.dev and keeps everything free and local. More info on local-ssl-proxy is available in the [Reverse Proxy for Developers](reverse-proxy-for-developers.md) documentation.
+
 # Testing
 
 ## Create group
@@ -81,6 +85,13 @@ npm install
 cd /tangerine/editor
 npm run dockerdev ### to watch the editor dirs.
 ```
+
+A shortcut to run in the console:
+
+```
+docker exec server-ui sh -c "cd /tangerine/editor && npm run dockerdev"
+```
+
 
 ### Modifying the client app
 
@@ -208,7 +219,7 @@ Example get using XMLHttpRequest (tangy-form's tangy-location input) `request.op
 ```yaml
   app.use('/app/:group/assets/', function (req, res, next) {
     const params = JSON.stringify(req.params)
-    console.log("server-ui route: /app/:group/assets : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
+#    console.log("server-ui route: /app/:group/assets : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
     let contentPath = `/tangerine/groups/${req.params.group}/client`
     return express.static(contentPath).apply(this, arguments);
   });
