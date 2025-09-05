@@ -248,52 +248,44 @@ export class UserService {
   // Accounts
   //
 
-  async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
+  async createAdmin(username:string, password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
     // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
     const appInfo = await this.deviceService.getAppInfo()
     userProfile['groupId'] = appInfo.groupId
+    userProfile['deviceId'] = lockBoxContents.device._id
     userProfile.items = [
       {
         id: 'item1',
         inputs: [
           {
-            name: 'roles',
-            value: [{name: 'admin', value: 'on'}]
+            name: 'role',
+            value: [{name: 'admin', value: 'on'}],
+            hidden: 'true'
           },
           {
-            name: 'first_name',
-            value: 'Admin of Device'
-          },
-          {
-            name: 'last_name',
-            value: `Device ID: ${lockBoxContents.device._id}`
+            name: 'username',
+            value: username
           },
           {
             name: 'location',
-            value: Object
-              .getOwnPropertyNames(lockBoxContents.device.assignedLocation)
-              .map(propName => { 
-                return { 
-                  level: propName,
-                  value: lockBoxContents.device.assignedLocation[propName]
-                }
-              })
+            showLevels: lockBoxContents.device.assignedLocation.showLevels.toString(),
+            value: lockBoxContents.device.assignedLocation.value
           }
         ]
       }
     ]
     const userAccount = new UserAccount({
-      _id: 'admin',
+      _id: username,
       password: this.hashValue(password),
       securityQuestionResponse: this.hashValue(password),
       userUUID: userProfile._id,
       initialProfileComplete: true
     })
     await this.usersDb.post(userAccount)
-    let userDb = new UserDatabase('admin', userAccount.userUUID, lockBoxContents.device.key, lockBoxContents.device._id, true)
+    let userDb = new UserDatabase(username, userAccount.userUUID, lockBoxContents.device.key, lockBoxContents.device._id, true)
     await userDb.put(userProfile)
-    await this.lockBoxService.fillLockBox('admin', password, lockBoxContents)
+    await this.lockBoxService.fillLockBox(username, password, lockBoxContents)
     return userAccount
   }
 
@@ -415,6 +407,7 @@ export class UserService {
     username = username
       ? username
       : this.getCurrentUser()
+    if (!username) return;
     const userAccount = <UserAccount>await this.getUserAccount(username)
     const userDb = await this.getUserDatabase(username)
     
@@ -588,7 +581,7 @@ export class UserService {
       } catch(e) {
       }
     }
-    this.setCurrentUser('');
+    this.clearCurrentUser();
     this.getUserAccount(username)
       .then((userAccount) => this.userLoggedOut$.next(userAccount))
     // TODO test on upgrades - pathing may have changed.
@@ -631,6 +624,11 @@ export class UserService {
     this.profile = await this.getUserProfile()
     this.roles = this.getRoles()
     return username
+  }
+
+  async clearCurrentUser() {
+    localStorage.setItem('currentUser', '')
+    this._currentUser = ''
   }
 
   async getSharedDBDocCount() {

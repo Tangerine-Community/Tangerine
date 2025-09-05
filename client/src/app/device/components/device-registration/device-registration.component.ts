@@ -90,8 +90,9 @@ export class DeviceRegistrationComponent implements OnInit {
 
   async confirmRegistration(deviceId, deviceToken) {
     let device:Device
+    const isSandbox = window.location.hostname === 'localhost' ? true : false
     try {
-      device = await this.deviceService.getRemoteDeviceInfo(deviceId, deviceToken)
+      device = await this.deviceService.getRemoteDeviceInfo(deviceId, deviceToken, isSandbox)
     } catch (error) {
       if (typeof error !== 'undefined') {
         if (typeof error.error !== 'undefined' && typeof error.error.error !== 'undefined') {

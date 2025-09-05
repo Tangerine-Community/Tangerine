@@ -8,6 +8,9 @@ tangerine-env-vars.sh
 .history
 certs
 
+tangy-form/package-lock.json
+tangy-form-editor/package-lock.json
+
 content-sets/content-sets.json
 translations/*.csv
 
