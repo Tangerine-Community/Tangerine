@@ -19,6 +19,7 @@ export class TangerineFormInfo {
     enabled: false,
     filterByLocation: false
   }
+  archived?: boolean;
 }
 
 export interface CouchdbSyncSettings {

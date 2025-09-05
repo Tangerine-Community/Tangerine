@@ -1,4 +1,4 @@
-<mat-tab-group animationDuration="0ms">
+<mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTabIndex" *ngIf="!showClassDashboard">
   <mat-tab label="{{'SEARCH'|translate}}">
     <ng-template matTabContent>
       <app-search></app-search>
@@ -20,3 +20,7 @@
     </ng-template>
   </mat-tab>
 </mat-tab-group>
+<div *ngIf="showClassDashboard">
+  <app-dashboard></app-dashboard>
+</div>
+

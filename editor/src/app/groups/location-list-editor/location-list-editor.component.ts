@@ -1,9 +1,14 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
-import { GroupsService } from '../services/groups.service';
+import { GroupsService, LocationList } from '../services/groups.service';
 import { Loc } from 'tangy-form/util/loc.js';
+import { AppConfig } from 'src/app/shared/_classes/app-config.class';
+import { TangerineFormInfo } from 'src/app/shared/_classes/tangerine-form.class';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
+import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
+import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
   selector: 'app-location-list-editor',
@@ -28,18 +33,31 @@ export class LocationListEditorComponent implements OnInit {
   showLocationForm = false;
   groupId = '';
   isMoveLocationFormShown = false;
+  isLinkFormsFormShown = false;
   parentItemsForMoveLocation;
   moveLocationParentLevelId;
   canMoveItem = false;
   isItemMarkedForUpdate = false;
   isLoading = false;
   form: any = { label: '', id: '' };
+  displayedColumns: string[] = ['toggle', 'title'];
+  dataSource;
+  activeForms;
+  selectedForms = []
+  allFormsSelected = false
+  allActiveFormsSelected = false
+  allArchivedFormsSelected = false
+  stateUrl;
+
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
     private errorHandler: TangyErrorHandler,
-    private groupsService: GroupsService
+    private groupsService: GroupsService,
+    private formsService: TangerineFormsService,
+    private serverConfig: ServerConfigService,
+    private router: Router
   ) { }
 
   async ngOnInit() {
@@ -47,6 +65,13 @@ export class LocationListEditorComponent implements OnInit {
       this.groupId = params.groupId;
     });
     await this.getLocationListFromDisk()
+    // this.groupId = this.route.snapshot.paramMap.get('groupId')
+    
+    try {
+      await this.getForms();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
   }
 
   async getLocationListFromDisk() {
@@ -100,6 +125,7 @@ export class LocationListEditorComponent implements OnInit {
     this.updateMoveLocationForm();
     this.isMoveLocationFormShown = false;
     this.showLocationForm = false;
+    this.isLinkFormsFormShown = false;
   }
 
   async addItem(parentItem) {
@@ -115,6 +141,7 @@ export class LocationListEditorComponent implements OnInit {
     await this.getLocationListFromDisk();
     this.form = { label: '', id: '' };
     this.showLocationForm = false;
+    this.isLinkFormsFormShown = false;
   }
 
   showEditForm(item) {
@@ -137,9 +164,21 @@ export class LocationListEditorComponent implements OnInit {
     this.showLocationForm = false;
     this.isItemMarkedForUpdate = false;
     this.isMoveLocationFormShown = false;
+    this.isLinkFormsFormShown = false;
   }
   showMoveLocationForm() {
     this.isMoveLocationFormShown = true;
+    this.showLocationForm = false;
+    this.isLinkFormsFormShown = false;
+  }
+  showLinkFormsForm() {
+    if (this.currentLocation.forms) {
+      this.selectedForms = this.currentLocation.forms;
+    } else {
+      this.selectedForms = [];
+    }
+    this.isLinkFormsFormShown = true;
+    this.isMoveLocationFormShown = false;
     this.showLocationForm = false;
   }
   updateMoveLocationForm() {
@@ -188,7 +227,91 @@ export class LocationListEditorComponent implements OnInit {
       this.errorHandler.handleError('Error Saving Location Lits File to disk');
     }
   }
+
+  async getForms() {
+      const config = await this.serverConfig.getServerConfig()
+      const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
+      
+      let forms = await this.formsService.getFormsInfo(this.groupId)
+      if (appConfig.teachProperties?.useAttendanceFeature) {
+        const attendanceForms = <Array<TangerineFormInfo>>[
+          {id: 'attendance', title: _TRANSLATE('Attendance')},
+          {id: 'behavior', title: _TRANSLATE('Behavior')},
+          {id: 'scores', title: _TRANSLATE('Scores')}
+        ]
+        forms = [...forms, ...attendanceForms]
+      }
+      if (config.enabledModules.includes('case')) {
+        const caseForms = <Array<TangerineFormInfo>>[
+          {id: 'participant', title: _TRANSLATE('Participant')},
+          {id: 'event-form', title: _TRANSLATE('Event Form')},
+          {id: 'case-event', title: _TRANSLATE('Case Event')}]
+        forms = [...forms, ...caseForms]
+      }
+      const allForms = forms.map(form => {
+        return {
+          ...form
+        }
+      })
+      this.activeForms = allForms.filter(form => !form.archived);
+  }
+
+  onFormCheckBoxChange(formId, input){
+    if(input.checked){
+      this.selectedForms = [...this.selectedForms, formId]
+    } else{
+      this.selectedForms = this.selectedForms.filter(e=>e!==formId)
+    }
+  }
+
+  async createCurriculum() {
+    const forms = this.selectedForms
+    // .map(formId => this.templateSelections[formId] ? `${formId}:${this.templateSelections[formId]}` : formId)
+    .toString()
+    // const refineToLevel = [...this.locationsLevels].slice(0, this.breadcrumbs.length - 2);
+    const currentLevel = this.breadcrumbs[this.breadcrumbs.length-1]['label'];
+    const parentLevel = this.breadcrumbs[this.breadcrumbs.length-2]['label'];
+    console.log("currentLevel: " +  currentLevel + " parentLevel: " + parentLevel);
+
+    const generatedLocationId = parentLevel + "_" + currentLevel + '_curriculum';
+    const locationListTitle = "Curriculum for " + parentLevel + "/" + currentLevel;
+    console.log(" generatedLocationId: " + generatedLocationId.replace(/\s/g, "") + " locationListTitle: " + locationListTitle);
+    const locationList = new LocationList(
+      {
+        id: generatedLocationId.replace(/\s/g, ""),
+        name: locationListTitle,
+        forms: forms
+      }
+    )
+
+    // this.container.nativeElement.innerHTML = `
+    //   <tangy-location show-levels="${refineToLevel.join(',')}" 
+    //     location-src="/editor/${this.groupId}/content/${this.locationListFileName}">
+    // `;
+    try {
+      const result: any = await this.groupsService.createLocationList(this.groupId, locationList);
+      this.stateUrl = result.stateUrl;
+      // this.router.navigate(['../', result.id], { relativeTo: this.route })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async saveCurriculum(currentBreadcrumb, parentBreadcrumb) {
+    const forms = this.selectedForms
+    .toString()
+    currentBreadcrumb.forms = forms;
+    // const currentLevel = this.breadcrumbs[this.breadcrumbs.length-1]['label'];
+    // const parentLevel = this.breadcrumbs[this.breadcrumbs.length-2]['label'];
+    // console.log("currentLevel: " +  currentLevel + " parentLevel: " + parentLevel);
+
+    // const generatedLocationId = parentLevel + "_" + currentLevel + '_curriculum';
+    // const locationListTitle = "Curriculum for " + parentLevel + "/" + currentLevel;
+    // console.log(" generatedLocationId: " + generatedLocationId.replace(/\s/g, "") + " locationListTitle: " + locationListTitle);
+    this.editItem();
+  }
 }
+
 
 function findAndAdd(object, value, replaceValue) {
   for (let x in object) {

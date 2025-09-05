@@ -16,6 +16,8 @@ import {MatCardModule} from "@angular/material/card";
 import { RestoreBackupComponent } from './components/restore-backup/restore-backup.component';
 import { DeviceResyncComponent } from './components/device-resync/device-resync.component';
 import { DevicePermissionsComponent } from './components/device-permissions/device-permissions.component';
+import { DeviceAdminUserComponent } from './components/device-admin-user/device-admin-user.component';
+import { UserProfileModule } from '../user-profile/user-profile.module';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -27,11 +29,13 @@ import { DevicePermissionsComponent } from './components/device-permissions/devi
     DevicePasswordComponent,
     DevicePermissionsComponent,
     RestoreBackupComponent,
-    DeviceResyncComponent
+    DeviceResyncComponent,
+    DeviceAdminUserComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    UserProfileModule,
     DeviceRoutingModule,
     MatButtonModule, MatIconModule,
     RouterModule, MatTabsModule, MatCardModule

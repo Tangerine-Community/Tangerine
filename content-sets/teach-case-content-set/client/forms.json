@@ -1,0 +1,253 @@
+[
+  {
+    "id": "about",
+    "src": "./assets/about/form.html",
+    "description": "User Profile",
+    "listed": false,
+    "title": "About",
+    "type": "about",
+    "searchSettings": {
+      "shouldIndex": false,
+      "primaryTemplate": "",
+      "secondaryTemplate": "",
+      "variablesToIndex": []
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id": "user-profile",
+    "src": "./assets/user-profile/form.html",
+    "description": "User Profile",
+    "listed": false,
+    "title": "User Profile",
+    "icon": "perm_identity",
+    "type": "user-profile",
+    "searchSettings": {
+      "shouldIndex": false,
+      "primaryTemplate": "",
+      "secondaryTemplate": "",
+      "variablesToIndex": []
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id": "teach-case-manifest",
+    "src": "./assets/teach-case-manifest/form.html",
+    "description": "Teach Case Manifest",
+    "listed": true,
+    "title": "Classroom",
+    "icon": "folder",
+    "type": "case",
+    "searchSettings": {
+      "primaryTemplate": "${searchDoc.variables.classroom_id ? `Classroom ID: ${searchDoc.variables.classroom_id}` : 'N/A' }",
+      "shouldIndex": true,
+      "secondaryTemplate": "${searchDoc.variables.grade ? `Grade: ${searchDoc.variables.grade}` : 'N/A' }",
+      "variablesToIndex": [
+        "classroom_id",
+        "grade"
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id": "classroom-registration",
+    "type": "form",
+    "title": "Classroom Registration",
+    "src": "./assets/classroom-registration/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  },
+  {
+    "id": "student-registration",
+    "type": "form",
+    "title": "Student Registration",
+    "src": "./assets/student-registration/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  },
+  {
+    "id": "attendance",
+    "type": "form",
+    "title": "Attendance",
+    "src": "./assets/attendance/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  },
+  {
+    "id": "scoring",
+    "type": "form",
+    "title": "Scoring",
+    "src": "./assets/scoring/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  },
+  {
+    "id": "behavior",
+    "type": "form",
+    "title": "Behavior",
+    "src": "./assets/behavior/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  },
+  {
+    "id": "grade-1-math-assessment",
+    "type": "form",
+    "title": "Grade 1 Math Assessment",
+    "src": "./assets/grade-1-math-assessment/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  },
+  {
+    "id": "grade-1-english-assessment",
+    "type": "form",
+    "title": "Grade 1 English Assessment",
+    "src": "./assets/grade-1-english-assessment/form.html",
+    "searchSettings": {
+      "shouldIndex": false,
+      "variablesToIndex": [],
+      "primaryTemplate": "",
+      "secondaryTemplate": ""
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": false,
+      "push": true,
+      "pull": false,
+      "filterByLocation": false
+    }
+  }
+]

@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { UserService } from '../shared/_services/user.service';
 import {AppConfigService} from "../shared/_services/app-config.service";
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,6 +18,7 @@ export class UserProfileComponent implements AfterContentInit {
   tangyFormResponse: {};
   returnUrl: string; // stores the value of the url to redirect to after login
   @ViewChild('container', {static: true}) container: ElementRef;
+  done$:Subject<string> = new Subject<string>()
 
   constructor(
     private route: ActivatedRoute,
@@ -30,8 +32,9 @@ export class UserProfileComponent implements AfterContentInit {
     const appConfig = await this.appConfigService.getAppConfig();
     const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     const homeUrl = appConfig.homeUrl;
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    const userDb = await this.userService.getUserDatabase();
+    if (!this.returnUrl) {
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
+    }
     const container = this.container.nativeElement
     let formHtml =  await this.http.get('./assets/user-profile/form.html', {responseType: 'text'}).toPromise();
     container.innerHTML = formHtml
@@ -39,14 +42,18 @@ export class UserProfileComponent implements AfterContentInit {
     formEl.addEventListener('submit', async (event) => {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
-      await userDb.put(profileDoc)
       if (!userAccount.initialProfileComplete) {
         await this.userService.saveUserAccount(<UserAccount>{ ...userAccount, initialProfileComplete:true })
       }
-      await this.userService.setCurrentUser(this.userService.getCurrentUser())
+      const userDb = await this.userService.getUserDatabase();
+      await userDb.put(profileDoc)
+      const currentUser = this.userService.getCurrentUser()
+      await this.userService.setCurrentUser(currentUser)
+      this.done$.next(profileDoc._id)
       this.router.navigate([this.returnUrl]);
-    })
+     })
     try {
+      const userDb = await this.userService.getUserDatabase();
       formEl.response = await userDb.get(userAccount.userUUID)
     } catch(e) {
       formEl.newResponse()

@@ -2,7 +2,7 @@ import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { VariableService } from './../../shared/_services/variable.service';
 import { LockBoxService } from './../../shared/_services/lock-box.service';
 import { Loc } from 'tangy-form/util/loc.js';
-import { Device } from './../classes/device.class';
+import { Device, LocationConfig } from './../classes/device.class';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -20,8 +20,13 @@ export interface AppInfo {
   buildChannel:string
   tangerineVersion:string
   buildId:string
-  assignedLocation:string
+  assignedLocation:LocationConfig
+  syncLocation:LocationConfig
   versionTag:string
+  curriculum: string[];
+  grades:[];
+  school: any;
+
 }
 
 @Injectable({
@@ -51,26 +56,49 @@ export class DeviceService {
   }
 
   async initialize() {
+    let grade, curriculum, grades, school, assignedLocationString, syncLocation:LocationConfig;
     const appConfig = await this.appConfigService.getAppConfig()
+    const homeUrl = appConfig.homeUrl;
     const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
     const buildChannel = window.location.hostname !== 'localhost' ? await this.getBuildChannel() : 'localhost'
     const device = await this.getDevice()
     const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
+
     const encryptionLevel = (window['isCordovaApp'] && window['sqlCipherRunning'])
       ? _TRANSLATE('in-app')
       : 'OS'
-    let assignedLocation
+    const assignedLocation:LocationConfig = device.assignedLocation
+    const syncLocations:LocationConfig[] = device.syncLocations
     try {
-      assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+      assignedLocationString = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
         ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
         : 'N/A'
     } catch (e) {
       // This may be a restored backup in an APK with a different app-config.json. Use the device's assignedLocation.
-      assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+      assignedLocationString = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
         ? device.assignedLocation.value.map(value => ` ${value.level}: Restored-${value.value}`).join(', ')
         : 'N/A'
     }
+
+    if (homeUrl == 'dashboard' && assignedLocationString != 'N/A') {
+      console.log("populating grade, grades, and curriculum for homeUrl: ", homeUrl)
+      const gradeLevel = device.assignedLocation.value.find(loc => loc.level === 'grade');
+      if (gradeLevel) {
+        grade = gradeLevel.value;
+      }
+      if (grade) {
+        const location = flatLocationList.locations.find(node => node.id === grade)
+        if (location) {
+          curriculum = location.forms;
+        }
+        const parentId = location.parent;
+        school = flatLocationList.locations.find(node => node.id === parentId)
+        grades = flatLocationList.locations.filter(node => node.parent === parentId)
+      }
+      syncLocation = device.syncLocations[0] || device.assignedLocation;
+    }
+    
     const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
     const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
     this.appInfo = <AppInfo>{
@@ -83,51 +111,34 @@ export class DeviceService {
       buildId,
       deviceId: device._id,
       assignedLocation,
-      versionTag
+      versionTag,
+      curriculum,
+      grades,
+      school,
+      syncLocation
     }
   }
 
-  async getRemoteDeviceInfo(id, token):Promise<Device> {
+  async getRemoteDeviceInfo(id, token, isTest=false):Promise<Device> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const device = <Device>await this
-      .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise()
+     let device:Device
+    if (isTest) {
+      const homeUrl = appConfig.homeUrl
+      device = await this.generateTestDevice(id, token, homeUrl);
+    } else {
+      device = <Device>await this
+        .httpClient
+        .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise()
+    }
     return device
   }
 
   async register(id, token, isTest = false):Promise<Device> {
     const appConfig = await this.appConfigService.getAppConfig()
+    const homeUrl = appConfig.homeUrl
     let device:Device
     if (isTest) {
-      // Pick a location out of the location list.
-      const locationList = await this.appConfigService.getLocationList()
-      const flatLocationList = Loc.flatten(locationList)
-      const pickedLocation = [...flatLocationList.locationsLevels]
-        // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
-        .reverse()
-        .reduce((locationArray, level, i) => {
-          return [
-            i === 0
-              ? flatLocationList.locations.find(node => node.level === level)
-              : flatLocationList.locations.find(node => node.id === locationArray[0].parent),
-            ...locationArray
-          ]
-        }, [])    
-        // Transform the array of location nodes into a location object where the keys are the level and the values are the node IDs.
-        .reduce((location, node) => {
-          return {
-            ...location,
-            [node.level]: node.id
-          }
-        }, {})
-      // @TODO Assign a location.
-      device = <Device>{
-        _id: id,
-        token,
-        key: 'test',
-        assignedLocation: pickedLocation,
-        syncLocations: [pickedLocation]
-      }
+      device = await this.generateTestDevice(id, token, homeUrl);
     } else {
       device = <Device>await this
         .httpClient
@@ -144,15 +155,10 @@ export class DeviceService {
   async getDevice():Promise<Device> {
     try {
       if (window.location.hostname === 'localhost') {
-        return <Device>{
-          _id: 'device1',
-          collection: 'Device',
-          token: 'token1',
-          key: 'test',
-          version: 'sandbox',
-          claimed: true,
-          syncLocations: []
-        }
+        const appConfig = await this.appConfigService.getAppConfig()
+        const homeUrl = appConfig.homeUrl
+        const device = await this.generateTestDevice('device1', 'token1', homeUrl);
+        return device;
       }
       const locker = this.lockBoxService.getOpenLockBox()
       this.device = locker.contents.device
@@ -255,4 +261,87 @@ export class DeviceService {
     }
   }
 
+  /**
+   * 
+   * @param id 
+   * @param token 
+   * @param homeUrl 
+   * @returns Device object with a pickedLocation.
+   */
+  async generateTestDevice(id, token, homeUrl): Promise<Device> {
+    let device: Device, pickedLocation
+    // Pick a location out of the location list.
+    const locationList = await this.appConfigService.getLocationList()
+    const flatLocationList = Loc.flatten(locationList)
+    if (homeUrl === 'dashboard') {
+      // If the homeUrl is 'dashboard', pick a location that has a grade and curriculum.
+      const dashboardLocations = flatLocationList.locations.filter(node => node.level === 'grade' && node.forms && node.forms.length > 0)
+      pickedLocation = [...flatLocationList.locationsLevels]
+        // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
+        .reverse()
+        .reduce((dashboardLocations, level, i) => {
+          return [
+            i === 0
+              ? flatLocationList.locations.find(node => node.level === level)
+              : flatLocationList.locations.find(node => node.id === dashboardLocations[0].parent),
+            ...dashboardLocations
+          ]
+        }, [])
+      if (!pickedLocation) {
+        console.log("No location found with a grade and curriculum. Picking any first node at the bottom of the tree.")
+        pickedLocation = [...flatLocationList.locationsLevels]
+        // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
+        .reverse()
+        .reduce((locationArray, level, i) => {
+          return [
+            i === 0
+              ? flatLocationList.locations.find(node => node.level === level)
+              : flatLocationList.locations.find(node => node.id === locationArray[0].parent),
+            ...locationArray
+          ]
+        }, [])
+      }
+    } else {
+      pickedLocation = [...flatLocationList.locationsLevels]
+      // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
+      .reverse()
+      .reduce((locationArray, level, i) => {
+        return [
+          i === 0
+            ? flatLocationList.locations.find(node => node.level === level)
+            : flatLocationList.locations.find(node => node.id === locationArray[0].parent),
+          ...locationArray
+        ]
+      }, [])
+    }
+
+    // Transform the array of location nodes into a location array where each item is an object with level, label, and value.
+    pickedLocation = pickedLocation.map(node => {
+      return {
+        level: node.level,
+        label: node.label,
+        value: node.id
+      }
+    })
+    const assignedLocation: LocationConfig = {
+      "value": pickedLocation,
+      "showLevels": flatLocationList.locationsLevels
+    }
+    
+    
+    // @TODO Assign a location.
+    device = <Device>{
+      _id: id,
+      token,
+      key: 'test',
+      assignedLocation: assignedLocation,
+      syncLocations: pickedLocation,
+      collection: 'Device',
+      version: 'sandbox',
+      claimed: true,
+    }
+    return device;
+  }
 }
+
+

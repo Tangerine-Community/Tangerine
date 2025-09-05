@@ -18,6 +18,7 @@ import { AssociateUserProfileComponent } from './associate-user-profile/associat
     SharedModule
 
   ],
-  declarations: [UserProfileComponent, ImportUserProfileComponent, AssociateUserProfileComponent]
+  declarations: [UserProfileComponent, ImportUserProfileComponent, AssociateUserProfileComponent],
+  exports: [UserProfileComponent, ImportUserProfileComponent, AssociateUserProfileComponent]
 })
 export class UserProfileModule { }

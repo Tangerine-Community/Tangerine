@@ -25,7 +25,6 @@ export class SettingsComponent implements OnInit, AfterContentInit {
   languageCode = 'en'
   usePouchDbLastSequenceTracking = false
   selected = ''
-  classes: any;
   showClassConfig = false;
   info:AppInfo
   ready = false;
@@ -43,10 +42,9 @@ export class SettingsComponent implements OnInit, AfterContentInit {
 
   async ngOnInit(): Promise<void> {
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.homeUrl === 'dashboard' || appConfig.homeUrl === 'attendance-dashboard') {
+    if (appConfig.homeUrl === 'dashboard' || appConfig.homeUrl === 'attendance-dashboard' || appConfig.showClassDashboard) {
       this.showClassConfig = true;
       await this.classFormService.initialize();
-      this.classes = await this.dashboardService.getMyClasses();
     }
   }
 
@@ -57,19 +55,6 @@ export class SettingsComponent implements OnInit, AfterContentInit {
     const translations = <Array<any>>await this.http.get('./assets/translations.json').toPromise();
     const appConfig = await this.appConfigService.getAppConfig()
     let classDashboardOption = ''
-    if (appConfig.homeUrl === 'dashboard') {
-      // classDashboardOption = `
-      // <div class="class-config-content">
-      //   <h1>Class Configuration</h1>
-      //   <p>Toggle a class 'off' to archive. The toggle will be white when 'off'. Click a class 'on' to enable.  The toggle will be orange when 'on'. </p>
-      //   <span *ngFor="let class of classes; let classIndex=index">
-      //     <p>
-      //       <mat-slide-toggle [checked]="!class.doc.archive"
-      //                         (click)="toggleClass(class.id)">Class: ${getClassTitle(class.doc)}</mat-slide-toggle>
-      //     </p>
-      //   </span>
-      // </div>`
-    }
     this.container.nativeElement.innerHTML = `
       <tangy-form>
         <tangy-form-item>

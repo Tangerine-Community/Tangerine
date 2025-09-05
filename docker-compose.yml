@@ -94,6 +94,8 @@ services:
       - TANGY_PRE_ENTRYPOINT
 #    entrypoint: "/bin/sh -c \"$${TANGY_PRE_ENTRYPOINT} cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
 #    entrypoint: "/bin/sh -c \"cd /tangerine/editor && npm run dockerdev && cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
+#    entrypoint: "/bin/sh -c \"cd /tangerine/editor && npm run dockerdev; cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
+#    entrypoint: "/bin/sh -c \"cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE};cd /tangerine/editor && npm run dockerdev\""
     entrypoint: "/bin/sh -c \"cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
       - ./data/groups:/tangerine/groups

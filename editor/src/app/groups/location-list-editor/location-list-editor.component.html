@@ -14,6 +14,10 @@
       mat-raised-button (click)="hideLocationForm()">Hide Editing Form</button>
     <button *ngIf="breadcrumbs.length>2&&!isMoveLocationFormShown" mat-raised-button (click)="showMoveLocationForm()">MOVE
       {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+    <button *ngIf="breadcrumbs.length>3&&!isLinkFormsFormShown&&!currentLocation.forms" mat-raised-button (click)="showLinkFormsForm()">CREATE CURRICULUM FOR 
+      {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+    <button *ngIf="breadcrumbs.length>3&&!isLinkFormsFormShown&&currentLocation.forms" mat-raised-button (click)="showLinkFormsForm()">EDIT CURRICULUM FOR 
+      {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
     <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="hideLocationForm()">HIDE
       FORM</button>
   </div>
@@ -22,6 +26,27 @@
   {{breadcrumbs[breadcrumbs.length-1]['label']}}
 
   to another {{locationsLevels[breadcrumbs.length-3]}}</span>
+<div *ngIf="breadcrumbs.length>3&&isLinkFormsFormShown" class="tangy-foreground-primary">{{'Curent Curriculum for'|translate}}
+  {{breadcrumbs[breadcrumbs.length-1]['label']}}
+    <h2 class="tangy-foreground-secondary">Active Forms</h2>
+    <table mat-table class="form-list" [dataSource]="activeForms" >
+      <!-- toggle Column -->
+      <ng-container matColumnDef="toggle">
+        <th mat-header-cell *matHeaderCellDef><mat-checkbox name="toggle-select-all-forms" (change)="toggleSelectAllForms($event, 'active')"></mat-checkbox></th>
+        <td mat-cell *matCellDef="let form"> <mat-checkbox [checked]="currentLocation.forms?.includes(form.id)" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox> </td>
+      </ng-container>
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Form Title </th>
+        <td mat-cell *matCellDef="let form"> {{form|formTitleFromInfo}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div id="submit-container">
+      <button mat-raised-button color="warn" (click)="saveCurriculum(breadcrumbs[breadcrumbs.length-1], breadcrumbs[breadcrumbs.length-2])" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
+    </div>
+</div>
 <div *ngIf="isLoading">
   <app-tangy-loading></app-tangy-loading>
 </div>
@@ -39,8 +64,7 @@
     <button [hidden]="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
       mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
     <button *ngIf="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
-      mat-raised-button color="warn" (click)="editItem()">{{'Update
-      Record'|translate}}</button>
+      mat-raised-button color="warn" (click)="editItem()">{{'Update Record'|translate}}</button>
   </form>
 </div>
 <div [hidden]="!isMoveLocationFormShown">
@@ -57,7 +81,7 @@
     <span *ngIf="locationChildren.length>0" class="tangy-foreground-primary">{{'Children'|translate}} of
       {{breadcrumbs[breadcrumbs.length-1]['label']}}</span>
     <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
+    <span class="tangy-foreground-primary"> {{'Actions'|translate}}</span>
   </mat-list-item>
   <mat-list-item role="listitem" *ngFor="let child of locationChildren">
     <span class="faux-anchor tangy-foreground-secondary" (click)="onChildClick(child.id)">{{child.label}} - id

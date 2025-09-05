@@ -2,7 +2,7 @@
 
 ## Reverse proxy software
 
-[local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy) is a Node.js app that can be used to proxy requests from a local development server to a remote server over HTTPS. This is an alternative to using a reverse proxy tunnel service such as ngrok.io or tunnelto.dev.
+[local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy) is a Node.js app that can be used to proxy requests from port 80 to HTTPS. This is an alternative to using a reverse proxy tunnel service such as ngrok.io or tunnelto.dev.
 
 ## Generate SSL certificates
 

@@ -12,7 +12,9 @@ export class CaseHomeComponent implements OnInit {
   showQueries = true;
   showCaseReports = false
   showIssues = false
+  showClassDashboard = false
   openQueriesCount = 0;
+  selectedTabIndex = 0;
 
   constructor(
     private appConfig: AppConfigService,
@@ -25,6 +27,7 @@ export class CaseHomeComponent implements OnInit {
     this.showQueries = config.showQueries;
     this.showCaseReports = config.showCaseReports
     this.showIssues = config.showIssues
+    this.showClassDashboard = config.showClassDashboard
     // TODO: replace showQueries with showIssues
     if (this.showQueries) {
       this.openQueriesCount = await this.caseService.getOpenQueriesCount();

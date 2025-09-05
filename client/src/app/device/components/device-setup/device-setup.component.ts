@@ -13,11 +13,13 @@ import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@ang
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 import { LockBoxContents } from 'src/app/shared/_classes/lock-box-contents.class';
 import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
+import { DeviceAdminUserComponent } from './../device-admin-user/device-admin-user.component';
 
 const STEP_LANGUAGE_SELECT = 'STEP_LANGUAGE_SELECT'
 const STEP_DEVICE_PERMISSIONS = 'STEP_DEVICE_PERMISSIONS'
 const STEP_DEVICE_PASSWORD = 'STEP_DEVICE_PASSWORD'
 const STEP_DEVICE_REGISTRATION = 'STEP_DEVICE_REGISTRATION'
+const STEP_USER_PROFILE = 'STEP_USER_PROFILE'
 const STEP_SYNC = 'STEP_SYNC'
 
 @Component({
@@ -33,6 +35,7 @@ export class DeviceSetupComponent implements OnInit {
   @ViewChild('stepDevicePermissions', {static: true}) stepDevicePermissions:DevicePermissionsComponent
   @ViewChild('stepDevicePassword', {static: true}) stepDevicePassword:DevicePasswordComponent
   @ViewChild('stepDeviceRegistration', {static: true}) stepDeviceRegistration:DeviceRegistrationComponent
+  @ViewChild('stepUserProfile', {static: true}) stepUserProfile:DeviceAdminUserComponent
   @ViewChild('stepDeviceSync', {static: true}) stepDeviceSync:DeviceSyncComponent
 
   constructor(
@@ -44,16 +47,17 @@ export class DeviceSetupComponent implements OnInit {
 
   async ngOnInit() {
     const isSandbox = window.location.hostname === 'localhost' ? true : false
-    if (isSandbox) {
+    if (false && isSandbox) {
       console.log(`Warning: This device is running in sandbox mode. If this is not intentional, debug why hostname === localhost.`)
       const device = await this.deviceService.register('test', 'test', true)
       await this.userService.installSharedUserDatabase(device)
-      await this.userService.createAdmin('password', <LockBoxContents>{
+      await this.userService.createAdmin('admin', 'password', <LockBoxContents>{
         device
       })
       await this.userService.login('admin', 'password')
       this.routerService.navigate([''])
     } else {
+      let username = ''
       let password = ''
       // Initial step. First we ask for the language, then the language step reloads page,
       // that's when language will be set and we go to the next step of setting up a password.
@@ -73,39 +77,60 @@ export class DeviceSetupComponent implements OnInit {
         this.step = STEP_DEVICE_PASSWORD
       }})
       // On device admin password set.
-      this.stepDevicePassword.done$.subscribe({next: setPassword => {
-        password = setPassword
+      this.stepDevicePassword.done$.subscribe({next: credentials => {
+        username = credentials.username
+        password = credentials.password
         this.step = STEP_DEVICE_REGISTRATION
       }})
       // On device registration complete.
       this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
-        const device = await this.deviceService.register(deviceDoc._id, deviceDoc.token)
-        // Note that device.token has been reset so important to use the device record
-        // that register returned.
-        let replicationStatus:ReplicationStatus = <ReplicationStatus>{
-          info: ''
-        };
-        // await this.syncService.addDeviceSyncMetadata();
-        const deviceInfo = await this.deviceService.getAppInfo()
-        replicationStatus.deviceInfo = deviceInfo
-        const connection = navigator['connection']
-        const effectiveType = connection.effectiveType;
-        const downlink = connection.downlink;
-        const downlinkMax = connection.downlinkMax;
-        replicationStatus.effectiveConnectionType = effectiveType
-        replicationStatus.networkDownlinkSpeed = downlink
-        replicationStatus.networkDownlinkMax = downlinkMax
-        const userAgent = navigator['userAgent']
-        replicationStatus.userAgent = userAgent
-        replicationStatus.message = "device setup"
-        await this.deviceService.didUpdate(device._id, device.token, replicationStatus)
-        await this.userService.installSharedUserDatabase(device)
-        await this.userService.createAdmin(password, <LockBoxContents>{
-          device
-        })
-        await this.userService.login('admin', password)
+        let device;
+        try {
+          device = await this.deviceService.register(deviceDoc._id, deviceDoc.token, isSandbox);
+          // Note that device.token has been reset so important to use the device record
+          // that register returned.
+          let replicationStatus:ReplicationStatus = <ReplicationStatus>{
+            info: ''
+          };
+          // await this.syncService.addDeviceSyncMetadata();
+          const deviceInfo = await this.deviceService.getAppInfo()
+          replicationStatus.deviceInfo = deviceInfo
+          const connection = navigator['connection']
+          const effectiveType = connection.effectiveType;
+          const downlink = connection.downlink;
+          const downlinkMax = connection.downlinkMax;
+          replicationStatus.effectiveConnectionType = effectiveType
+          replicationStatus.networkDownlinkSpeed = downlink
+          replicationStatus.networkDownlinkMax = downlinkMax
+          const userAgent = navigator['userAgent']
+          replicationStatus.userAgent = userAgent
+          replicationStatus.message = "device setup"
+          if (!isSandbox) {
+            await this.deviceService.didUpdate(device._id, device.token, replicationStatus)
+          }
+          await this.userService.installSharedUserDatabase(device)
+          await this.userService.createAdmin(username, password, <LockBoxContents>{
+            device
+          })
+          await this.userService.login(username, password)
+
+          this.stepUserProfile.load();
+
+          this.step = STEP_USER_PROFILE
+        } catch (e) {
+          console.log(e)
+          console.log(e.error)
+          alert(e.error?.error)
+        }
+      })
+      this.stepUserProfile.done$.subscribe(async () => {
         this.step = STEP_SYNC
-        this.stepDeviceSync.sync()
+        if (!isSandbox) {
+          this.stepDeviceSync.sync()
+        } else {
+          await this.userService.logout()
+          this.routerService.navigate([''])
+        }
       })
       // On device sync.
       this.stepDeviceSync.done$.subscribe(async (value) => {
