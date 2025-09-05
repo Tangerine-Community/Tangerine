@@ -19,6 +19,10 @@
   </app-device-registration>
 </div>
 
+<div [hidden]="step !== 'STEP_USER_PROFILE'">
+  <app-device-admin-user #stepUserProfile></app-device-admin-user>
+</div>
+
 <div [hidden]="step !== 'STEP_SYNC'">
   <app-device-sync #stepDeviceSync>
   </app-device-sync>

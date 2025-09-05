@@ -119,11 +119,17 @@ export class DeviceService {
     }
   }
 
-  async getRemoteDeviceInfo(id, token):Promise<Device> {
+  async getRemoteDeviceInfo(id, token, isTest=false):Promise<Device> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const device = <Device>await this
-      .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise()
+     let device:Device
+    if (isTest) {
+      const homeUrl = appConfig.homeUrl
+      device = await this.generateTestDevice(id, token, homeUrl);
+    } else {
+      device = <Device>await this
+        .httpClient
+        .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise()
+    }
     return device
   }
 
@@ -329,7 +335,7 @@ export class DeviceService {
       token,
       key: 'test',
       assignedLocation: assignedLocation,
-      syncLocations: [assignedLocation],
+      syncLocations: pickedLocation,
       collection: 'Device',
       version: 'sandbox',
       claimed: true,
