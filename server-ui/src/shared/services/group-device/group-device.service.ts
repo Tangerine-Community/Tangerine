@@ -36,12 +36,14 @@ export class GroupDeviceService {
       .map(row => row.value)
   }
   
-  async create(groupId, deviceData:any):Promise<GroupDevice> {
+  async create(groupId, deviceData:any, token:any=undefined):Promise<GroupDevice> {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
+    let device = new GroupDevice()
+    device.deviceName = deviceData.deviceName || device._id
     const response = await groupDevicesDb.put({
-      ...new GroupDevice(),
+      ...device,
       ...deviceData,
-      token: UUID()
+      token: token ? token : UUID()
     })
     return <GroupDevice>await groupDevicesDb.get(response.id)
   }
@@ -73,7 +75,7 @@ export class GroupDeviceService {
     await groupDevicesDb.remove(device)
   }
 
-  async reset(groupId:string, deviceId:string) {
+  async reset(groupId:string, deviceId:string, token:string=undefined) {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(deviceId)
@@ -81,7 +83,7 @@ export class GroupDeviceService {
         ...originalDevice,
         lastUpdated: undefined,
         version: undefined,
-        token: UUID(),
+        token: token ? token : UUID(),
         claimed: false
       })
       const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
@@ -208,14 +210,14 @@ export class GroupDeviceService {
     
   }
 
-  async unregister(groupId, deviceId) {
+  async unregister(groupId, deviceId, token:string=undefined) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const device = <GroupDevice>await groupDevicesDb.get(deviceId)
     // Reset token on registration.
     const freshDevice = await groupDevicesDb.put({
       ...device,
       claimed: false,
-      token: UUID()
+      token: token ? token : UUID()
     })
     return freshDevice
   }

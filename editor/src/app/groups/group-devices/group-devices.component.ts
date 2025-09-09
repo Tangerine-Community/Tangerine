@@ -494,8 +494,8 @@ export class GroupDevicesComponent implements OnInit {
   }
 
   async generateDevices() {
-    const locationList = <LocationList>await this.filesService.get(this.groupId, 'location-list.json')
-    const maxSyncLocations = 20
+    const locationListsData: any = await this.groupsService.getLocationLists(this.groupId);
+    const maxSyncLocations = 2
     // Set up an array of blank syncLocations for the template to iterate over.
     const syncLocations = []
     let i = 0
@@ -503,20 +503,75 @@ export class GroupDevicesComponent implements OnInit {
       syncLocations.push(null)
       i++
     }
+
     window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
       <tangy-form>
-        <tangy-form-item id="edit-device" 
+        <tangy-form-item id="generate-devices" 
         on-open="
           ${template__calculateDownSyncSizeFunction}
         "
         on-change="
-          const locationsLevels = [ ${locationList.locationsLevels.map(level => `'${level}'`).join(',')} ]
-          ${syncLocations.map((syncLocation, i) => `
-            if (getValue('sync_location__show_levels__${i}')) {
-              inputs.sync_location__${i}.setAttribute('show-levels', locationsLevels.slice(0, locationsLevels.indexOf(getValue('sync_location__show_levels__${i}'))+1).join(','))
+
+          const current_assigned_location_list = getValue('current_assigned_location_list')
+          const assigned_location_list = getValue('assigned_location_list')
+          ${locationListsData.map((list: any) => `
+            if (assigned_location_list === '${list.id}' && current_assigned_location_list !== assigned_location_list) {
+              inputs.assigned_location.value = []
+              inputs.assigned_location.setAttribute('location-src', '/files/${this.groupId}/assets/${list.path}')
+              inputs.assigned_location.onLocationSrcChange();
+              inputs.assigned_location.setAttribute('show-levels', '');
             }
           `).join('')}
+           if (assigned_location_list && assigned_location_list !== current_assigned_location_list) {
+            inputs.current_assigned_location_list.value = assigned_location_list
+          }
+
+          const current_sync_location_list_levels = getValue('current_sync_location_list_levels')
+          const sync_location_list_levels = getValue('sync_location__show_levels')
+          const current_sync_location_list = getValue('current_sync_location_list')
+          const sync_location_list = getValue('sync_location_list')
+          ${locationListsData.map((list: any) => `
+            if (sync_location_list === '${list.id}') {
+
+              var new_sync_location_levels = '${list.locationsLevels.join(',')}'
+              if (current_sync_location_list !== sync_location_list) {
+                inputs.sync_location__show_levels.innerHTML = '';
+                inputs.sync_location__show_levels.value = [];
+                var levelValue = ''
+                ${list.locationsLevels.map((level, i) => `
+                  levelValue = ${i>0 ? `levelValue + ',' + new_sync_location_levels.split(',')[${i}]` : `new_sync_location_levels.split(',')[${i}]`}
+                  var optionEl = document.createElement('option')
+                  optionEl.setAttribute('value', levelValue)
+                  optionEl.textContent = '${level}'
+                  inputs.sync_location__show_levels.appendChild(optionEl)
+                `).join('')}
+                inputs.sync_location__show_levels.render()
+
+                inputs.sync_location.innerHTML = '';
+                inputs.sync_location.value = []
+                inputs.sync_location.setAttribute('location-src', '/files/${this.groupId}/assets/${list.path}')
+                inputs.sync_location.onLocationSrcChange();
+                inputs.sync_location.setAttribute('show-levels', '');
+
+              } else if (current_sync_location_list_levels !== sync_location_list_levels) {
+                inputs.sync_location.innerHTML = '';
+                inputs.sync_location.value = []
+                inputs.sync_location.setAttribute('location-src', '/files/${this.groupId}/assets/${list.path}')
+                inputs.sync_location.onLocationSrcChange();
+                inputs.sync_location.setAttribute('show-levels', getValue('sync_location__show_levels'));
+              }
+            }
+          `).join('')}
+
+          if (sync_location_list_levels && sync_location_list_levels !== current_sync_location_list_levels) {
+            inputs.current_sync_location_list_levels.value = sync_location_list_levels
+          }
+
+          if (sync_location_list && sync_location_list !== current_sync_location_list) {
+            inputs.current_sync_location_list.value = sync_location_list
+          }
+
         ">
           <style>
             .device-settings-list {
@@ -534,62 +589,51 @@ export class GroupDevicesComponent implements OnInit {
           </style>
           <tangy-input name="number_of_devices" value="1" label="Number of devices to generate" type="number" required></tangy-input>
           <tangy-input name="description" label="Device description"></tangy-input>
-          <tangy-location
-            name="assigned_location"
-            label="Assign device to location at which location?"
-            location-src="/files/${this.groupId}/assets/location-list.json"
-            hint-text="This determines the default location metadata for syncing that is applied to a new Case. Your forms may reassign a Case, see change-location-of-case form in the case-module content set for an example."
-            show-levels='${locationList.locationsLevels.join(',')}'
-          >
-          </tangy-location>
+          <tangy-input name="current_assigned_location_list" label="Current assigned location list" hidden></tangy-input>
           <tangy-select
-            name="number_of_sync_locations"
-            label="Number of locations to sync to"
-            value="1"
+            name="assigned_location_list"
+            label="Assign this device using which Location List?"
+            required
           >
-            ${syncLocations.map((syncLocation, i) => `
-              <option value=${i+1}>${i+1}</option>
+            ${locationListsData.map((locationList) => `
+              <option value=${locationList.id}>${locationList.name}</option>
             `).join('')}
           </tangy-select>
-          ${syncLocations.map((syncLocation, i) => `
-            <tangy-box
-              name="sync_location__title__${i}"
-              show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+          <tangy-location
+            name="assigned_location"
+            label="Assign device to a location"
+            hint-text="This determines the default location metadata for syncing for all form responses."
+            show-if="getValue('assigned_location_list')"
+            required
+          >
+          </tangy-location>
+
+          <tangy-input name="current_sync_location_list" label="Current sync location list" hidden></tangy-input>
+          <tangy-input name="current_sync_location_list_levels" label="Current sync location list levels" hidden></tangy-input>
+          <tangy-select
+            name="sync_location_list"
+            label="Select which Location List to use to sync this device"
+            required
+          >
+            ${locationListsData.map((locationList) => `
+              <option value=${locationList.id}>${locationList.name}</option>
+            `).join('')}
+          </tangy-select>
+          <tangy-radio-buttons
+            label="Sync device to location at which level?"
+            name="sync_location__show_levels"
+            show-if="getValue('sync_location_list')"
+            required
+          >
+          </tangy-radio-buttons>
+          <tangy-location
+              name="sync_location"
+              label="Sync device to a location"
+              hint-text="This determines the default location for syncing for all form responses."
+              show-if="getValue('sync_location__show_levels')"
+              required
             >
-              <h2 style="padding: 0px; margin: 0px;">Sync Location ${i+1}</h2>
-            </tangy-box>
-            <tangy-radio-buttons
-              label="Sync device to location at which level?"
-              name="sync_location__show_levels__${i}"
-              show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
-              ${syncLocations && syncLocations[i] && syncLocations[i].showLevels ? `
-                value='${
-                  JSON.stringify(
-                    locationList.locationsLevels.map(level => {
-                      return {
-                        name:level,value:level === syncLocations[i].showLevels.slice(-1)[0] ? 'on' : ''
-                      }
-                    })
-                  )
-                }'
-              ` : ''}
-            >
-              ${locationList.locationsLevels.map(level => `
-                <option value="${level}">${level}</option>
-              `).join('')}
-            </tangy-radio-buttons>
-            <tangy-location
-              name="sync_location__${i}"
-              location-src="/files/${this.groupId}/assets/location-list.json"
-              show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
-              label="Sync device to which location?"
-              ${syncLocations && syncLocations[i] && syncLocations[i].value ? `
-                show-levels='${syncLocations[i].showLevels.join(',')}'
-                value='${JSON.stringify(syncLocations[i].value)}'
-              ` : ''}
-            >
-            </tangy-location>
-          `).join('')}
+          </tangy-location>
           ${template__calculateDownSyncSizeButton}
         </tangy-form-item>
       </tangy-form>
@@ -618,7 +662,8 @@ export class GroupDevicesComponent implements OnInit {
         const device = await this.groupDevicesService.createDevice(this.groupId)
         device.assignedLocation.value = assignedLocationNodes
         device.assignedLocation.showLevels = assignedLevels 
-        device.syncLocations = syncLocations 
+        device.syncLocations = syncLocations
+        device.name = event.target.inputs.find(input => input.name === 'device_name').value
         device.description = description
         await this.groupDevicesService.updateDevice(this.groupId, device)
         numberOfDevicesGenerated++
