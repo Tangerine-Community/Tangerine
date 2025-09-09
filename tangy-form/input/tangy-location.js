@@ -509,7 +509,7 @@ class TangyLocation extends TangyInputBase {
       locationSrc: {
         type: String,
         value: './assets/location-list.json',
-        observer: 'render'
+        observer: 'onLocationSrcChange'
       },
       showLevels: {
         type: String,

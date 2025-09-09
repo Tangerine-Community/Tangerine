@@ -3,6 +3,7 @@ import {ReplicationStatus} from "../../sync/replication-status.class";
 
 export class GroupDevice {
   _id:string = uuidv4()
+  name:string = this._id;
   token:string = uuidv4()
   key:string = uuidv4()
   claimed:boolean = false

@@ -4,6 +4,7 @@ const {v4: uuidv4}= require('uuid')
 export class GroupDevice {
   _id:string = uuidv4()
   collection = 'Device'
+  deviceName:string
   token:string = uuidv4()
   key:string = uuidv4()
   claimed:boolean = false
