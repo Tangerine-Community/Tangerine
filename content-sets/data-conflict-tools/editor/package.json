@@ -13,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "jsondiffpatch": "^0.4.1",
+    "jsondiffpatch": "^0.7.2",
     "lit-element": "^2.4.0",
     "pouchdb": "^7.2.2",
     "webpack": "5.1.3",
