@@ -12,4 +12,5 @@ export interface TangerineConfig {
   reportingDelay: number
   hideSkipIf: boolean
   couchdbSync4All: boolean
+  openRegistration: boolean
 }

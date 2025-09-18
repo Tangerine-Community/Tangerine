@@ -1,12 +1,17 @@
 import { GroupDeviceService } from './../../shared/services/group-device/group-device.service';
 import {Controller, All, Param, Body, HttpException, HttpStatus} from '@nestjs/common';
+import { GroupService } from 'src/shared/services/group/group.service';
+import { GroupDevice, LocationConfig } from 'src/shared/classes/group-device.class';
+import { TangerineConfigService } from 'src/shared/services/tangerine-config/tangerine-config.service';
 const log = require('tangy-log').log
 
 @Controller('group-device-public')
 export class GroupDevicePublicController {
 
   constructor(
-    private readonly groupDeviceService: GroupDeviceService
+    private readonly groupDeviceService: GroupDeviceService,
+    private readonly groupService: GroupService,
+    private readonly tangerineConfigService: TangerineConfigService
   ) { }
 
   @All('did-sync/:groupId/:deviceId/:token/:version')
@@ -90,14 +95,47 @@ export class GroupDevicePublicController {
       if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
         return 'Token does not match'
       }
-      const device = await this.groupDeviceService.read(groupId, deviceId)
-      return device
+      return await this.groupDeviceService.read(groupId, deviceId)
     } catch (error) {
       let message = 'Error registering device for group ' + groupId + ' and deviceId ' + deviceId
       let errorDetails = {
         "message" : message,
         "groupId" : groupId,
         "deviceId" : deviceId,
+        "error" : error
+      }
+      log.error(errorDetails)
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: message,
+        errorDetails: errorDetails,
+      }, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @All('register/:groupId/:token')
+  async openRegistration(@Param('groupId') groupId:string,  @Param('token') token: string, @Body('location') location: any) {
+    try {
+      const config = await this.tangerineConfigService.config()
+      if (!config.openRegistration) {
+        return 'Open registration is not enabled';
+      }
+      // use app config upload token as proxy for allowing unverified device creation for open registration
+      const appConfig = await this.groupService.readAppConfig(groupId);
+      if (token !== appConfig.uploadToken) {
+        return 'Token does not match';
+      }
+      let newDevice = new GroupDevice()
+      let assignedLocation = new LocationConfig()
+      assignedLocation.value = location
+      assignedLocation.showLevels = location.map(l => l.level)
+      newDevice.assignedLocation = assignedLocation
+      return await this.groupDeviceService.create(groupId, newDevice);
+    } catch (error) {
+      let message = 'Error registering device for group ' + groupId
+      let errorDetails = {
+        "message" : message,
+        "groupId" : groupId,
         "error" : error
       }
       log.error(errorDetails)

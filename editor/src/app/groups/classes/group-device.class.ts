@@ -5,6 +5,7 @@ export class GroupDevice {
   _id:string = uuidv4()
   token:string = uuidv4()
   key:string = uuidv4()
+  verified:boolean = false
   claimed:boolean = false
   updatedOn:number = undefined
   registeredOn:number = undefined
