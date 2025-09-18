@@ -141,6 +141,8 @@ export class SyncCouchdbService {
     this.writeBatchSize = reduceBatchSize ? this.reducedBatchSize : appConfig.writeBatchSize || this.writeBatchSize
     this.changesBatchSize = reduceBatchSize ? this.reducedChangesBatchSize : appConfig.changesBatchSize || this.changesBatchSize
 
+    const deviceVerified = await this.deviceService.isDeviceVerified()
+
     let replicationStatus:ReplicationStatus
     syncDetails.usePouchDbLastSequenceTracking = appConfig.usePouchDbLastSequenceTracking || await this.variableService.get('usePouchDbLastSequenceTracking')
       ? true
@@ -231,57 +233,59 @@ export class SyncCouchdbService {
       await this.variableService.set('previousDeviceSyncLocations', syncDetails.deviceSyncLocations)
     }
 
-    // Pull.
-    let pullReplicationStatus
-    let hadPullSuccess = false
-    this.retryCount = 1
-    let prePullLastSeq = await this.variableService.get('sync-pull-last_seq')
-    while (!hadPullSuccess && !this.cancelling) {
-      try {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, syncDetails, prePullLastSeq);
-        if (!pullReplicationStatus.pullError) {
-          await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
-          hadPullSuccess = true
-          pullReplicationStatus.hadPullSuccess = true
-        } else {
+    // Pull -- Only pull if the device is verified on the server
+    if (deviceVerified) {
+      let pullReplicationStatus
+      let hadPullSuccess = false
+      this.retryCount = 1
+      let prePullLastSeq = await this.variableService.get('sync-pull-last_seq')
+      while (!hadPullSuccess && !this.cancelling) {
+        try {
+          pullReplicationStatus = await this.pull(userDb, remoteDb, syncDetails, prePullLastSeq);
+          if (!pullReplicationStatus.pullError) {
+            await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
+            hadPullSuccess = true
+            pullReplicationStatus.hadPullSuccess = true
+          } else {
+            await sleep(retryDelay)
+            ++this.retryCount
+          }
+        } catch (e) {
+          // Theoretically this.pull shouldn't ever throw an error, but just in case make sure we set that last push sequence.
+          const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
+          await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
+          console.error(e)
           await sleep(retryDelay)
-          ++this.retryCount
         }
-      } catch (e) {
-        // Theoretically this.pull shouldn't ever throw an error, but just in case make sure we set that last push sequence.
-        const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
-        await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
-        console.error(e)
-        await sleep(retryDelay)
       }
-    }
-    replicationStatus = {...replicationStatus, ...pullReplicationStatus}
-    this.syncMessage$.next(replicationStatus);
+      replicationStatus = {...replicationStatus, ...pullReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
 
-    // Pull Form Response Ids Assigned to the Device
-    // get the list of docs assigned to the device from the server device database
-    const deviceDoc = await this.deviceService.getRemoteDeviceInfo(syncDetails.deviceId, syncDetails.deviceToken)
-    const assignedFormResponseIds = deviceDoc?.assignedFormResponseIds ? deviceDoc.assignedFormResponseIds : []
+      // Pull Form Response Ids Assigned to the Device
+      // get the list of docs assigned to the device from the server device database
+      const deviceDoc = await this.deviceService.getRemoteDeviceInfo(syncDetails.deviceId, syncDetails.deviceToken)
+      const assignedFormResponseIds = deviceDoc?.assignedFormResponseIds ? deviceDoc.assignedFormResponseIds : []
 
-    let pullIssueFormsReplicationStatus
-    let hadPullIssueFormsSuccess = false
-    while (!hadPullIssueFormsSuccess && !this.cancelling) {
-      try {
-        pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, syncDetails, prePullLastSeq);
-        if (!pullIssueFormsReplicationStatus.pullError) {
-          hadPullIssueFormsSuccess = true
-          pullIssueFormsReplicationStatus.hadPullSuccess = true
-        } else {
+      let pullIssueFormsReplicationStatus
+      let hadPullIssueFormsSuccess = false
+      while (!hadPullIssueFormsSuccess && !this.cancelling) {
+        try {
+          pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, syncDetails, prePullLastSeq);
+          if (!pullIssueFormsReplicationStatus.pullError) {
+            hadPullIssueFormsSuccess = true
+            pullIssueFormsReplicationStatus.hadPullSuccess = true
+          } else {
+            await sleep(retryDelay)
+            ++this.retryCount
+          }
+        } catch (e) {
+          console.error(e)
           await sleep(retryDelay)
-          ++this.retryCount
         }
-      } catch (e) {
-        console.error(e)
-        await sleep(retryDelay)
       }
+      replicationStatus = {...replicationStatus, ...pullIssueFormsReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
     }
-    replicationStatus = {...replicationStatus, ...pullIssueFormsReplicationStatus}
-    this.syncMessage$.next(replicationStatus);
 
     if (this.cancelling) {
       this.finishCancelling(replicationStatus)

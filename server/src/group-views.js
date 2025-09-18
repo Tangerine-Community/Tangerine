@@ -222,6 +222,7 @@ module.exports.listDevices =  {
       _id: doc._id,
       token: doc.token,
       claimed:doc.claimed,
+      verified:doc.verified,
       description: doc.description,
       registeredOn: doc.registeredOn,
       syncedOn: doc.syncedOn,

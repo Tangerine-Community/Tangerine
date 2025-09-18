@@ -6,6 +6,7 @@ export class GroupDevice {
   collection = 'Device'
   token:string = uuidv4()
   key:string = uuidv4()
+  verified:boolean = false
   claimed:boolean = false
   updatedOn:number
   version:string
@@ -19,7 +20,6 @@ export class SyncLocation {
   id:string
 }
 
-// 
 export class LocationConfig {
   showLevels: Array<string>
   value:any

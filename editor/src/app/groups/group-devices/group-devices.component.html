@@ -45,6 +45,12 @@
           <mwc-icon *ngIf="element.claimed">done</mwc-icon>
         </td>
       </ng-container>
+      <ng-container matColumnDef="verified">
+        <th mat-header-cell *matHeaderCellDef> Verified </th>
+        <td mat-cell *matCellDef="let element">
+          <mwc-icon *ngIf="element.verified">done</mwc-icon>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="registeredOn">
         <th class="w-100" mat-header-cell *matHeaderCellDef> Registered on </th>
         <td mat-cell *matCellDef="let element"> {{element.registeredOn}} </td>
@@ -153,6 +159,9 @@
               </button>
               <button mat-menu-item (click)="editDevice(element._id)">
                 <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
+              </button>
+              <button mat-menu-item *ngIf="!element.verified" (click)="verifyDevice(element._id)">
+                <mat-icon>done</mat-icon><span>{{'verify'|translate}}</span>
               </button>
               <button mat-menu-item (click)="viewSyncLog(element._id)">
                 <mat-icon>view_list</mat-icon><span>{{'view sync log'|translate}}</span>
