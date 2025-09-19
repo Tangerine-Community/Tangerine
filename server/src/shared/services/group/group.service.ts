@@ -157,6 +157,7 @@ export class GroupService {
     }
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
+    const config = await this.configService.config() // in the future, add this to the group doc
     await createGroupDatabase(groupId, '', true)
     await createGroupDatabase(groupId, '-log')
     await createGroupDatabase(groupId, '-conflict-revs')

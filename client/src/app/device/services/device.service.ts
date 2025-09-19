@@ -153,8 +153,10 @@ export class DeviceService {
     const deviceId = device._id
     const deviceToken = device.token
 
+    // This function is meant to check if the device is verified on the server.
+    // Do not assume the device is verified if remoteDevice is not found.
     const remoteDevice = await this.getRemoteDeviceInfo(deviceId, deviceToken, undefined)
-    if (!remoteDevice) return false // do not assume the device is verified if remoteDevice is not found
+    if (!remoteDevice) return false
     return remoteDevice.verified
   }
 
