@@ -1,7 +1,6 @@
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { Subject } from 'rxjs';
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { Route } from '@angular/router';
 import { UserProfileComponent } from 'src/app/user-profile/user-profile.component';
 
 @Component({
@@ -23,8 +22,9 @@ export class DeviceAdminUserComponent {
   constructor(
   ) { }
 
-  load() {
+  load(returnUrl:string) {
     this.showUserProfile = true;
+    this.userProfile.returnUrl = returnUrl;
   }
 
 }

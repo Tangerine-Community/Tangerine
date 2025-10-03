@@ -93,7 +93,7 @@ export class GroupDevicePublicController {
   async read(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
     try {
       if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
-        return 'Token does not match'
+        throw new Error('Token does not match')
       }
       return await this.groupDeviceService.read(groupId, deviceId)
     } catch (error) {
@@ -118,12 +118,12 @@ export class GroupDevicePublicController {
     try {
       const config = await this.tangerineConfigService.config()
       if (!config.openRegistration) {
-        return 'Open registration is not enabled';
+        throw new Error('Open registration is not enabled');
       }
       // use app config upload token as proxy for allowing unverified device creation for open registration
       const appConfig = await this.groupService.readAppConfig(groupId);
       if (token !== appConfig.uploadToken) {
-        return 'Token does not match';
+        throw new Error('Token does not match');
       }
       let newDevice = new GroupDevice()
       let assignedLocation = new LocationConfig()

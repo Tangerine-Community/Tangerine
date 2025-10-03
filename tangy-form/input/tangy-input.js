@@ -193,7 +193,7 @@ export class TangyInput extends TangyInputBase {
   connectedCallback() {
     super.connectedCallback()
     // Template.
-    this.$.container.innerHTML = `   
+    this.$.container.innerHTML = `
       <label id="label"></label>
       <label id="hintText" class="hint-text"></label>
       ${
@@ -201,6 +201,7 @@ export class TangyInput extends TangyInputBase {
         this.getAttribute('type') === 'number' ||
         this.getAttribute('type') === 'date' ||
         this.getAttribute('type') === 'time' ||
+        this.getAttribute('type') === 'password' ||
         this.getAttribute('allowed-pattern')
         ? `<paper-input id="input"></paper-input>`
         : `<paper-textarea id="input"></paper-textarea>`

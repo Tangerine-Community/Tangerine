@@ -114,7 +114,8 @@ export class DeviceSetupComponent implements OnInit {
           })
           await this.userService.login(username, password)
 
-          this.stepUserProfile.load();
+          const returnUrl = 'device-setup'
+          this.stepUserProfile.load(returnUrl);
 
           this.step = STEP_USER_PROFILE
         } catch (e) {
