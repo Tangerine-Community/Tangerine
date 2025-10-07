@@ -1,5 +1,48 @@
 # CHANGELOG
 
+## v7.22.0
+
+- Add tangy-audio-recording-nlp-widget
+- Bump tangy-form to 4.50.2
+
+## v7.21.3, v7.21.4, v7.21.5, v7.21.6, v7.21.7
+
+- Bump tangy-form to 4.49.4 to enabel custom style of tangy-radio-block background color
+- Bump tangy-form to 4.49.5 to use tangy-form-item background color for tangy-radio-block label
+- Bump tangy-form to 4.49.6 to convert webm to wav for tangy-audio-recording
+- Bump tangy-form to 4.49.7 to fix resource leaks with tangy-audio-recording
+- Bump tangy-form to 4.49.8 to prevent double click of tangy-audio-recording buttons
+
+## v7.21.0, v7.21.1, v7.21.2
+
+- Bump tangy-form to 4.49.1, 4.49.2, 4.49.3 with Tangy Audio Recording with Visualization
+- Introduce autoStopMode config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
+
+## v7.20.2
+
+- Bump tangy-form to 4.48.2 with fixes to Tangy Audio Recording and Playback widgets
+
+## v7.20.1
+
+- Bump tangy-form to 4.48.1 with fixes to Tangy Audio Recording and Playback widgets
+
+## v7.20.0
+
+- Bump tangy-form to 4.48.0
+
+## v7.19.0
+
+- Create Tangy Audio Recording and Tangy Audio Playback widgets
+- Bump tangy-form to 4.47.0
+
+## v7.18.2
+
+- Bump tangy-form to 4.46.1
+
+## v7.18.1
+
+- Bump tangy-form to 4.46.0
+
 ## v7.18.0
 
 - Add editor widgets for Tangy Prompt Box and updates to Tangy Radio Blocks

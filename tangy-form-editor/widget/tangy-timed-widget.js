@@ -20,6 +20,7 @@ class TangyTimedWidget extends TangyBaseWidget {
       ...this.defaultConfigUnimplementedAttributes(),
       hintText: '',
       autoStop: '',
+      autoStopMode: 'first',
       columns: 4,
       options: [],
       showLabels: true,
@@ -63,6 +64,7 @@ class TangyTimedWidget extends TangyBaseWidget {
         ${this.downcastUnimplementedAttributes(config)}
         ${config.duration ? `duration="${config.duration}"` : ``}
         ${config.autoStop ? `auto-stop="${config.autoStop}"` : ``}
+        ${config.autoStopMode ? `auto-stop-mode="${config.autoStopMode}"` : ``}
         ${config.captureItemAt ? `capture-item-at="${config.captureItemAt}"` : ``}
         ${config.rowMarkers ? 'row-markers' : ''}
         ${config.showLabels ? 'show-labels' : ''}
@@ -142,6 +144,12 @@ class TangyTimedWidget extends TangyBaseWidget {
                 <tangy-input name="autoStop" inner-label="Auto Stop" value="${
                   config.autoStop ? config.autoStop : ''
                 }"></tangy-input>
+                <tangy-select name="autoStopMode" label="Auto Stop Mode" value="${
+                  config.autoStopMode ? config.autoStopMode : 'first'
+                }">
+                  <option value="first">First X items</option>
+                  <option value="consecutive">Apply to any consecutive items</option>
+                </tangy-select>
                 <tangy-toggle name="showLabels" ${
                   config.showLabels ? 'value="on"' : ''
                 }>Show text labels on the control buttons</tangy-toggle>
@@ -204,6 +212,7 @@ class TangyTimedWidget extends TangyBaseWidget {
       ...config,
       ...this.onSubmitCoreAttributes(config, formEl),
       autoStop: formEl.values.autoStop,
+      autoStopMode: formEl.values.autoStopMode,
       captureItemAt: formEl.values.captureItemAt,
       duration: formEl.values.duration,
       hintText: formEl.values.hintText,

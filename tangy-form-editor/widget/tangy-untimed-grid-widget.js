@@ -23,7 +23,8 @@ class TangyUntimedGridWidget extends TangyBaseWidget {
       options: [],
       rowMarkers: false,
       optionFontSize: '',
-      autoStop: ''
+      autoStop: '',
+      autoStopMode: 'first'
     };
   }
 
@@ -58,6 +59,7 @@ class TangyUntimedGridWidget extends TangyBaseWidget {
         ${config.rowMarkers ? 'row-markers' : ''}
         ${config.optionFontSize ? `option-font-size="${config.optionFontSize}"` : ``}
         ${config.autoStop ? `auto-stop="${config.autoStop}"` : ``}
+        ${config.autoStopMode ? `auto-stop-mode="${config.autoStopMode}"` : ``}
       >
       ${config.options
         .map(
@@ -128,6 +130,12 @@ class TangyUntimedGridWidget extends TangyBaseWidget {
                 <tangy-input name="autoStop" inner-label="Auto Stop" value="${
                   config.autoStop ? config.autoStop : ''
                 }"></tangy-input>
+                <tangy-select name="autoStopMode" label="Auto Stop Mode" value="${
+                  config.autoStopMode ? config.autoStopMode : 'first'
+                }">
+                  <option value="first">First X items</option>
+                  <option value="consecutive">Apply to any consecutive items</option>
+                </tangy-select>
                 <tangy-checkbox name="rowMarkers" ${
                   config.rowMarkers ? 'value="on"' : ''
                 }>Mark entire rows</tangy-checkbox>
@@ -161,6 +169,7 @@ class TangyUntimedGridWidget extends TangyBaseWidget {
       ...config,
       ...this.onSubmitCoreAttributes(config, formEl),
       autoStop: formEl.values.autoStop,
+      autoStopMode: formEl.values.autoStopMode,
       hintText: formEl.values.hintText,
       columns: formEl.values.columns,
       rowMarkers: formEl.values.rowMarkers === 'on' ? true : false,

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  
+  <head>
+      <style>
+          *{
+            --accent-color:#f26f10;
+            --accent-text-color:white;
+            --lighter-accent-color: #ff9522;
+            --primary-color: #3c5b8d;
+            --primary-color-dark: #3c5b8d;
+            --primary-color-lighter: #2d7dd2;
+          }
+          </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form-editor demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script src="../node_modules/js-beautify/js/lib/beautify-html.js"></script>
+
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+      fetch('assets/translation.json')
+              .then(response => response.json())
+              .then(json => {
+                console.log("populating window.translation.")
+                window.translation = json
+              })
+      window.example = 1
+    </script>
+
+    <script type="module" src="../tangy-form-editor.js"></script>
+
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+          <tangy-form-editor 
+            files-endpoint="./files.json" 
+            location-lists-metadata='[{"id":"default-location-list","name":"Default Location List","path":"location-list.json", "locationsLevels": ["county","school"]},{"id":"hospitals","name":"Hospitals","path":"locations/hospitals.json", "locationsLevels": ["clinic","ward"]}]'>
+            
+            <template>
+
+              <tangy-form 
+                id="field-demo" 
+                title="Field Demo" 
+                on-open="console.log('tangy-form.on-open called')"
+                on-change="console.log('tangy-form.on-change called')"
+                on-submit="console.log('tangy-form.on-submit called')"
+                category="three"
+              >
+
+                <tangy-form-item id="text_and_number" title="Text and Number inputs">
+                  <template>
+                    <tangy-input type="text" name="is_text" label="This is text"></tangy-input>
+                    <tangy-input type="number" name="is_number" label="This is a number"></tangy-input>
+                  </template>
+                </tangy-form-item>
+
+                <tangy-form-item id="section_radio-blocks"
+                title="Tangy Radio Blocks and Prompt Box"
+                 incorrect-threshold="undefined"
+                on-open="
+  
+                "
+                on-change="
+  
+                "
+                category="
+                  null
+                "
+              >
+                  <template>
+  
+                      <tangy-radio-blocks name="moving_windows_comp_02" label="What does Kofi like to do?" orientation="rows" class="" style="" required="">
+                          <option value="0" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Tie_her_shoes.mp3">Tie her shoes</option>
+                          <option value="1" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Visit_the_city.mp3">Visit the city</option>
+                          <option value="2" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Run.mp3">Run</option>
+                          <option value="3" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Get_up_early.mp3">Get up early</option>
+                      </tangy-radio-blocks>
+                      <tangy-prompt-box name="moving_windows_comp_02_prompt" justify-content="flex-end">
+                          <option value="instructions" label="prompt" sound="assets/sounds/letters_moving_windows_comp_help.mp3" image="./assets/images/instructions.png" play-on-open="on"></option>
+                          <option value="help" label="insturctions" prompt-for="moving_windows_comp_02" sound="assets/sounds/letters_moving_windows_comp_02_What_does_Kofi_like_to_do.mp3" image="./assets/images/ms-talk2.png"></option>
+                      </tangy-prompt-box>
+  
+                  </template>
+                </tangy-form-item>
+
+              </tangy-form>
+
+            </template>
+          </tangy-form-editor>
+          <script>
+            document.querySelector('tangy-form-editor').addEventListener('tangy-form-editor-change', event => {console.info('tangy-form-editor-change event')})
+          </script>
+  </body>
+</html>
