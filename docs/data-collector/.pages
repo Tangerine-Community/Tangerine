@@ -1,5 +1,9 @@
 title: "Data Collector"
-arrange:
+nav:
 
-    - data-collector-overview.md
     - README.md
+    - Tangerine app Installation: install-app.md
+    - registration.md
+    - data-collector.md
+    - data-sync.md
+    - App Update: update-app.md

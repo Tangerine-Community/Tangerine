@@ -139,6 +139,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
   --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
+  --env \"T_USER_SHORT_CODE_LENGTH=$T_USER_SHORT_CODE_LENGTH\" \
 
   $T_PORT_MAPPING \
   -p 9229:9229 \
