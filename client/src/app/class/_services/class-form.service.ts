@@ -70,6 +70,7 @@ export class ClassFormService {
       return false;
     }
   }
+
   async getResponsesByStudentId(studentId) {
     await this.initUserDB();
     const result = await this.userDB.query('tangy-class/responsesByStudentId', {
@@ -78,11 +79,20 @@ export class ClassFormService {
     });
     return result.rows;
   }
+
   async getResponsesByFormId(formId) {
     const r = await this.db.query('tangy-class/responsesByFormId', { key: formId, include_docs: true });
     return r.rows.map((row) => row.doc);
   }
 
+  async getResponseByClassId(classId) {
+    await this.initUserDB();
+    const result = await this.userDB.query('tangy-class/responsesByClassId', {
+      key: classId,
+      include_docs: true
+    });
+    return result.rows;
+  }
 }
 
 const tangyClassDesignDoc = {
@@ -103,11 +113,10 @@ const tangyClassDesignDoc = {
         }
       }.toString()
     },
-    responsesByClassIdCurriculumId: {
+    responsesByClassIdFormId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc && doc.metadata.studentRegistrationDoc.classId) {
-            // console.log("matching: " + doc.metadata.studentRegistrationDoc.classId)
              emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
           }
         }

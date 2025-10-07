@@ -12,16 +12,16 @@
 </mat-toolbar>
 <mat-toolbar *ngIf="selectedClass" class="classDashboard">
 
-  <<span dir="rtl" class="class-dashboard-button-spacer-right">
+  <span dir="rtl" class="class-dashboard-button-spacer-right">
       <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
       <mat-menu #groupingMenu="matMenu">
         <ng-template matMenuContent>
-        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+        <button mat-menu-item *ngFor="let item of formItemList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.formId}}">{{item.title}}</button>
         </ng-template>
       </mat-menu>
   <!--<mat-menu #progressMenu="matMenu">-->
   <!--<ng-template matMenuContent>-->
-  <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
+  <!--<button mat-menu-item *ngFor="let item of formItemList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.formId}}">{{item.title}}</button>-->
   <!--</ng-template>-->
   <!--</mat-menu>-->
       <mat-menu #reportsMenu="matMenu">
@@ -43,9 +43,8 @@
         <mat-form-field>
           <mat-label>{{'Select Subtask'|translate}}</mat-label>
           <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
-            <mat-option>{{'None'|translate}}</mat-option>
-            <mat-option *ngFor="let item of formList;" value="{{item.id}}"
-                        (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
+            <mat-option *ngFor="let item of formItemList;" value="{{item.id}}"
+                        (click)="selectSubTask(item.id,item.classId,item.formId)">{{item.title}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -59,7 +58,7 @@
           </tr>
           <tr *ngFor="let element of allStudentResults">
             <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["student_name"]}} {{element["student_surname"]}} </td>
-            <td class="checkbox-response" *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
+            <td class="checkbox-response" *ngIf="element.formItems[currentItemId]?.response ; else elseBlock ">
               <input type="checkbox"
                      (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
                      [checked]="true"/>

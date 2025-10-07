@@ -1,7 +1,6 @@
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { Subject } from 'rxjs';
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { Route } from '@angular/router';
 import { UserProfileComponent } from 'src/app/user-profile/user-profile.component';
 
 @Component({
@@ -11,9 +10,13 @@ import { UserProfileComponent } from 'src/app/user-profile/user-profile.componen
 })
 export class DeviceAdminUserComponent {
   showUserProfile = false;
+  returnUrl:string
   done$:Subject<string> = new Subject<string>()
   @ViewChild(UserProfileComponent) set userProfile(component: UserProfileComponent) {
     if (component) {
+      if (this.returnUrl) {
+        component.returnUrl = this.returnUrl;
+      }
       component.done$.subscribe((userProfileId) => {
         this.done$.next(userProfileId);
       });
@@ -23,8 +26,9 @@ export class DeviceAdminUserComponent {
   constructor(
   ) { }
 
-  load() {
+  load(returnUrl:string) {
     this.showUserProfile = true;
+    this.returnUrl = returnUrl;
   }
 
 }

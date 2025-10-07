@@ -24,10 +24,10 @@ export class GroupDeviceUsersComponent implements OnInit {
     'item-1_firstOpenTime',
     'item1_firstOpenTime',
     'complete',
-    'deviceId',
     'buildChannel',
     'buildId',
-    'tangerineModifiedByUserId'
+    'tangerineModifiedByUserId',
+    'verified',
   ]
   groupId:string
 

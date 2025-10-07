@@ -7,6 +7,7 @@ export class GroupDevice {
   token:string = uuidv4()
   key:string = uuidv4()
   claimed:boolean = false
+  verified:boolean = false
   updatedOn:number
   version:string
   syncLocations:Array<LocationConfig> = []
