@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-audio-recording demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+        import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+        <style>
+            html {
+                --document-background-color: #FAFAFA;
+                --primary-color-dark: #3c5b8d;
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-color: #3c5b8d;
+                --accent-color: #f26f10;
+                --accent-text-color: #FFF;
+                --error-color: var(--paper-red-500);
+                --disabled-color: #BBB;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5 {
+                @apply --paper-font-common-base;
+                color: var(--primary-text-color);
+                margin: 25px 0px 5px 15px;
+            }
+        </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-gate.js"></script>
+    <script type="module" src="../input/tangy-audio-recording.js"></script>
+    <script type="module" src="../input/tangy-audio-playback.js"></script>
+    <script type="module" src="../input/tangy-audio-recording-nlp.js"></script>
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
+    </custom-style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>tangy-audio-recording demo</h3>
+        <demo-snippet>
+            <template>
+                <tangy-form id="my-form" title="My Form">
+                    <tangy-form-item id="item1">
+                        <h2>Audio Recording on Same Page as NLP Processing</h2>
+                        <tangy-audio-recording name="tangy-audio-recording-1" label="siku moja furaha alikwenda polini kuchuma matunda"></tangy-audio-recording>
+                        <tangy-audio-recording-nlp 
+                            name="test-stimuli-nlp-1"
+                            label="📚 Reading Assessment Feedback"
+                            audio-recording-input-name="tangy-audio-recording-1"
+                            nlp-model-url="https://ai.tangerinecentral.org/invocations"
+                            stimuli-text="Siku moja Furaha alikwenda porini kuchuma matunda."
+                            required>
+                        </tangy-audio-recording-nlp>
+                    </tangy-form-item>
+                    <tangy-form-item id="item2">
+                        <h3>Audio Recording on Different Page as NLP Processing</h3>
+                        <tangy-audio-recording name="tangy-audio-recording-2" label="Audio Recording 2"></tangy-audio-recording>
+                    </tangy-form-item>
+                    <tangy-form-item id="item3">
+                        <h3>Audio Recording on Different Page as NLP Processing</h3>
+                        <tangy-audio-recording-nlp 
+                            name="test-stimuli-nlp-2"
+                            label="Tangy with Stimuli Text"
+                            audio-recording-input-name="tangy-audio-recording-2"
+                            hint-text="Read the text provided in the stimuli."
+                            nlp-model-url="https://ai.tangerinecentral.org/invocations"
+                            stimuli-text="siku moja furaha alikwenda porini kuchuma matunda"
+                            required>
+                        </tangy-audio-recording-nlp>
+                    </tangy-form-item>
+                </tangy-form>
+                <script>
+                    document.querySelector('#my-form').addEventListener('submit', event => {
+                        // By default, the form response is locked and the user can browse it. Use event.preventDefault()
+                        // to do something else.
+                        event.preventDefault()
+                        // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+                        console.log(event.target.response)
+                        console.log(event.target.inputs)
+                        console.log(event.target.values)
+                    })
+                    /*document.querySelector('#my-form').addEventListener('TANGY_MEDIA_UPDATE', event => {
+                        // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+                        console.log("Caught TANGY_MEDIA_UPDATE event at: " + event.target.name)
+
+                        // create an a element to download the audio file
+                        // const audioElement = document.createElement('a');
+                        // audioElement.href = event.target.value;
+                        // audioElement.download = 'recorded-audio.wav';
+                        // audioElement.textContent = 'Download Recorded Audio';
+                        // audioElement.click();
+
+                    // }, true)*/
+                    // document.querySelector('#my-form').addEventListener('TANGY_MEDIA_UPDATE', event => {
+                    //     if (navigator.onLine) {
+                    //         console.log("We are online");
+                    //     } else {
+                    //         console.log("We are offline");
+                    //         document.querySelector('tangy-gate[name="item3gate"]').value = true;
+                    //         return;
+                    //     }
+
+                    //     if (event.target.tagName !== 'TANGY-AUDIO-RECORDING') {
+                    //         console.error('Event target is not a tangy-audio-recording element');
+                    //         return;
+                    //     }
+
+                    //    // send an http request to the server mimicking the curl command above
+                    //     const formData = new FormData();
+                    //     const audioBlob = event.target.audioBlob;
+                    //     if (audioBlob) {
+                    //         formData.append('audio', audioBlob, 'recording.wav');
+                    //     } else {
+                    //         console.error('No audio blob found');
+                    //         return;
+                    //     }
+                    //     formData.append('stimuli', 'Siku moja Furaha');
+
+                    //     fetch('https://ai.tangerinecentral.org/invocations', {
+                    //         method: 'POST',
+                    //         body: formData,
+                    //     })
+                    //     .then(
+                    //         response => {
+                    //             try {
+                    //                 return response.json(); // Add 'return' here!
+                    //             } catch (error) {
+                    //                 console.error('Error parsing JSON:', error);
+                    //                 throw error;
+                    //             }
+                    //         }
+                    //     )
+                    //     .then(data => {
+                    //         console.log('Success:', data);
+                    //         // set the gate value to true if the response is successful
+                    //         document.querySelector('tangy-gate[name="item3gate"]').value = true;
+                    //         // set the aiResponse value to the response text (stringify if it's an object)
+                    //         const aiResponseInput = document.querySelector('tangy-input[name="aiResponse"]');
+                    //         if (aiResponseInput) {
+                    //             aiResponseInput.value = typeof data === 'object' ? JSON.stringify(data) : data;
+                    //             // Call the feedback update function directly
+                    //             if (window.updateFeedbackDisplay) {
+                    //                 window.updateFeedbackDisplay();
+                    //             }
+                    //             // Also trigger a change event as backup
+                    //             aiResponseInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    //         }
+                    //     })
+                    // }, true);
+                    
+                    // // Add event listener for feedback updates (backup approach)
+                    // document.querySelector('#my-form').addEventListener('change', (event) => {
+                    //     // Check if the change is from the aiResponse input
+                    //     if (event.target.name === 'aiResponse' && window.updateFeedbackDisplay) {
+                    //         window.updateFeedbackDisplay();
+                    //     }
+                    // });
+                </script>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

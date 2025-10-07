@@ -57,6 +57,7 @@
     <script type="module" src="../input/tangy-video-capture.js"></script>
     <script type="module" src="../input/tangy-qr.js"></script>
     <script type="module" src="../input/tangy-signature.js"></script>
+    <script type="module" src="../input/tangy-audio-recording-nlp.js"></script>
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
@@ -657,7 +658,7 @@
           <tangy-form id="autostop-radio" title="autostop radio">
             <tangy-form-item id="item1" incorrect-threshold="3">
               <tangy-box name="RC_helpENG" class="" style="">
-                <p>Only the responses provided (under each question) or responses with a meaning similar to those provided should be marked correct. If a child says “I don't know,” mark as “Incorrect.” </p>
+                <p>Only the responses provided (under each question) or responses with a meaning similar to those provided should be marked correct. If a child says "I don't know," mark as "Incorrect." </p>
                 <div style="background:lightgray;color:black;padding:15px;">
                   <p><b>Now I am going to ask you a few questions about the story you just read. Try to answer the questions as well as you can. You can answer the questions in whichever Arabic dialect you prefer.</b></p>
                 </div></tangy-box>
@@ -776,6 +777,24 @@
               </template>
             </tangy-form-item>
           </tangy-form>
+        </template>
+      </demo-snippet>
+
+      <h3>Audio Recording with NLP Processing</h3>
+      <demo-snippet>
+        <template>
+         <tangy-form id="my-form" title="Tangy with Stimuli Text">
+                    <tangy-form-item id="nlpitem1">
+                        <tangy-audio-recording-nlp 
+                            name="test-stimuli-nlp" 
+                            label="Tangy with Stimuli Text"
+                            hint-text="Read the text provided in the stimuli."
+                                                         nlp-model-url="http://localhost:3001/api/invocations"
+                            stimuli-text="Siku moja Furaha alikwenda porini kuchuma matunda. Njiani alimuona bibi amekaa barabarani. Karibu yake lilikuwepo kapu la machungwa. Baadhi ya machungwa yalikuwa yamemwagika. Bibi alifurahi kumuona Furaha. Bibi akamuomba Furaha amtoe mwiba mguuni. Bibi hakuweza kuufikia ule mwiba. Furaha alimtoa mwiba polepole. Bibi alimshukuru Furaha na kumpa machungwa machache."
+                            required>
+                        </tangy-audio-recording-nlp>
+                    </tangy-form-item>
+                </tangy-form>
         </template>
       </demo-snippet>
         

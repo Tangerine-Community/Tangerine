@@ -72,8 +72,15 @@
         <demo-snippet>
             <template>
                 <tangy-form id="my-form" title="My Form">
+                    <tangy-form-item id="item0">
+                        <tangy-input name="test-input" label="Input Text" placeholder="Type something here..."></tangy-input>
+                    </tangy-form-item>
                     <tangy-form-item id="item1">
                         <tangy-video-capture name="test-video" label="Take a video" codec="video/webm;codecs=vp8,opus" video-width=2560 video-height=1280></tangy-video-capture>
+                    </tangy-form-item>
+                    <tangy-form-item id="item2">
+                        <tangy-audio-playback name="test-audio-playback" label="Playback Audio"
+                            audio-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></tangy-audio-playback>
                     </tangy-form-item>
                 </tangy-form>
                 <script>
@@ -92,6 +99,14 @@
                         event.preventDefault()
                         // 3 ways to inspect the user's response to the form. Ordered by level of detail.
                         console.log("Caught TANGY_MEDIA_UPDATE event at: " + event.target.name)
+
+                        // download the video file
+                        const videoElement = document.createElement('a');
+                        videoElement.href = event.target.value;
+                        videoElement.download = 'recorded-video.webm';
+                        videoElement.textContent = 'Download Recorded Video';
+                        // videoElement.click();
+
                     }, true)
                 </script>
             </template>
