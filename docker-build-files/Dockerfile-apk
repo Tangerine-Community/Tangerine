@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 alvrme/alpine-android:android-32-jdk11
+FROM alvrme/alpine-android:android-32-jdk11
 
 RUN apk add --update nodejs npm
 # Install Cordova and other useful globals
@@ -57,10 +57,10 @@ ADD apk-generator /tangerine/apk-generator
 RUN cd /tangerine/apk-generator && \
     npm link
 
-ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
-RUN cd /tangerine/online-survey-app/ && \
-#    export NODE_OPTIONS=--openssl-legacy-provider && \
-    npm install
+# ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
+# RUN cd /tangerine/online-survey-app/ && \
+# #    export NODE_OPTIONS=--openssl-legacy-provider && \
+#     npm install
 
 ## Install client.
 ADD client/package.json /tangerine/client/package.json
