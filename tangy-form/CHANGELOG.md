@@ -1,5 +1,108 @@
 # CHANGELOG
 
+## v4.50.2
+
+Add tangy-audio-recording-nlp input component with NLP processing and results display
+
+## v4.49.8
+
+`tangy-audio-recording`: Disconnect and nullify all audio stream objects to stop resource leaks
+
+## v4.49.7
+
+`tangy-audio-recording`: Disconnect and nullify all audio stream objects to stop resource leaks
+
+## v4.49.6
+
+Convert webm audio files to wav in tangy-audio-recording
+
+## v4.49.4, v4.49.5
+
+__Enable custom styling of tangy-radio-block background color__
+
+Use `--tangy-radio-block-label-bg` to set the background color for global or specific `tangy-radio-block` elements.
+Use tangy-form-item background color for tangy-radio-block label
+
+
+Set the default background color of the tangy-radio-block elements with this code in custom-style:
+```css
+  :tangy-radio-block {
+  --tangy-radio-block-label-bg: #ffe082;
+  }
+``` 
+
+Or set ="--tangy-radio-block-label-bg: transparent;" to make the tangy-prompt-box radio-blocks transparent:
+```html
+<tangy-prompt-box name="tangerineMan" question-number="" label="" hint-text="" error-text="" warn-text="" class="" style="--tangy-radio-block-label-bg: transparent;" flex-start="">
+```
+
+## v4.49.3
+
+__Addition of validate_back() function to enable separate validation checks when the back button is hit__
+
+Validation checks when hitting the back button were turned on in [this commit](https://github.com/Tangerine-Community/tangy-form/commit/e460a44ae70428c25345b06cf6164c5debe5a3c1
+). We want to allow navigation with the back button in most cases. The commit was aimed to fix an issue where audio was being recorded when the back button is clicked.
+
+This fixes the issue instead by introducing a `validate_back()` function in `tangy-form-item`. Any tangy input can add that function to enforce validation when the back button is hit. 
+
+We start by validating `tangy-audio-recording` and `tangy-video-capture`. If the audio or video is actively being recorded, the `validate_back()` button will cancel the navigation, and prompt the user to stop the recording. 
+
+This also fixes issues with the `tangy-audio-recording` deletion workflow.
+
+__Fixes for tangy-prompt-box__
+
+- Icon buttons are not clickable but the image is. Help and tangerine icons can be clicked but if you tap anywhere inside the whitespace for that item it doesn’t trigger the sound playing.
+
+- Background of tangy-prompt options should be transparent (could not trick it with a workaround)
+
+
+
+## v4.49.0, v4.49.1, v4.49.2
+
+- Add audiomotion-analyzer for vizualization of audio in tangy-audio-recording
+
+## v4.48.2
+
+- Updates and fixes for `tangy-audio-recording`
+
+## v4.48.0, v4.48.1
+
+- Update translation-web-component and use it to update translations on the fly (lang and direction)
+
+The text and style for tangy-form and it's elements will be set to 'ltr' or 'rtl' as required. This also fixes issues with refreshing
+translations pulled using the combTranslation function. 
+
+## v4.47.0
+
+- Add `tangy-audio-recording` and `tangy-audio-playback` inputs
+
+Two new inputs are available for recording and playing back audio. Recorded audio is saved as a media file separate from the form response and available for upload to a server through the media uploads during the sync process. The audio playback input allows users to listen to audio files that are part of the form.
+
+```html
+<tangy-audio-recording name="test-audio" label="Record Audio"></tangy-audio-recording>
+<tangy-audio-playback name="test-playback" label="Audio Playback" src="assets/sounds/fewtimes_Eng.mp3"></tangy-audio-playback>
+```
+
+## v4.46.1
+
+Calculate section score percent and denominator based on type of input:
+- TANGY-TIMED: each grid present is scored as "number of correct items"/"number of total items" *100 aka a percent
+- TANGY-CHECKBOX: score is 1 if checked, 0 if not; denominator is 1 per checkbox
+- Inputs with Array values (TANGY-CHECKBOXES, TANGY-RADIO-BUTTONS): score is the value selected in the array; denominator is the max value of the array.
+- TANGY-INPUT with `type=number` and `max=X` attributes: score is the input value; denominator is the input.max value.
+- DEFAULT: score is the value; denominator is 1
+
+## v4.46.0
+
+Section Scoring Updates:
+- Add `<section_id>_percent` and `<section_id>_denominator` to the form item outputs.
+- Prevent scoring of both tangy-timed, custom-scoring and regular scoring in the same section.
+
+Rules:
+- custom scoring always returns a percent
+- users should only use one type of input per scoring section
+- if there is a tangy-timed input, the score is the average of the percents of each grid. All other scores are ignored.
+
 ## v4.45.4
 
 Fix missing function parens

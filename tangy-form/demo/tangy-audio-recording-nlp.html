@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-audio-recording-nlp demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+        import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+        <style>
+            html {
+                --document-background-color: #FAFAFA;
+                --primary-color-dark: #3c5b8d;
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-color: #3c5b8d;
+                --accent-color: #f26f10;
+                --accent-text-color: #FFF;
+                --error-color: var(--paper-red-500);
+                --disabled-color: #BBB;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5 {
+                /* @apply --paper-font-common-base; */
+                color: var(--primary-text-color);
+                margin: 25px 0px 5px 15px;
+            }
+        </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-audio-recording-nlp.js"></script>
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
+    </custom-style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>tangy-audio-recording-nlp demo</h3>
+        <demo-snippet>
+            <template>
+                <tangy-form id="my-form" title="Tangy with Stimuli Text">
+                    <tangy-form-item id="item3">
+                        <tangy-audio-recording-nlp 
+                            name="test-stimuli-nlp" 
+                            label="Tangy with Stimuli Text"
+                            hint-text="Read the text provided in the stimuli."
+                            nlp-model-url="http://localhost:3001/api/invocations"
+                            stimuli-text="Siku moja Furaha alikwenda porini kuchuma matunda. Njiani alimuona bibi amekaa barabarani. Karibu yake lilikuwepo kapu la machungwa. Baadhi ya machungwa yalikuwa yamemwagika. Bibi alifurahi kumuona Furaha. Bibi akamuomba Furaha amtoe mwiba mguuni. Bibi hakuweza kuufikia ule mwiba. Furaha alimtoa mwiba polepole. Bibi alimshukuru Furaha na kumpa machungwa machache."
+                            required>
+                        </tangy-audio-recording-nlp>
+                    </tangy-form-item>
+                </tangy-form>
+
+                <script>
+                    document.querySelector('#my-form').addEventListener('submit', event => {
+                        event.preventDefault()
+                        console.log(event.target.response)
+                        console.log(event.target.inputs)
+                        console.log(event.target.values)
+                    })
+                    document.querySelector('#my-form').addEventListener('TANGY_MEDIA_UPDATE', event => {
+                        console.log("Caught TANGY_MEDIA_UPDATE event at: " + event.target.name)
+                        if (event.detail.value.tagName === 'TANGY-AUDIO-RECORDING-NLP') {
+                            console.log('NLP Results:', event.detail.value.nlpResults)
+                            console.log('Stimuli Text:', event.detail.value.stimuliText)
+                        }
+                    }, true)
+                </script>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html> 

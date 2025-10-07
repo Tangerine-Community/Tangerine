@@ -1,7 +1,7 @@
 {
   "name": "tangy-form",
   "description": "A form element for lazy loaded multipage forms",
-  "version": "4.42.0",
+  "version": "4.50.1",
   "main": "tangy-form.js",
   "scripts": {
     "start": "polymer serve",
@@ -30,6 +30,7 @@
     "@uppy/image-editor": "^2.1.2",
     "@uppy/webcam": "^3.3.1",
     "@zxing/library": "^0.19.1",
+    "audiomotion-analyzer": "^4.5.1",
     "cropperjs": "^1.5.13",
     "devtools-detect": "^4.0.1",
     "dr-niels-sortable-list": "https://github.com/DrNiels/sortable-list.git#master",
@@ -41,7 +42,7 @@
     "redux": "^4.2.0",
     "signature_pad": "^4.1.4",
     "tesseract.js": "^4.0.3",
-    "translation-web-component": "^1.1.1",
+    "translation-web-component": "^1.1.4",
     "wct-browser-legacy": "^1.0.2",
     "zxing-js-es6": "^0.15.3"
   },
