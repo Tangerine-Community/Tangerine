@@ -21,7 +21,7 @@ export class ClassUtils {
    * @param curriculumFormHtml
    * @returns {Promise<*[]>}
    */
-  async createCurriculumFormsList(curriculumFormHtml) {
+  async createCurriculumFormItemsList(curriculumFormHtml) {
     let templateEl = document.createElement("template")
     templateEl.innerHTML = curriculumFormHtml
     let curriculumForms = [...templateEl.content.querySelectorAll('tangy-form-item')].map(itemEl => {

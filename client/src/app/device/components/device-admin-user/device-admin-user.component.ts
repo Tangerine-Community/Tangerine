@@ -10,9 +10,13 @@ import { UserProfileComponent } from 'src/app/user-profile/user-profile.componen
 })
 export class DeviceAdminUserComponent {
   showUserProfile = false;
+  returnUrl:string
   done$:Subject<string> = new Subject<string>()
   @ViewChild(UserProfileComponent) set userProfile(component: UserProfileComponent) {
     if (component) {
+      if (this.returnUrl) {
+        component.returnUrl = this.returnUrl;
+      }
       component.done$.subscribe((userProfileId) => {
         this.done$.next(userProfileId);
       });
@@ -24,7 +28,7 @@ export class DeviceAdminUserComponent {
 
   load(returnUrl:string) {
     this.showUserProfile = true;
-    this.userProfile.returnUrl = returnUrl;
+    this.returnUrl = returnUrl;
   }
 
 }

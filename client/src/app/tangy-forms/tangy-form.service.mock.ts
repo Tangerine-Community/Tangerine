@@ -44,9 +44,6 @@ export class MockTangyFormService {
       "original": this.original
     }
     let formMarkup:any
-    // = this.formsMarkup[key]
-    // if (!this.formsMarkup[key]) {
-    const foo = this.tangyFormsInfoService.getFoo()
     let src: string = await this.tangyFormsInfoService.getFormSrc(formId, formVersionId)
 
     // formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
@@ -54,10 +51,6 @@ export class MockTangyFormService {
     // formMarkup = forms["foo"]
 
     return formMarkup
-    
-    console.log("mocking getFormMarkup")
-    
-    // return forms[formId]
   }
 
   async saveForm(formDoc) {

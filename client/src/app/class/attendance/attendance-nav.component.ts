@@ -37,7 +37,7 @@ import { Component, OnInit } from '@angular/core';
 export class AttendanceNavComponent implements OnInit {
 
   classRegistrationParams = {
-    curriculum: 'class-registration'
+    formId: 'class-registration'
   };
   constructor() { }
 

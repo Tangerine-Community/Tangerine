@@ -22,6 +22,7 @@ export class ClassFormComponent implements OnInit {
 
   formResponseId:string
   response:TangyFormResponseModel
+  itemId:string
   formId:string
   
   $saved = new Subject()
@@ -30,8 +31,7 @@ export class ClassFormComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;
   @ViewChild('formPlayer', {static: true}) formPlayer: ClassFormsPlayerComponent
   responseId;
-  curriculum;
-  curriculumLabel: string;
+  classFormLabel: string;
   studentId;
   classId;
   classUtils: ClassUtils;
@@ -71,19 +71,19 @@ export class ClassFormComponent implements OnInit {
     
     this.route.queryParams.subscribe(async params => {
       this.responseId = params['responseId'];
-      this.formId = params['formId']; // corresponds to the form_item.id
+      this.formId = params['formId'];
+      this.itemId = params['itemId'];
       this.classId = params['classId'];
-      this.curriculum = params['curriculum']; // corresponds to form.id
-      this.curriculumLabel = params['curriculumLabel']; // corresponds to form.id
+      this.classFormLabel = params['classFormLabel'];
       this.studentId = params['studentId'];
       this.viewRecord = params['viewRecord'];
       this.reportDate = params['reportDate'];
       this.newForm = params['newForm'];
-      if (typeof this.formId === 'undefined') {
+      if (typeof this.itemId === 'undefined') {
         // this is student reg or class reg.
-        this.formId = this.curriculum;
+        this.itemId = this.formId;
       }
-      const formHtml = await this.tangyFormService.getFormMarkup(this.curriculum)
+      const formHtml = await this.tangyFormService.getFormMarkup(this.formId)
       if (typeof this.studentId !== 'undefined') {
         if (typeof this.responseId === 'undefined') {
           // work-around for attendance records, which differ from usual class records.
@@ -94,7 +94,7 @@ export class ClassFormComponent implements OnInit {
             for (const response of responses as any[]) {
               const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
               const respCurrId = response.doc.form.id;
-              if (respClassId === this.classId && respCurrId === this.curriculum) {
+              if (respClassId === this.classId && respCurrId === this.formId) {
                 this.formResponse = response.doc;
               }
             }
@@ -110,11 +110,11 @@ export class ClassFormComponent implements OnInit {
         let templateEl = document.createElement('template');
         templateEl.innerHTML = formHtml
         const buildContainer = templateEl.content
-        const curriculumFormsList = await this.classUtils.createCurriculumFormsList(formHtml);
+        const curriculumFormsList = await this.classUtils.createCurriculumFormItemsList(formHtml);
         const itemsToDisable = [];
         // disable all tangy-form-items except for the one you want to view.
         for (const el of curriculumFormsList) {
-          if (el['id'] !== this.formId) {
+          if (el['id'] !== this.itemId) {
             itemsToDisable.push(el['id']);
             buildContainer.querySelector('#' + el['id']).remove()
           }
@@ -135,7 +135,7 @@ export class ClassFormComponent implements OnInit {
           // let formItems = []
           if (this.formResponse.items) {
             this.formResponse.items = this.formResponse.items.forEach(item => {
-              if (item.id !== this.formId) {
+              if (item.id !== this.itemId) {
                 state.items.push(item)
               }
             });
@@ -174,15 +174,15 @@ export class ClassFormComponent implements OnInit {
             const classIndex = parseInt(classClassIndex)
             const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
             // const reportDate = DateTime.local().toISODate()
-            // const formInfo = await this.tangyFormsInfoService.getFormInfo(this.curriculum)
-            // const curriculumLabel = formInfo.title
+            // const formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
+            // const classFormLabel = formInfo.title
             const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
-            let curriculumLabel = this.curriculumLabel
+            let classFormLabel = this.classFormLabel
             if (ignoreCurriculumsForTracking) {
-              curriculumLabel = null
+              classFormLabel = null
             }
             const randomId = currentClass.metadata?.randomId
-            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, null, curriculumLabel, randomId, false)
+            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, null, classFormLabel, randomId, false)
               currentBehaviorReport = docArray? docArray[0]?.doc : null
             // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
             const currentStudent = currentBehaviorReport.studentBehaviorList.find((thisStudent) => {
@@ -204,13 +204,10 @@ export class ClassFormComponent implements OnInit {
         const url = appConfig.homeUrl
         
         if (window['eventFormRedirect']) {
-          // await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
           await this.router.navigate(['class-form'], { queryParams:
-              { curriculum: this.curriculum, classId: this.classId, newForm: this.newForm, queryParamsHandling: 'preserve',
+              { formId: this.formId, classId: this.classId, newForm: this.newForm, queryParamsHandling: 'preserve',
                 preserveFragment: true }
           });
-          // /class-form?curriculum=student-registration&classId=' + classId + '&newForm=true';
-          // '/class-form?curriculum=student-registration&classId=d4605997-8a4f-4027-a52b-185e84e2454f&newForm=true'
           this.router.navigateByUrl(window['eventFormRedirect'])
           // Fix for double-submit of this form clearing eventFormRedirect.
           if (!this.newForm) {
