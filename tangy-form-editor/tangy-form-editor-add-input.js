@@ -1,5 +1,5 @@
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js'
-import {Button} from "@material/mwc-button"
+import "@material/mwc-button"
 
 /**
  * `tangy-form-item-editor`
@@ -67,6 +67,11 @@ class TangyFormEditorAddInput extends PolymerElement {
             <mwc-button icon="date_range" on-click="addThis" id="tangy-ethio-date-widget">Ethiopian Date</mwc-button><br>
             <mwc-button icon="timer" on-click="addThis" id="tangy-time-widget">Time</mwc-button><br>
           </div>
+          <h4>Location</h4>
+          <div class="element-list">
+              <mwc-button icon="add_location" on-click="addThis" id="tangy-gps-widget">GPS</mwc-button><br>
+              <mwc-button icon="location_city" on-click="addThis" id="tangy-location-widget">Location</mwc-button>
+          </div>
         </div>
         <div>
           <h4>Lists</h4>
@@ -78,21 +83,22 @@ class TangyFormEditorAddInput extends PolymerElement {
           </div>
           <h4>Boolean</h4>
           <div class="element-list">
-            <mwc-button icon="check_box" on-click="addThis" id="tangy-checkbox-widget">Checkbox</mwc-button><br>        
-            <mwc-button icon="toggle_on" on-click="addThis" id="tangy-toggle-widget">Toggle Button</mwc-button><br>          
+            <mwc-button icon="check_box" on-click="addThis" id="tangy-checkbox-widget">Checkbox</mwc-button><br>
+            <mwc-button icon="toggle_on" on-click="addThis" id="tangy-toggle-widget">Toggle Button</mwc-button><br>
           </div>
         </div>
         <div>
-          <h4>Location</h4>
-          <div class="element-list">
-              <mwc-button icon="add_location" on-click="addThis" id="tangy-gps-widget">GPS</mwc-button><br>
-              <mwc-button icon="location_city" on-click="addThis" id="tangy-location-widget">Location</mwc-button>
-          </div>
-          <h4>Content Display</h4>
+          <h4>Media</h4>
           <div class="element-list">
             <mwc-button icon="image" on-click="addThis" id="tangy-image-widget">Image</mwc-button><br>
             <mwc-button icon="photo" on-click="addThis" id="tangy-photo-capture-widget">Photo Capture</mwc-button><br>
             <mwc-button icon="videocam" on-click="addThis" id="tangy-video-capture-widget">Video Capture</mwc-button><br>
+            <mwc-button icon="play_arrow" on-click="addThis" id="tangy-audio-playback-widget">Audio Playback</mwc-button><br>
+            <mwc-button icon="settings_voice" on-click="addThis" id="tangy-audio-recording-widget">Audio Recording</mwc-button><br>
+            <mwc-button icon="graphic_eq" on-click="addThis" id="tangy-audio-recording-nlp-widget">Audio Recording NLP</mwc-button><br>
+          </div>
+          <h4>Html Containers</h4>
+          <div class="element-list">
             <mwc-button icon="code" on-click="addThis" id="tangy-box-widget">HTML content container</mwc-button><br>
             <mwc-button icon="attach_money" on-click="addThis" id="tangy-template-widget">HTML template</mwc-button><br>
             <mwc-button icon="repeat" on-click="addThis" id="tangy-input-groups-widget">Repeatable HTML Group</mwc-button><br>

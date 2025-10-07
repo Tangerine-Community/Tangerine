@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  
+  <head>
+      <style>
+          *{
+            --accent-color:#f26f10;
+            --accent-text-color:white;
+            --lighter-accent-color: #ff9522;
+            --primary-color: #3c5b8d;
+            --primary-color-dark: #3c5b8d;
+            --primary-color-lighter: #2d7dd2;
+          }
+          </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form-editor demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script src="../node_modules/js-beautify/js/lib/beautify-html.js"></script>
+
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+      fetch('assets/translation.json')
+              .then(response => response.json())
+              .then(json => {
+                console.log("populating window.translation.")
+                window.translation = json
+              })
+      window.example = 1
+    </script>
+
+    <script type="module" src="../tangy-form-editor.js"></script>
+
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+          <tangy-form-editor files-endpoint="./files.json" >
+            
+            <template>
+
+                  <tangy-form id="my-form" title="My Form">
+                    <tangy-form-item id="item1">
+                        <h2>Audio Recording on Same Page as NLP Processing</h2>
+                        <tangy-audio-recording name="tangy-audio-recording-1" label="siku moja furaha alikwenda polini kuchuma matunda"></tangy-audio-recording>
+                        <tangy-audio-recording-nlp 
+                            name="test_stimuli_1"
+                            label="📚 Reading Assessment Feedback"
+                            audio-recording-input-name="tangy-audio-recording-1"
+                            nlp-model-url="https://ai.tangerinecentral.org/invocations"
+                            stimuli-text="Siku moja Furaha alikwenda porini kuchuma matunda."
+                            required>
+                        </tangy-audio-recording-nlp>
+                    </tangy-form-item>
+                    <tangy-form-item id="item2">
+                        <h3>Audio Recording on Different Page as NLP Processing</h3>
+                        <tangy-audio-recording name="tangy-audio-recording-2" label="siku moja furaha alikwenda polini kuchuma matunda"></tangy-audio-recording>
+                    </tangy-form-item>
+                    <tangy-form-item id="item3">
+                        <h3>Audio Recording on Different Page as NLP Processing</h3>
+                        <tangy-audio-recording-nlp 
+                            name="test_stimuli_2"
+                            label="Tangy with Stimuli Text"
+                            audio-recording-input-name="tangy-audio-recording-2"
+                            hint-text="Read the text provided in the stimuli."
+                            nlp-model-url="https://ai.tangerinecentral.org/invocations"
+                            stimuli-text="siku moja furaha alikwenda porini kuchuma matunda"
+                            required>
+                        </tangy-audio-recording-nlp>
+                    </tangy-form-item>
+                </tangy-form>
+
+            </template>
+          </tangy-form-editor>
+          <script>
+            document.querySelector('tangy-form-editor').addEventListener('tangy-form-editor-change', event => {console.info('tangy-form-editor-change event')})
+          </script>
+  </body>
+</html>
