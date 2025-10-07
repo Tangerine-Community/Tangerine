@@ -9,7 +9,8 @@ This information remain in case there is interest in restoring this feature.
 
 Use the P2P sync feature to transfer data between two or more tablets without an Internet connection.
 
-Note: The tablets must be running Android 8 (Oreo) to use this function. 
+!!! note 
+    The tablets must be running Android 8 (Oreo) to use this function. 
 
 In the following example, your tablet will be syncing data from your tablet to two other peers' tablets running Tangerine. The goal is to have the same data on all tablets. At the end of the process, data will be transferred from your tablet to the Internet.
 

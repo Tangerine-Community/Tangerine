@@ -6,7 +6,7 @@
       <mat-list-item>
         <span>{{index+1}}</span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
 
         <span><a mat-icon-button>
@@ -17,7 +17,7 @@
     </mat-list>
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span class="tangy-spacer" [innerHTML]="form|formTitleFromInfo|unsanitizeHtml"></span>
     <span><a mat-icon-button [routerLink]=" '/groups/'+groupId+ '/data/download-csv/'+form.id ">
         <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
       </a>

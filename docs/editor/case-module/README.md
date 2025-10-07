@@ -2,6 +2,40 @@
 
 Case Module allows us to define Case Definitions for different purposes such as following a participant in a drug trial over the course of many events, where each event may require many forms to be filled out. In order to create and find cases, you will need to configure the `"case-home"` as the `"homeUrl"` value in `app-config.json`.
 
+## Case Structure in Tangerine
+
+Case Management in Tangerine can be used to model highly complex workflows for longitudinal data collection. 
+
+- Case: The highest-level subject of your study (e.g., School, Teacher, or box of textbooks).
+- Event: Touchpoints in your study. Used to organize forms and model business processes (e.g., Annual Census or Classroom Observation)
+- Form: Data to be collected within a touchpoint OR a business process that executes actions on the case)
+- Participant: Individual subjects within your case that you want to collect data for. (e.g., Teacher, Classroom, or School)
+
+<img src="../assets/caseMod1.png" width="500">
+
+## Case Interface
+
+The case home screen shows a listing of cases. Allows for search based on pre-defined varaibles. Gives access to the Schedule and Custom Reports
+
+<img src="../assets/caseMod2.png" width="500">
+
+### Case Re-Identification and Events
+
+After selecting a case from search, it’s important to confirm that you have correctly identified the case. This is an intentional manual step to avoid data entry mistakes. 
+
+<img src="../assets/caseMod3.png" width="500">
+
+The event structure can be created dynamically, or new events can be manually added to the case to appropriately model the case workflow
+
+<img src="../assets/caseMod4.png" width="500">
+
+### Case Event Participants
+
+All data collected in forms is explicitly connected to the case, the event, and the participant on the case. This allows for ease of tracking multiple case participants over time through multiple events.
+
+<img src="../assets/caseMod5.png" width="500">
+
+
 ## Configuring Cases
 Case Module allows us to define Case Definitions for different purposes such as following a participant in a drug trial over the course of many events, where each event may require many forms to be filled out.
 
@@ -157,7 +191,6 @@ if ((JSON.parse(data)).participant_id) {
 ## Configuring two-way sync
 Because you may need to share cases across devices, configuring two-way sync may be necessary. See the [Two-way Sync Documentation](feature-two-way-sync.md) for more details. Note that you sync Form Responses, and it's the IDs of that you'll want to sync in the `"formId"` of the Case Definition in order to sync cases.
 
-
 ## Configuring the Schedule
 One of the two tabs that Data Collectors see when they log into Tangerine is a "Schedule" tab. This schedule will show Case Event's on days where they are have an estimated day, scheduled day, and/or occurred on day. You can set these three dates on an event using the following APIs.
 
@@ -166,5 +199,6 @@ caseService.setEventEstimatedDay(idOfEvent, timeInUnixMilliseconds)
 caseService.setEventOccurredOn(idOfEvent, timeInUnixMilliseconds)
 caseService.setEventScheduledDay(idOfEvent, timeInUnixMilliseconds)
 ```
+
 
 
