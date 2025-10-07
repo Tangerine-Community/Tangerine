@@ -7,7 +7,7 @@
         <mat-option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</mat-option>
       </mat-select>
     </p>
-    <div #curriculumSelectPara id="curriculumSelectPara" >
+    <div #curriculumSelectElement id="curriculumSelectElement" >
       <mat-button-toggle-group name="curriculumSelect" aria-label="Select Curr" (change)="onCurriculumSelect($event)">
         <mat-button-toggle *ngFor="let subtestReport of subtestReports" value="{{subtestReport.cssName}}">{{subtestReport.label}}</mat-button-toggle>
       </mat-button-toggle-group>

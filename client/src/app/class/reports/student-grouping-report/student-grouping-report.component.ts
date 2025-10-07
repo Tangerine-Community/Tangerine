@@ -60,11 +60,11 @@ export class StudentGroupingReportComponent implements OnInit {
     this.classUtils = new ClassUtils();
     const itemId = this.route.snapshot.paramMap.get('type');
     const classId = this.route.snapshot.paramMap.get('classId');
-    const curriculumId = this.route.snapshot.paramMap.get('curriculumId');
+    const formId = this.route.snapshot.paramMap.get('formId');
 
     // Get data about this particular subtest
-    const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    const curriculumFormHtml = await this.dashboardService.getForm(formId);
+    this.curriculumFormsList = await this.classUtils.createCurriculumFormItemsList(curriculumFormHtml);
 
     this.formList = [];
     for (const form of this.curriculumFormsList) {
@@ -72,7 +72,7 @@ export class StudentGroupingReportComponent implements OnInit {
         'title': form.title,
         'id': form.id,
         'classId': classId,
-        'curriculumId': curriculumId
+        'curriculumId': formId
       };
       this.formList.push(formEl);
     }
@@ -81,8 +81,8 @@ export class StudentGroupingReportComponent implements OnInit {
       return obj.id === itemId;
     });
     const item = subtest[0];
-    const results = await this.getResultsByClass(classId, curriculumId, this.curriculumFormsList, item);
-    this.classGroupReport = await this.dashboardService.getClassGroupReport(item, classId, curriculumId, results);
+    const results = await this.getResultsByClass(classId, formId, this.curriculumFormsList, item);
+    this.classGroupReport = await this.dashboardService.getClassGroupReport(item, classId, formId, results);
     // console.log("this.classGroupReport item: " + item + " classId: " + classId + " curriculumId: " + curriculumId + "results: "  + JSON.stringify(results))
     // console.log("this.classGroupReport feedback: " + JSON.stringify(this.classGroupReport.feedback))
     this.dataSource = new MatTableDataSource<StudentResult>(this.classGroupReport.allStudentResults);
@@ -145,10 +145,10 @@ export class StudentGroupingReportComponent implements OnInit {
     }
   }
 
-  async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList, item) {
+  async getResultsByClass(selectedClass: any, formId, curriculumFormsList, item) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList, item);
+      return await this.dashboardService.getResultsByClass(selectedClass, formId, curriculumFormsList, item);
     } catch (error) {
       console.error(error);
     }

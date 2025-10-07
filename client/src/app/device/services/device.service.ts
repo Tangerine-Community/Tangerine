@@ -354,6 +354,10 @@ export class DeviceService {
       "value": pickedLocation,
       "showLevels": flatLocationList.locationsLevels
     }
+    const syncLocation: LocationConfig = {
+      "value": pickedLocation,
+      "showLevels": flatLocationList.locationsLevels
+    }
     
     
     // @TODO Assign a location.
@@ -362,7 +366,7 @@ export class DeviceService {
       token,
       key: 'test',
       assignedLocation: assignedLocation,
-      syncLocations: pickedLocation,
+      syncLocations: [syncLocation],
       collection: 'Device',
       version: 'sandbox',
       claimed: true,

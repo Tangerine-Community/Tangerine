@@ -40,7 +40,7 @@ export class AttendanceScoresComponent implements OnInit {
   curriculum: any
   saveSuccess: boolean;
   currArray: any;
-  curriculumId:string
+  formId:string
   ignoreCurriculumsForTracking: boolean = false
   
   constructor(
@@ -73,8 +73,8 @@ export class AttendanceScoresComponent implements OnInit {
     this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
 
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    this.curriculumId = await this.variableService.get('class-curriculumId');
-    this.curriculum = currArray.find(x => x.name === this.curriculumId);
+    this.formId = await this.variableService.get('class-formId');
+    this.curriculum = currArray.find(x => x.name === this.formId);
     this.currArray = currArray;
 
     const currentClassId = this.selectedClass._id
@@ -89,7 +89,7 @@ export class AttendanceScoresComponent implements OnInit {
     const schoolYear = this.getValue('school_year', currentClass)
     const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
-    const curriculumLabel = this.curriculum.label
+    const curriculumLabel = this.curriculum.labelSafe
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
     let doc, listFromDoc
     try {
@@ -194,16 +194,16 @@ export class AttendanceScoresComponent implements OnInit {
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
-        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+        { formId: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
 
   getClassTitle = this.dashboardService.getClassTitle
 
-  async changeCurriculum(curriculumId) {
-    this.curriculumId = curriculumId
-    await this.variableService.set('class-curriculumId', curriculumId);
-    this.curriculum = this.currArray.find(x => x.name === this.curriculumId);
+  async changeCurriculum(formId) {
+    this.formId = formId
+    await this.variableService.set('class-formId', formId);
+    this.curriculum = this.currArray.find(x => x.name === this.formId);
     await this.showScoreListing(this.selectedClass, this.selectedClass._id)
   }
 }

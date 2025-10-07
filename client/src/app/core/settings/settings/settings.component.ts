@@ -112,7 +112,7 @@ export class SettingsComponent implements OnInit, AfterContentInit {
     }
     await this.variableService.set('class-classIndex', null);
     await this.variableService.set('class-currentClassId', null);
-    await this.variableService.set('class-curriculumId', null);
+    await this.variableService.set('class-formId', null);
     await this.variableService.set('class-currentItemId', null);
   }
 

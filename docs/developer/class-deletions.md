@@ -9,7 +9,7 @@ For most queries, you simply must simply append  `&& !archive` to the query in o
 Sample view that filters by archive:
 
 ```
-    responsesByClassIdCurriculumId: {
+    responsesByClassIdFormId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {

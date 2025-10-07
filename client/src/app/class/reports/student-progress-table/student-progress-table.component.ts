@@ -71,12 +71,12 @@ export class StudentProgressTableComponent implements OnInit {
 
     const tangyFormItem = this.route.snapshot.paramMap.get('type');
     const classId = this.route.snapshot.paramMap.get('classId');
-    const curriculumId = this.route.snapshot.paramMap.get('curriculumId');
+    const formId = this.route.snapshot.paramMap.get('formId');
     const classDoc = await this.classFormService.getResponse(classId);
 
     // Get data about this particular subtest
-    const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    const curriculumFormHtml = await this.dashboardService.getForm(formId);
+    const curriculumFormsList = await this.classUtils.createCurriculumFormItemsList(curriculumFormHtml);
 
     const subtest = curriculumFormsList.filter(obj => {
       return obj.id === tangyFormItem;
@@ -138,10 +138,10 @@ export class StudentProgressTableComponent implements OnInit {
     return observations;
   }
 
-  async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList) {
+  async getResultsByClass(selectedClass: any, formId, curriculumFormsList) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList, null);
+      return await this.dashboardService.getResultsByClass(selectedClass, formId, curriculumFormsList, null);
     } catch (error) {
       console.error(error);
     }

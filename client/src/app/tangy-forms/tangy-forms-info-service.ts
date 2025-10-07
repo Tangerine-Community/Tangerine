@@ -28,10 +28,6 @@ export class TangyFormsInfoService {
     const formTemplateMarkup = await this.http.get(formTemplate.src, { responseType: 'text' }).toPromise()
     return formTemplateMarkup
   }
-  
-  getFoo() {
-    return "foo"
-  }
 
   async getFormSrc(formId, formVersionId:string = '') {
     const formInfo = await this.getFormInfo(formId)

@@ -18,9 +18,9 @@ export class ClassNavBarComponent implements OnInit {
   formList = [];
   selectedClass: any
   selectedClassSubscription: Subscription;
-  studentRegistrationCurriculum = 'student-registration';
+  studentRegistrationFormId = 'student-registration';
   classRegistrationParams = {
-    curriculum: 'class-registration'
+    formId: 'class-registration'
   };
   
   window: any;

@@ -150,7 +150,7 @@ export class AttendanceComponent implements OnInit {
 
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     this.currArray = currArray
-    this.curriculumId = await this.variableService.get('class-curriculumId');
+    this.curriculumId = await this.variableService.get('class-formId');
     this.curriculum = currArray.find(x => x.name === this.curriculumId);
     
     const classRegistration = this.classUtils.getInputValues(currentClass);
@@ -318,7 +318,7 @@ export class AttendanceComponent implements OnInit {
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
-        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+        { formId: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
 
