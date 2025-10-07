@@ -5,10 +5,15 @@
 __General Updates__
 
 - Tangy Audio Recording with Visualization
+- Tangy Audio Recording NLP: Input to send an audio recording to a natrual language processing (NLP) API endpoint
 - Enable setting of tangy-radio-block bg color with --tangy-radio-block-label-bg [tangy-form v4.49.4](https://github.com/Tangerine-Community/tangy-form/releases/tag/v4.49.4)
 - Fixes for tangy-prompt-box
 - Introduce `autoStopMode` config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
 - Add the Myanmar language translations
+
+__Maintenance__
+
+- Load legacy debian apt repo to install archived packages
 
 __Server upgrade instructions__
 
