@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+          ref: ${{ github.ref }}
       - run: npm ci
       - run: npm install
       - run: npm run build

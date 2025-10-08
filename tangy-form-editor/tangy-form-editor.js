@@ -38,6 +38,7 @@ import "tangy-form/input/tangy-consent.js";
 import "tangy-form/input/tangy-signature.js";
 import "tangy-form/input/tangy-audio-playback.js";
 import "tangy-form/input/tangy-audio-recording.js";
+import "tangy-form/input/tangy-audio-recording-nlp.js";
 
 /**
  * `tangy-form-editor`

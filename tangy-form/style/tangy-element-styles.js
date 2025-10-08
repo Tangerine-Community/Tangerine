@@ -69,7 +69,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
       label {
         font-family: var(--paper-font-common-base_-_font-family);
         display: block;
-        font-size: var(--label-font-size);
+        font-size: 1.2rem;
         color: var(--primary-text-color);
         margin-bottom: 5px;
       }
@@ -154,11 +154,24 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
       .m-y-25 {
         margin: var(--tangy-form-widget--margin, 25px 0);
       }
-      .m-y-10 {
-        margin: var(--tangy-form-widget--margin, 10px 0);
-      }
    
-      
+      audio {
+        color: var(--accent-text-color, #fff);
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin-top: 10px;
+        box-sizing: border-box;
+      }
+      audio::-webkit-media-controls-play-button,
+      audio::-webkit-media-controls-panel {
+        background-color: var(--accent-color, #fff);
+        color: var(--accent-text-color, #fff);
+      }
+
+      #audio-motion-container {
+        display: flex;
+        max-height: 48px;
+      }
      
   
     </style>

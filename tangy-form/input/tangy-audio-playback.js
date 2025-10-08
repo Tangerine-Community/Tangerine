@@ -37,7 +37,6 @@ export class TangyAudioPlayback extends TangyInputBase {
       hintText: {
         type: String,
         value: "",
-        observer: 'onHintTextChange',
       },
       label: {
         type: String,
@@ -83,7 +82,6 @@ export class TangyAudioPlayback extends TangyInputBase {
       value: {
         type: String,
         value: "",
-        observer: "onValueChange",
       },
       src: {
         type: String,
@@ -124,14 +122,13 @@ export class TangyAudioPlayback extends TangyInputBase {
       this.value = this.constructor.properties.value.value
     }
   }
-  validate() {
-    if (this.hasAttribute('required') && !this.value) {
-      this.invalid = true
-      return false
-    } else {
-      this.invalid = false
-      return true
+  onDisabledChange(value) {
+    if (this.shadowRoot.querySelector('audio')) {
+      this.shadowRoot.querySelector('audio').disabled = this.disabled;
     }
+  }
+  validate() {
+    return true
   }
 }
 

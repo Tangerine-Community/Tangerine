@@ -187,6 +187,9 @@ In the client, prevent users from editing their own profile.
 Sync Protocol 1 Only: On device registration, after the user creates the account, it will force the user to enter a 6-character code that references the online account. We set this on per group bases so that other groups not requiring this setting can be created.
 **T_REGISTRATION_REQUIRES_SERVER_USER="false"**
 
+Synchronization Protocol 1 Only: Length of the user profile code used to sync down documents
+**T_USER_SHORT_CODE_LENGTH=6**
+
 Synchronization Protocol 1 Only: In client synchronization, it will result in any changes made to a user profile on the server being downloaded and reflected on the client.
 This setting only works with new groups that are being created.
 **T_CENTRALLY_MANAGED_USER_PROFILE="false"**
