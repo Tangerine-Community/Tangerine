@@ -1,7 +1,7 @@
 {
   "name": "tangy-form-editor",
   "main": "tangy-form-editor.js",
-  "version": "7.22.0",
+  "version": "7.22.5",
   "scripts": {
     "start": "./node_modules/.bin/polymer serve",
     "build": "webpack",
@@ -20,7 +20,7 @@
     "js-beautify": "^1.14.7",
     "juicy-ace-editor": "https://github.com/Juicy/juicy-ace-editor.git#ES6-modules",
     "redux": "^4.2.0",
-    "tangy-form": "^4.50.2",
+    "tangy-form": "^4.50.6",
     "tangy-translate": "^1.0.0"
   },
   "devDependencies": {

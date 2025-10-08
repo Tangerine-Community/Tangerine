@@ -42,7 +42,7 @@ class TangyAudioRecordingNlpWidget extends TangyBaseWidget {
       nlpModelUrl: element.getAttribute("nlp-model-url"),
       stimuli: element.getAttribute("stimuli"),
       language: element.getAttribute("language"),
-      audioRecording: element.getAttribute("audio-recording") 
+      audioRecordingInputName: element.getAttribute("audio-recording-input-name"), 
     };
   }
 
@@ -58,7 +58,7 @@ class TangyAudioRecordingNlpWidget extends TangyBaseWidget {
         ${config.nlpModelUrl ? `nlp-model-url="${config.nlpModelUrl}"` : ""}
         ${config.stimuli ? `stimuli="${config.stimuli}"` : ""}
         ${config.language ? `language="${config.language}"` : ""}
-        ${config.audioRecording ? `audio-recording="${config.audioRecording}"` : ""}
+        ${config.audioRecordingInputName ? `audio-recording-input-name="${config.audioRecordingInputName}"` : ""}
       >
       </tangy-audio-recording-nlp>
     `;
@@ -77,7 +77,6 @@ class TangyAudioRecordingNlpWidget extends TangyBaseWidget {
   }
 
   renderInfo(config) {
-    console.log(config)
     const icon = (this.shadowRoot.querySelector(
       "#icon"
     ).innerHTML = `<span class="header-text"><mwc-icon>settings_voice</mwc-icon><span>`);
@@ -112,7 +111,7 @@ class TangyAudioRecordingNlpWidget extends TangyBaseWidget {
                    <option value='en' ${config.language === 'en' ? 'active' : ''}>English</option>
                    <option value='sw' ${config.language === 'sw' ? 'active' : ''}>Swahili</option>
                   </tangy-radio-buttons>
-                  <tangy-select class="audio-recording-select" name="audioRecording" hint-text="Select a tangy-audio-recording input to use." label="Connected Audio Recording" value="${config.audioRecording || ''}" required>
+                  <tangy-select class="audio-recording-select" name="audioRecordingInputSelect" hint-text="Select a tangy-audio-recording input to use." label="Connected Audio Recording" value="${config.audioRecordingInputName || ''}" required>
                       ${tangyAudioRecordingSiblingNames ? tangyAudioRecordingSiblingNames.map((name) => {
                         return `<option value="${name}">${name}</option>`;
                       }) : ''}
@@ -150,7 +149,7 @@ class TangyAudioRecordingNlpWidget extends TangyBaseWidget {
       nlpModelUrl: formEl.getValue('nlpModelUrl').trim(),
       stimuli: formEl.getValue('stimuli').trim(),
       language: language,
-      audioRecording: formEl.getValue('audioRecording').trim()
+      audioRecordingInputName: formEl.getValue('audioRecordingInputSelect').trim()
     };
   }
 }
