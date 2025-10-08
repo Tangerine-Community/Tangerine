@@ -34,6 +34,7 @@ import './widget/tangy-photo-capture-widget'
 import './widget/tangy-video-capture-widget'
 import './widget/tangy-audio-playback-widget.js'
 import './widget/tangy-audio-recording-widget.js'
+import './widget/tangy-audio-recording-nlp-widget.js'
 
 /**
  * `tangy-form-item-editor`

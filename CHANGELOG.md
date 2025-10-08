@@ -105,6 +105,25 @@ docker rmi tangerine/tangerine:v3.27.1
 # If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
 ./server/src/upgrade/v4.0.0.sh
 ```
+## v3.32.2
+
+__General Updates__
+
+- Tangy Audio Recording with Visualization
+- Tangy Audio Recording NLP: Input to send an audio recording to a natrual language processing (NLP) API endpoint
+- Enable setting of tangy-radio-block bg color with --tangy-radio-block-label-bg [tangy-form v4.49.4](https://github.com/Tangerine-Community/tangy-form/releases/tag/v4.49.4)
+- Fixes for tangy-prompt-box
+- Introduce `autoStopMode` config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
+- Add the Myanmar language translations
+
+__Maintenance__
+
+- Load legacy debian apt repo to install archived packages
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
 
 ## v3.32.1
 
@@ -136,6 +155,8 @@ Two new inputs are available for recording and playing back audio.
 - Add Modern Standard Arabic (MSA) to the list of supported languages
 
 Users can set the language of the tablet to Modern Standard Arabic (MSA) by selecting the 'Arabic' in the client and add `t-lang ar` tags to text labels in forms
+
+- [3811](https://github.com/Tangerine-Community/Tangerine/pull/3811) Documentation Overhaul
 
 __Libraries and Dependencies__
 - [translation-web-component](https://github.com/Tangerine-Community/translation-web-component): Update `t-select` with a `currentLanguageDirection` property to enable RTL support.
