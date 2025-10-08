@@ -60,7 +60,6 @@ class TangyAudioRecordingWidget extends TangyBaseWidget {
   }
 
   renderInfo(config) {
-    console.log(config)
     const icon = (this.shadowRoot.querySelector(
       "#icon"
     ).innerHTML = `<span class="header-text"><mwc-icon>settings_voice</mwc-icon><span>`);
@@ -71,7 +70,6 @@ class TangyAudioRecordingWidget extends TangyBaseWidget {
   }
 
   renderEdit(config) {
-    console.log(config)
     const action = config.name ? "Edit" : "Add";
     return `
       <h2>${action} Audio Recording</h2>

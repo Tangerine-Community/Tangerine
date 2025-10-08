@@ -302,7 +302,8 @@ export class TangyAudioRecordingNlp extends TangyInputBase {
 
     const audioBlob = this.audioRecordingInput.audioBlob;
     if (!audioBlob || !this.nlpModelUrl) {
-      console.warn("No audio blob or NLP model URL provided");
+      this.nlpError = this.t.processingError;
+      this.displayNlpError();
       return;
     }
     this.processing = true;
@@ -314,8 +315,9 @@ export class TangyAudioRecordingNlp extends TangyInputBase {
       if (audioBlob) {
           formData.append('audio', audioBlob, 'recording.wav');
       } else {
-          console.error('No audio blob found');
-          return;
+        this.nlpError = this.t.processingError;
+        this.displayNlpError();
+        return;
       }
       if (this.stimuliText) {
         const preparedStimuli = this.stimuliText.toLowerCase().replace(/[,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ");
@@ -326,8 +328,13 @@ export class TangyAudioRecordingNlp extends TangyInputBase {
         body: formData
       });
 
+      if (!response.ok) {
+        this.nlpError = this.t.processingError;
+        this.displayNlpError();
+        return;
+      }
+
       let result = await response.json();
-      console.log('NLP API cleaned result:', result);
       this.nlpResults = result;
       this.value = this.nlpResults;
 
@@ -336,7 +343,7 @@ export class TangyAudioRecordingNlp extends TangyInputBase {
       
     } catch (error) {
       console.error("NLP processing error:", error);
-      this.nlpError = error.message;
+      this.nlpError = this.t.processingError;
       this.displayNlpError();
     } finally {
       this.processing = false;

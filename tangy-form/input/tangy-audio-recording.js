@@ -157,11 +157,6 @@ export class TangyAudioRecording extends TangyInputBase {
         value: false,
         reflectToAttribute: true,
       },
-      mediaRecorder: Object,
-      audioChunks: {
-        type: Array,
-        value: () => [],
-      },
       audioBlob: {
         type: Object,
         value: null,
@@ -179,7 +174,12 @@ export class TangyAudioRecording extends TangyInputBase {
         value: "00:00",
         observer: "reflect",
         reflectToAttribute: true
-      }
+      },
+      dataType: {
+        type: String,
+        value: 'audio/wav',
+        reflectToAttribute: true
+      },
     };
   }
 
@@ -190,6 +190,8 @@ export class TangyAudioRecording extends TangyInputBase {
     )
       ? `<label>${this.getAttribute("question-number")}</label>`
       : "";
+
+    this.audioChunks = [];
 
     // initial state of hiding/showing elements -- only show the record button
     this.shadowRoot.querySelector("#stopRecording").style.display = "none";
