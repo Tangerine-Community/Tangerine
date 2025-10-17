@@ -10,6 +10,7 @@ __General Updates__
 - Fixes for tangy-prompt-box
 - Introduce `autoStopMode` config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
 - Add the Myanmar language translations
+- [#3854](https://github.com/Tangerine-Community/Tangerine/issues/3854) - Apply the csv replacement and disabled field handling in csv generation
 
 __Maintenance__
 
