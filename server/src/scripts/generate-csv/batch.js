@@ -41,7 +41,7 @@ function getData(dbName, formId, skip, batchSize, year, month) {
   });
 }
 
-function handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters) {
+function handleCSVReplacementAndDisabledFields(doc, header, value, csvReplacementCharacters, outputDisabledFieldsToCSV=false) {
   // Handle csv-safe character replacement and disabled fields
   if (Array.isArray(value)) {
     return ''
@@ -106,7 +106,7 @@ async function batch() {
                 return listItem[header];
               } else {
                 let value = doc[header];
-                return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+                return handleCSVReplacementAndDisabledFields(doc, header, value, csvReplacementCharacters, outputDisabledFieldsToCSV);
               }
             })])
             rows.push(row)
@@ -118,7 +118,7 @@ async function batch() {
                 return listItem[header];
               } else {
                 let value = doc[header];
-                return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+                return handleCSVReplacementAndDisabledFields(doc, header, value, csvReplacementCharacters, outputDisabledFieldsToCSV);
               }
             })])
             rows.push(row)
@@ -130,7 +130,7 @@ async function batch() {
                 return listItem[header];
               } else {
                 let value = doc[header];
-                return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+                return handleCSVReplacementAndDisabledFields(doc, header, value, csvReplacementCharacters, outputDisabledFieldsToCSV);
               }
             })])
             rows.push(row)
@@ -139,7 +139,7 @@ async function batch() {
           let row = [doc._id,
             ...state.headersKeys.map(header => {
               let value = doc[header];
-              return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+                return handleCSVReplacementAndDisabledFields(doc, header, value, csvReplacementCharacters, outputDisabledFieldsToCSV);
             })
           ]
           rows.push(row)
