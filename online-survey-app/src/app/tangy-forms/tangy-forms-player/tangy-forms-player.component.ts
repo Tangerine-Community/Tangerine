@@ -22,6 +22,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   @Input('preventSubmit') preventSubmit = false
   @Input('metadata') metadata:any
 
+  groupId: string;
   formId: string;
   formResponseId: string;
   caseId: string;
@@ -41,11 +42,12 @@ export class TangyFormsPlayerComponent implements OnInit {
     private tangyFormService: TangyFormService
   ) { 
     this.router.events.subscribe(async (event) => {
-        this.formId = this.route.snapshot.paramMap.get('formId');
-        this.formResponseId = this.route.snapshot.paramMap.get('formResponseId');
-        this.caseId = this.route.snapshot.paramMap.get('case');
-        this.caseEventId = this.route.snapshot.paramMap.get('event');
-        this.eventFormId = this.route.snapshot.paramMap.get('form');
+      this.groupId = this.route.snapshot.paramMap.get('groupId');
+      this.formId = this.route.snapshot.paramMap.get('formId');
+      this.formResponseId = this.route.snapshot.paramMap.get('formResponseId');
+      this.caseId = this.route.snapshot.paramMap.get('case');
+      this.caseEventId = this.route.snapshot.paramMap.get('event');
+      this.eventFormId = this.route.snapshot.paramMap.get('form');
     });
   }
 
@@ -59,8 +61,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       sessionStorage.setItem('caseUrlHash', `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`);
 
       try {
-        const groupId = window.location.pathname.split('/')[4];
-        this.tangyFormService.initialize(groupId);
+        this.tangyFormService.initialize(this.groupId);
 
         await this.caseService.load(this.caseId);
         this.caseService.setContext(this.caseEventId, this.eventFormId)
@@ -140,7 +141,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       tangyForm.addEventListener('after-submit', async (event) => {
         event.preventDefault();
         try {
-          if (await this.formsService.uploadFormResponse(event.target.response)){
+          if (await this.formsService.uploadFormResponse(this.groupId, event.target.response)){
             this.router.navigate(['/form-submitted-success']);
           } else {
             alert('Form could not be submitted. Please retry');
@@ -196,7 +197,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   async saveFormResponse(formResponse) {
 
     try {
-      if (!await this.formsService.uploadFormResponse(formResponse)) {
+      if (!await this.formsService.uploadFormResponse(this.groupId, formResponse)) {
         alert('Form could not be saved. Please retry');
         return false;
       }

@@ -31,18 +31,15 @@ export class AppConfigService {
   flatLocationList:FlatLocationList
 
   constructor(private httpClient: HttpClient) { }
-  async getAppConfig(): Promise<Partial<AppConfig>> {
+  async getAppConfig(groupId: string): Promise<Partial<AppConfig>> {
     try {
-      const data = await this.httpClient.get('./assets/app-config.json').toPromise() as AppConfig;
+      //const data = await this.httpClient.get('../online-survey-apps/group-fe276398-8c33-4a08-bd00-702b9bf1f882/form-f194254d-553e-40d2-bc64-9970581a92fd/assets/app-config.json').toPromise() as AppConfig;
+      const data = await this.httpClient.get(`/app/${groupId}/assets/app-config.json`).toPromise() as AppConfig;
       return data;
     } catch (error) {
       console.error(error);
       return { appName: '' };
     }
-  }
-
-  async getAppName(): Promise<string>{
-    return (await this.getAppConfig()).appName;
   }
 
   async getFlatLocationList() {

@@ -137,16 +137,15 @@ services:
       - ./content-sets:/tangerine/content-sets:delegated
       - ./apk-generator/package.json:/tangerine/apk-generator/package.json:delegated
       - ./apk-generator/src:/tangerine/apk-generator/src:delegated
-      - ./client/src:/tangerine/client/src:delegated \
-      - ./client/dist:/tangerine/client/dist:delegated \
-      - ./server/reporting:/tangerine/server/reporting:delegated \
-      - ./upgrades:/tangerine/upgrades:delegated \
-      - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
-      - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
-#      - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
-#      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
-      - ./translations:/tangerine/translations:delegated \
-      - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+      - ./client/src:/tangerine/client/src:delegated
+      - ./client/dist:/tangerine/client/dist:delegated
+      - ./server/reporting:/tangerine/server/reporting:delegated
+      - ./upgrades:/tangerine/upgrades:delegated
+#      - ./data/id_rsa:/root/.ssh/id_rsa:delegated
+#      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated
+      - ./translations:/tangerine/translations:delegated
+      - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated
+      - ./online-survey-app/dist:/tangerine/online-survey-app/dist:delegated
       - ./tangy-form-editor:/tangerine/tangy-form-editor:delegated
       - ./tangy-form:/tangerine/tangy-form:delegated
 
