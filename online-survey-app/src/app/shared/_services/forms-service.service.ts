@@ -38,13 +38,13 @@ export class FormsService {
     }
   }
 
-  async uploadFormResponse(formResponse): Promise<boolean>{
+  async uploadFormResponse(groupId: string, formResponse): Promise<boolean>{
     try {
-      const config = await this.appConfigService.getAppConfig();
+      const config = await this.appConfigService.getAppConfig(groupId);
 
       // Set the groupId or it will be missing from the form
       // TODO: Move this logic to tangy-form so it happens for all responses
-      formResponse.groupId = config.groupId
+      formResponse.groupId = config.groupId;
 
       const headers = new HttpHeaders();
       headers.set('formUploadToken', config.uploadKey);

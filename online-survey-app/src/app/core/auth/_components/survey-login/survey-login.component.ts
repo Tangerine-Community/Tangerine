@@ -15,6 +15,7 @@ export class SurveyLoginComponent implements OnInit {
   user = { accessCode: '' };
   @ViewChild('customLoginMarkup', {static: false}) customLoginMarkup: ElementRef;
   ready = false
+  groupId: string;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -23,6 +24,7 @@ export class SurveyLoginComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.groupId = this.route.snapshot.params['groupId'];
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] ||
                       sessionStorage.getItem('caseUrlHash') ||
                       'forms-list';
@@ -52,7 +54,8 @@ export class SurveyLoginComponent implements OnInit {
 
   async loginUser() {
     try {
-      if (await this.authenticationService.surveyLogin(this.user.accessCode)) {
+      const groupId = this.route.snapshot.params['groupId'];
+      if (await this.authenticationService.surveyLogin(groupId, this.user.accessCode)) {
         this.router.navigate([this.returnUrl]);
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccessful');

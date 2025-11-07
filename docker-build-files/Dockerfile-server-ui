@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:18-alpine3.17
+FROM node:18-alpine3.17
 #FROM node:18-alpine
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -54,7 +54,6 @@ RUN cd /tangerine/tangy-form-editor && \
 ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
     npm install
-#
 
 ## Install server-ui.
 ADD ./server-ui/package.json /tangerine/server-ui/package.json

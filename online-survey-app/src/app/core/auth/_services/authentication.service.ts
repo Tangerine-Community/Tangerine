@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -11,15 +10,11 @@ export class AuthenticationService {
   private _currentUserLoggedIn: boolean;
   constructor(
     private http: HttpClient,
-    private appConfigService: AppConfigService
   ) {
     this.currentUserLoggedIn$ = new Subject();
   }
 
-  async surveyLogin(accessCode: string) {
-    const appConfig = await this.appConfigService.getAppConfig();
-    const groupId = appConfig['groupId'];
-
+  async surveyLogin(groupId: string, accessCode: string): Promise<boolean> {
     try {
       const data = await this.http.post(`/onlineSurvey/login/${groupId}/${accessCode}`, {groupId, accessCode}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
@@ -56,9 +51,7 @@ export class AuthenticationService {
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
   }
 
-  async extendUserSession() {
-    const appConfig = await this.appConfigService.getAppConfig();
-    const groupId = appConfig['groupId'];
+  async extendUserSession(groupId: string): Promise<boolean> {
     const accessCode = sessionStorage.getItem('user_id');
 
     try {

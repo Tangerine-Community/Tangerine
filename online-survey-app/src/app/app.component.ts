@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -17,15 +17,20 @@ export class AppComponent implements OnInit{
   sessionTimeoutCheckTimerID;
   isConfirmDialogActive = false;
   loggedIn = false;
+  groupId: string;
 
   constructor(
     private appConfigService: AppConfigService, 
     private authenticationService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ){
   }
 
   async ngOnInit(): Promise<any>{
+
+    this.groupId = this.activatedRoute.snapshot.params['groupId'];
+
     this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
       if (isLoggedIn) {
         this.loggedIn = isLoggedIn;
@@ -39,7 +44,7 @@ export class AppComponent implements OnInit{
     });
 
     try {
-      const appConfig = await this.appConfigService.getAppConfig();
+      const appConfig = await this.appConfigService.getAppConfig(this.groupId);
       this.appName = appConfig.appName;
       this.languageDirection = appConfig.languageDirection;
       if (appConfig.helpLink) {
@@ -64,7 +69,7 @@ export class AppComponent implements OnInit{
       const extendSession = confirm(_TRANSLATE('You are about to be logged out. Should we extend your session?'));
       if (extendSession) {
         this.isConfirmDialogActive = false;
-        const extendedSession = await this.authenticationService.extendUserSession();
+        const extendedSession = await this.authenticationService.extendUserSession(this.groupId);
         if (!extendedSession) {
           await this.logout();
         }

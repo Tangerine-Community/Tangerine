@@ -12,7 +12,8 @@ export class LoginGuard implements CanActivate {
     private appConfigService: AppConfigService
   ) { }
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const config = await this.appConfigService.getAppConfig();
+    const groupId = route.params['groupId'];
+    const config = await this.appConfigService.getAppConfig(groupId);
     if (config['requireAccessCode'] === 'true') {
       if (await this.authenticationService.isLoggedIn()) {
         return true;
