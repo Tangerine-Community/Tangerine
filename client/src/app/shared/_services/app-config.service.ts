@@ -34,7 +34,7 @@ export class AppConfigService {
   ) { }
 
   async getAppConfig():Promise<AppConfig> {
-    this.config = this.config ? this.config : <AppConfig>await this.http.get('./assets/app-config.json').toPromise();
+    this.config = this.config ? this.config : new AppConfig(await this.http.get('./assets/app-config.json').toPromise())
     return this.config;
   }
 
