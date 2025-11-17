@@ -15,6 +15,7 @@ __General Updates__
 __Maintenance__
 
 - Load legacy debian apt repo to install archived packages
+- Workaround issue on ubuntu24 by rebuilding jdk8
 
 __Server upgrade instructions__
 
