@@ -2,23 +2,34 @@
 
 ![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/5caccebdeef1a1d189644216/1554823454410/?format=110w)
 
-[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg?branch=master)](https://travis-ci.org/Tangerine-Community/Tangerine)
 
-[![Join the chat at https://gitter.im/Tangerine-Community/Tangerine](https://badges.gitter.im/Tangerine-Community/Tangerine.svg)](https://gitter.im/Tangerine-Community/Tangerine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Tangerine is an open-source software platform designed to support data collection in low-resource settings, especially in education. It works offline, making it ideal for areas with limited or no internet access. Originally developed to assess early reading and math skills, Tangerine allows educators, researchers, and program staff to collect data using tablets or smartphones, then sync it when connectivity is available. 
 
-Digitize your EGMA and EGRA data collection with Tangerine&trade;. Create your Assessments online, conduct them offline with the Tangerine Android App or any device with Google Chrome web browser. All results you collect can be exported as a spreadsheet. When you have updates to forms you can send out an Over the Air update. Tangerine has been used by over 60 organizations to conduct over 1 million assessments and surveys in over 70 countries and in 100 languages.
+Tangerine is highly customizable—users can design their own surveys, assessments, and workflows to fit local needs. It supports audio playback, skip logic, and real-time data validation, helping ensure accurate and efficient data collection. Once data is collected, it can be exported for analysis or integrated into dashboards to inform decision-making. 
 
-[See here for a link to the Tangerine Manual](http://www.tangerinecentral.org/product-help)
+Whether used for classroom assessments, program monitoring, or large-scale evaluations, Tangerine empowers users to gather meaningful data that can improve learning outcomes and system performance. 
+
+
+[See here for a link to the Tangerine help documentation and Tangerine Academy](http://www.tangerinecentral.org/help)
 
 ## User Stories
-1. Subscription Owners use the Online Tangerine Hub App to create their own Tangerine Server which contains the online Tangerine Editor App. Tangerine is licensed as GNU GPL v3 and available to be installed on your own server.
-2. Form Designers use Tangerine Editor App to create forms and send those forms as Tangerine Client Apps to their Assessors.
-3. Assessors use Tangerine Client Apps to collect form responses while offline and later when online they upload form responses to Tangerine Editor.
-4. Form Designers download form responses as CSV. Other optional reporting modules include logstash module for building dashboards with Elastic Search and Kibana as well as the Dat Output module for sharing data on the P2P Dat Network. 
-5. Form Designers send out updates to forms as an Over the Air update to Tangerine Client Apps.
+
+Over 5 million assessments and surveys have been conducted using Tangerine across 65 countries and more than 80 organizations and research teams. 
+
+Discover how educators, governments, and researchers use Tangerine to generate insights, improve learning outcomes, and drive evidence-based decision-making. 
+
+1. Server Provisioning Subscription Owners use the Tangerine on hosted infrastructure. This can be managed via the cloud or installed on your own infrastructure.
+2. Form Design & Deployment create surveys/evaluations/interviews using the Editor and publish them to assessors’ tablets. The forms are deployed as a Tangerine app.
+3. Data Collection (offline/online) assessors use the app to collect responses. Responses are captured offline and synced to the platform backend on demand once an internet connection is available.
+4. Analysis & Export authorized users can download raw data as CSV files. For advanced analytics, the system supports MySQL and Logstash outputs
+5. Iterative Updates when forms need changes, those updates can be pushed instantly and the client app updated. 
+<img width="468" height="247" alt="image" src="https://github.com/user-attachments/assets/e98d58b5-2464-4c4a-82c9-d9d1b91a507a" />
+
 
 ## Technical details 
-A Tangerine Server can either be purchased online at Tangerine Hub or set up on your own server by following the instructions in the README.md file found in the Open Source Tangerine repository on Github. The Tangerine Editor App is deployed using Docker and built with Node.js, Express.js, Angular, Web Components, and CouchDB.  The Tangerine Client app, which the Tangerine Editor App releases, can be released either as a Progressive Web App (PWA), downloadable Android App (APK), or Dat Archive for use on the experimental Beaker/Bunsen Browsers. The Tangerine Client App is built using Angular, Web Components, and PouchDB. All options for releasing are enabled to receive Over The Air (OTA) updates for form content and application updates with the Dat option having experimental support for syncing OTA updates between devices while offline.
+Tangerine is open-source software, which means anyone can download the source code and run it on their own server—for free. This option is ideal for organizations with the technical capacity to manage their own hosting and support. 
+
+The Tangerine Editor App is deployed using Docker and built with Node.js, Express.js, Angular, Web Components, and CouchDB.  The Tangerine Client app, which the Tangerine Editor App releases, can be released either as a Progressive Web App (PWA), downloadable Android App (APK), or Dat Archive for use on the experimental Beaker/Bunsen Browsers. The Tangerine Client App is built using Angular, Web Components, and PouchDB. All options for releasing are enabled to receive Over The Air (OTA) updates for form content and application updates with the Dat option having experimental support for syncing OTA updates between devices while offline.
 
 Forms in Tangerine are based on the tangy-form suite of Web Components (<https://www.webcomponents.org/element/tangy-form>). Forms can be edited in the online Tangy Editor App on their Tangerine Server using a WYSIWYG interface or for advanced editors, via basic HTML and Javascript code.
 
