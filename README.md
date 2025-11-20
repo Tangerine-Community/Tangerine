@@ -23,7 +23,6 @@ Discover how educators, governments, and researchers use Tangerine to generate i
 3. Data Collection (offline/online) assessors use the app to collect responses. Responses are captured offline and synced to the platform backend on demand once an internet connection is available.
 4. Analysis & Export authorized users can download raw data as CSV files. For advanced analytics, the system supports MySQL and Logstash outputs
 5. Iterative Updates when forms need changes, those updates can be pushed instantly and the client app updated. 
-<img width="468" height="247" alt="image" src="https://github.com/user-attachments/assets/e98d58b5-2464-4c4a-82c9-d9d1b91a507a" />
 
 
 ## Technical details 
