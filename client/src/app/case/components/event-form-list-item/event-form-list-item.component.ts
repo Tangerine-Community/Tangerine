@@ -123,7 +123,7 @@ export class EventFormListItemComponent implements OnInit {
   }
 
   async navigateToEventForm() {
-    // Bail if there is a form response for this event form but the coresponding Form Response is not available.
+    // Bail if there is a form response for this event form but the corresponding Form Response is not available.
     if (!this.response && this.eventForm.formResponseId) {
       return
     }

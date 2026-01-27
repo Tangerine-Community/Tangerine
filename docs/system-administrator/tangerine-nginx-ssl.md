@@ -78,8 +78,8 @@ nginx -s reload
 ```
 
 
-Exit the nginx container and add some configuration for autmatic updates of certificates
-Execute crontab –e and add the line below
+Exit the nginx container and add some configuration for automatic updates of certificates
+Execute `crontab -e` and add the line below
         
 ```
  0 3 * * * docker exec -it nginx certbot renew --post-hook "service nginx reload"
@@ -91,7 +91,7 @@ docker commit nginx nginx/nginx:configuredNginx
 
 ```
 
- <b>Note that your nginx container is now linked to your tangerine container. </b>Every time you execute start.sh for tangerine you have to start a new nginx continer to udpate the link. To recreate using the saved image run 
+ <b>Note that your nginx container is now linked to your tangerine container. </b>Every time you execute start.sh for tangerine you have to start a new nginx container to update the link. To recreate using the saved image run 
  ``` 
  docker run -p 80:80 -p 443:443 --link tangerine:tangerine --restart always --name nginx -d nginx/nginx:configuredNginx
  ```

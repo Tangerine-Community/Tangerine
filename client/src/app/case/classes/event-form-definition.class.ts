@@ -13,9 +13,9 @@ export class EventFormDefinition {
    * 3. multiple roles "role1, role2,role3"
    */
   forCaseRole?:string = ''
-  // Wether or not multiple EventForm Instances can be created in the same EventForm for the same Participant.
+  // Whether or not multiple EventForm Instances can be created in the same EventForm for the same Participant.
   repeatable?: boolean = false
-  // Wether or not EventForm Instance is marked as required when created.
+  // Whether or not EventForm Instance is marked as required when created.
   required?:boolean = false
   // Create an EventForm Instance when a qualifying participant is added or when parent CaseEvent is created.
   autoPopulate?:boolean = false
