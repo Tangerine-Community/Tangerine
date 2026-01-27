@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
       options.descending = true;
       results = await groupDb.query('responsesByStartUnixTime', options);
     } else {
-      // searh options by document id
+      // search options by document id
       options.startkey = req.query.id;
       options.endkey = `${req.query.id}\ufff0`;
       results = await groupDb.allDocs(options);

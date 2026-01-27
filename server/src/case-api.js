@@ -10,7 +10,7 @@ const {
   Participant: Participant
 } = require('./classes/case.class.js')
 
-/* Return the contents of the case-definitions.json file or a sepcified */
+/* Return the contents of the case-definitions.json file or a specified */
 getCaseDefinitions = async (req, res) => {
   const groupDir = `/tangerine/client/content/groups/${req.params.groupId}`
   const caseType = 'case-definitions.json'

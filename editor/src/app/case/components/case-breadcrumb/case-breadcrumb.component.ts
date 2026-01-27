@@ -34,7 +34,7 @@ export class CaseBreadcrumbComponent implements OnInit {
     this.caseInstance = this.caseService.case
     this.groupId = window.location.pathname.split('/')[2]
 
-    // Used to hide the case actions from the event-list and form-reponse component views
+    // Used to hide the case actions from the event-list and form-response component views
     this.showingCaseEventList = !window.location.hash.includes("event")
 
     const caseEvent = this.caseEventId

@@ -31,8 +31,8 @@
         caseService.setParticipantData(participantRole2.id, 'participant_id', `${getValue('participant_id')}-${role2ParticipantNumber}`)
         role2ParticipantNumber++
       }
-      // The parameters for caseService.createNotification() are label, description, link, icon (see https://material.io/icons), background color, 
-      // whether or not to persist more than once (true or false), and wether or not this notification should enforce attention and warn when 
+      // The parameters for caseService.createNotification() are label, description, link, icon (see https://material.io/icons), background color,
+      // whether or not to persist more than once (true or false), and wether or not this notification should enforce attention and warn when
       // navigating away from the case (true or false).
       caseService.createNotification(
         `Registration success!`, 

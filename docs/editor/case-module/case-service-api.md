@@ -567,33 +567,33 @@ caseService.getParticipantData(participant.id, 'first_name')
 
 ## Notification API
 
-Notifications appear in the Case view to provide instructions or extra information to the users who are filling out forms. The programmer uses the following APIs to create notifications in teh Case interface. Notifications can be persistant or dismisable depending on the use case.
+Notifications appear in the Case view to provide instructions or extra information to the users who are filling out forms. The programmer uses the following APIs to create notifications in the Case interface. Notifications can be persistent or dismissible depending on the use case.
 
 ---
 ### createNotification
 
-Create a notificaiton and display it in the Case view
+Create a notification and display it in the Case view
 
 #### Parameters
 | Param        | Type         | Description  |
 | ------------ | ------------ | ------------ |
 | label        | <code>string</code>   | Short text used for the title |
 | description  | <code>string</code>   | Longer text description |
-| link         | <code>string</code>   | Url link internal or external |
+| link         | <code>string</code>   | URL link internal or external |
 | icon         | <code>string</code>   | Text name of a system icon |
 | color        | <code>string</code>   | Hexadecimal value of a color (e.g. #CCC) |
 | enforceAttention | <code>boolean</code> | If true, change focus to the notification when it is displayed |
-| persist | <code>boolean</code> | If true, notification can only be dismissed programatically |
+| persist | <code>boolean</code> | If true, notification can only be dismissed programmatically |
 
 #### Example
 ```javascript
-caseService.createNotification('Alert: Case Needs you attention', 'The Case needs review with a supervisor.', '', 'notification_important', '#CCC', true, false)
+caseService.createNotification('Alert: Case Needs your attention', 'The Case needs review with a supervisor.', '', 'notification_important', '#CCC', true, false)
 ```
 
 ---
 ### openNotification
 
-Sets the status of a notificaiton to `Open` so it will display to the user.
+Sets the status of a notification to `Open` so it will display to the user.
 
 #### Parameters
 | Param        | Type         | Description  |
@@ -606,7 +606,7 @@ This code re-opens any Closed notifications that have a label that starts with '
 if (case.notifications) {
   const notifications = case.notifications.filter(n => n.label.startsWith('Alert') && n.status === NotificationStatus.Closed)
   for (let notification in notifications) {
-    caseService.openNotificaiton(notification.id)
+    caseService.openNotification(notification.id)
   }
 }
 ```
@@ -614,7 +614,7 @@ if (case.notifications) {
 ---
 ### closeNotification
 
-Sets the status of a notificaiton to `Closed` so it will be hidden from the user.
+Sets the status of a notification to `Closed` so it will be hidden from the user.
 
 #### Parameters
 | Param        | Type         | Description  |
@@ -627,7 +627,7 @@ This code closes notifications that have a label that starts with 'Alert'.
 if (case.notifications) {
   const notifications = case.notifications.filter(n => n.label.startsWith('Alert') && n.status === NotificationStatus.Open)
   for (let notification in notifications) {
-    caseService.closeNotificaiton(notification.id)
+    caseService.closeNotification(notification.id)
   }
 }
 ```

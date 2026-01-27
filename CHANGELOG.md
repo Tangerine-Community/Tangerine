@@ -186,18 +186,18 @@ __New Features__
 ```
 
 - **Improved Data Management**: 
-  * Data Managers now have access to a full workflow to review, edit, and verify data in the Tangerine web server. The Data Manager can click on a record and enter a new screen that allows them to perform actions align with a data collection supervision process.
-  * Searching has been improved to allow seaqrching for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. [#3681](https://github.com/Tangerine-Community/Tangerine/issues/3681)
+  * Data Managers now have access to a full workflow to review, edit, and verify data in the Tangerine web server. The Data Manager can click on a record and enter a new screen that allows them to perform actions that align with a data collection supervision process.
+  * Searching has been improved to allow searching for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. [#3681](https://github.com/Tangerine-Community/Tangerine/issues/3681)
 
 __Fixes__
 - Client Search Service: exclude archived cases from recent activity
 - Media library cannot upload photos [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
-- User Profile Import: The process of importing an existing device user now allows for retries and an asynchronous process to download existing records. This fixes an issue cause by timeouts when trying to import a user with a large number of records. [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
+- User Profile Import: The process of importing an existing device user now allows for retries and an asynchronous process to download existing records. This fixes an issue caused by timeouts when trying to import a user with a large number of records. [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
 - When `T_ONLY_PROCESS_THESE_GROUPS` has a list of one or more groups, running `reporting-cache-clear` will only process the groups in the list
 
 __Tangerine Teach__
 
-- Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
+- Add toggle in Attendance Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
 - Use `studentRegistrationFields` to control showing name and surname of student in the student dashboard
 
 __Libs and Dependencies__
@@ -3904,7 +3904,6 @@ docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
 ```
 docker exec -it tangerine-container /tangerine-server/upgrades/v2.2.0.sh
 ```
-
 
 
 

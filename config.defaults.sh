@@ -20,7 +20,7 @@ T_USER1="user1"
 T_USER1_PASSWORD="password"
 # If using Sync Protocol 1, this is the password tablets will use to authenticate when uploading data.
 T_UPLOAD_TOKEN="password"
-# The database username and password. Please make this extrememly secure.
+# The database username and password. Please make this extremely secure.
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
 # Mysql - Enter container name - usually "mysql" or the ip address or server name for an external service.
@@ -52,7 +52,7 @@ T_COUCHDB_PORT_MAPPING=" -p 5984:5984"
 # Open additional ports. You probably don't need to do this.
 T_PORT_MAPPING="-p 80:80"
 
-# Control wether or not the limit of reporting output is per group or sidewide. The other option is "group" which will make sure allowance applies to the group level.
+# Control whether or not the limit of reporting output is per group or sidewide. The other option is "group" which will make sure allowance applies to the group level.
 T_PAID_MODE="site"
 
 # The number of form responses uploaded that will be marked paid thus end up in the reporting outputs.
@@ -66,7 +66,7 @@ T_LIMIT_NUMBER_OF_CHANGES=200
 
 # Limit processing to certain group dbs. Cache clear and batching reporting outputs will only run on the groups specified below.
 # If empty, all groups will be processed.
-# The value of the paramter is an array of group names. For example:
+# The value of the parameter is an array of group names. For example:
 # T_ONLY_PROCESS_THESE_GROUPS="['group-1','group-2']"
 T_ONLY_PROCESS_THESE_GROUPS=""
 
@@ -104,7 +104,7 @@ T_REPLICATE="[]"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
 
-# Wether or not to use legacy parts of the system marked for deprecation. At the moment this is important for older clients that upload to an old route.
+# Whether or not to use legacy parts of the system marked for deprecation. At the moment this is important for older clients that upload to an old route.
 T_LEGACY="false"
 
 # Override the docker image version of Tangerine to use. Note you must also check out that version in git.
@@ -142,7 +142,7 @@ T_CUSTOM_LOGIN_MARKUP=''
 
 # The value to use for issuer parameter when signing JWTs.
 T_JWT_ISSUER="Tangerine"
-# The validity period for a signed JWT Token - determines how long before a token is conidered invalid. Expressed in seconds or a string describing a time span as defined in https://github.com/zeit/ms
+# The validity period for a signed JWT Token - determines how long before a token is considered invalid. Expressed in seconds or a string describing a time span as defined in https://github.com/zeit/ms
 T_JWT_EXPIRES_IN="1h"
 
 # Password Policy
