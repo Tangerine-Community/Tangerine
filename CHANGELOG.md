@@ -4,7 +4,7 @@
 
 __General Updates__
 
-- Tangy Audio Recording with Visualization
+- Tangy Audio Recording with Visualization and min-duration setting in edit input
 - Tangy Audio Recording NLP: Input to send an audio recording to a natrual language processing (NLP) API endpoint
 - Enable setting of tangy-radio-block bg color with --tangy-radio-block-label-bg [tangy-form v4.49.4](https://github.com/Tangerine-Community/tangy-form/releases/tag/v4.49.4)
 - Fixes for tangy-prompt-box
