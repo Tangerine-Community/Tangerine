@@ -382,6 +382,11 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )
+        } else if (input.tagName === 'TANGY-AUDIO-RECORDING') {
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
+              : ""
+          )
         } else if (input.tagName === 'TANGY-EFTOUCH') {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {

@@ -13,30 +13,48 @@ VERSION_TAG="$9"
 CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP"
 STATUS_FILE="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP.json"
+# New Lock File Definition
+LOCK_FILE="/tangerine/client/builds/apk/release-apk.lock"
+
+# --------------------------------
 URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www"
 CHCP_URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www/chcp.json"
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
 CORDOVA_ANDROID_DIRECTORY="/opt/cordova-android"
 ARCHIVE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/archive/$GROUP"
 
+# Check if the lock file exists
+if [ -f "$LOCK_FILE" ]; then
+	    echo "ERROR: Another APK generation for group '$GROUP' is already in progress."
+	    	echo '{"processing":true,"step":"Another APK generation in progress. Please try again in 2 minutes."}' > $STATUS_FILE
+		    exit 1
+		    	
+fi
+
+# Create the lock file
+touch "$LOCK_FILE"
+# Ensure the lock file is removed when the script exits, regardless of success or failure
+trap 'rm -f "$LOCK_FILE"; echo "Lock file removed."' EXIT
+
+
 echo "RELEASE APK script started $DATE"
 
 if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ] || [ "$T_PROTOCOL" = "" ] || [ "$T_HOST_NAME" = "" ]; then
-  echo ""
-  echo "RELEASE APK"
-  echo "A command for releasing an APK using a group URL."
-  echo ""
-  echo "./release-apk.sh <group> <content path> <release type> <protocol> <hostname>"
-  echo ""
-  echo "Release type is either qa or prod."
-  echo ""
-  echo "<protocol> <hostname> are for the update URL"
-  echo ""
-  echo "Usage:"
-  echo "  release-apk a4uw93 ./content/groups/group-a qa"
-  echo ""
-  echo "Then visit https://foo.tangerinecentral.org/releases/qa/apk/a4uw93.apk"
-  exit 1
+	  echo ""
+	  echo "RELEASE APK"
+	  echo "A command for releasing an APK using a group URL."
+	  echo ""
+	  echo "./release-apk.sh <group> <content path> <release type> <protocol> <hostname>"
+	  echo ""
+	  echo "Release type is either qa or prod."
+	  echo ""
+	  echo "<protocol> <hostname> are for the update URL"
+	  echo ""
+	  echo "Usage:"
+	  echo "  release-apk a4uw93 ./content/groups/group-a qa"
+	  echo ""
+	  echo "Then visit https://foo.tangerinecentral.org/releases/qa/apk/a4uw93.apk"
+	  exit 1
 fi
 
 # Mark build status early.
@@ -65,8 +83,9 @@ cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 #echo "RELEASE APK: rm assets dir from $RELEASE_DIRECTORY"
 rm -rf $RELEASE_DIRECTORY/www/shell/assets
 #sleep 10
-#echo "RELEASE APK: Copy content dir to $RELEASE_DIRECTORY"
-cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
+# echo "RELEASE APK: Copy content dir to $RELEASE_DIRECTORY" less any client uplaods
+# cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
+rsync -a --exclude 'client-uploads' $CONTENT_PATH/ $RELEASE_DIRECTORY/www/shell/assets/
 #sleep 10
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 

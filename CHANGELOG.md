@@ -1,5 +1,28 @@
 # What's new
 
+## v3.32.2
+
+__General Updates__
+
+- Tangy Audio Recording with Visualization and min-duration setting in edit input
+- Tangy Audio Recording NLP: Input to send an audio recording to a natrual language processing (NLP) API endpoint
+- Enable setting of tangy-radio-block bg color with --tangy-radio-block-label-bg [tangy-form v4.49.4](https://github.com/Tangerine-Community/tangy-form/releases/tag/v4.49.4)
+- Fixes for tangy-prompt-box
+- Introduce `autoStopMode` config and UI for both TangyTimedWidget and TangyUntimedGridWidget, allowing selection between "first" and "consecutive" modes for auto-stop behavior.
+- Add the Myanmar language translations
+- [#3854](https://github.com/Tangerine-Community/Tangerine/issues/3854) - Apply the csv replacement and disabled field handling in csv generation
+- Lock file creation on release-apk.sh script to prevent simultaneous APKS.
+
+__Maintenance__
+
+- Load legacy debian apt repo to install archived packages
+- Workaround issue on ubuntu24 by rebuilding jdk8
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Instructions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+
 ## v3.32.1
 
 __General Updates__

@@ -4,12 +4,19 @@ const log = require('tangy-log').log
 const util = require('util')
 const readDir = util.promisify(require('fs').readdir)
 const stat = util.promisify(require('fs').stat)
-const exec = util.promisify(require('child_process').exec)
+const execFile = util.promisify(require('child_process').execFile)
 const sanitize = require('sanitize-filename');
 
 module.exports = async (req, res) => {
+  // Sanitize the group parameter to prevent path traversal
+  const sanitizedGroup = sanitize(req.params.group);
+  
   for (let path of req.body.paths) {
-    await exec(`rm /tangerine/client/content/groups/${req.params.group}/media/${sanitize(path.replace('./assets/media/', '')).replace(/(\s+)/g, '\\$1')}`)
+    const sanitizedPath = sanitize(path.replace('./assets/media/', ''));
+    const fullPath = `/tangerine/client/content/groups/${sanitizedGroup}/media/${sanitizedPath}`;
+    
+    // Use execFile with argument array instead of shell string for better security
+    await execFile('rm', [fullPath]);
   }
   res.send()
 }
