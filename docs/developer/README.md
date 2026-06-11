@@ -24,6 +24,7 @@
 - [Upgrades](../system-administrator/upgrades.md)
 - [Installing Multiple Tangerine apps on the same tablet](../system-administrator/install-multiple-apks-config.md)
 - [Deleting Records](deletion-strategy.md)
+- [Docker Image CI Workflow](docker-image-ci.md)
 
 ## Testing
 - [Load Testing](load-testing.md)
