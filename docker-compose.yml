@@ -68,6 +68,7 @@ services:
 #        - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
         - ./translations:/tangerine/translations:delegated \
         - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+        - ./online-survey-app/dist/online-survey-app:/tangerine/online-survey-app/dist/online-survey-app:ro \
         - ./server/entrypoint-server.sh:/tangerine/server/entrypoint-server.sh:delegated
         - ./data/ssh:/root/.ssh:delegated \
         - ./data/state:/state:delegated \
@@ -147,6 +148,7 @@ services:
 #      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
       - ./translations:/tangerine/translations:delegated \
       - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+      - ./online-survey-app/dist/online-survey-app:/tangerine/online-survey-app/dist/online-survey-app:ro \
       - ./tangy-form-editor:/tangerine/tangy-form-editor:delegated
       - ./tangy-form:/tangerine/tangy-form:delegated
 

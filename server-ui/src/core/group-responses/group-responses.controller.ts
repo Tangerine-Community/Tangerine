@@ -1,6 +1,5 @@
 import { GroupResponsesService } from './../../shared/services/group-responses/group-responses.service';
 import { Controller, All, Param, Body } from '@nestjs/common';
-import { SSL_OP_TLS_BLOCK_PADDING_BUG } from 'constants';
 const log = require('tangy-log').log
 
 @Controller('group-responses')

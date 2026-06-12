@@ -1,0 +1,36 @@
+import { TangerineConfigService } from '../tangerine-config/tangerine-config.service';
+import { Group } from '../../classes/group';
+import PouchDB from 'pouchdb';
+import { Subject } from 'rxjs';
+import { UserService } from '../user/user.service';
+import { DbService } from '../db/db.service';
+import { HttpService } from '@nestjs/axios';
+type SyncUrl = string;
+export declare class GroupService {
+    private readonly configService;
+    private readonly userService;
+    private readonly http;
+    private readonly dbService;
+    _views: {};
+    readonly groups$: Subject<Group>;
+    groupDatabases: PouchDB[];
+    DB: any;
+    groupsDb: any;
+    constructor(configService: TangerineConfigService, userService: UserService, http: HttpService, dbService: DbService);
+    initialize(): Promise<void>;
+    getGroupDatabase(id?: string): PouchDB;
+    getSyncUrl(groupId: string): SyncUrl;
+    listGroups(): Promise<Group[]>;
+    registerViews(moduleName: any, views: any): void;
+    installViews(groupId: any): Promise<void>;
+    updateAllUserViews(): Promise<void>;
+    indexAllUserViews(): Promise<void>;
+    create(label: any, contentSet: any, username: any): Promise<Group>;
+    contentSets(): Promise<any>;
+    read(groupId: string): Promise<Group>;
+    update(group: Group): Promise<void>;
+    delete(group: Group): Promise<void>;
+    startSession(groupId: string, username: string, type: string): Promise<object>;
+    expireAdminCouchdbSessions(): Promise<void>;
+}
+export {};
