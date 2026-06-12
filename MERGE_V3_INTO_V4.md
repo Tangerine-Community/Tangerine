@@ -26,7 +26,7 @@ This is the current process used to merge changes from v3 into v4. It involves t
    ```
 4. Next, use the [script](./scripts/manual-tangy-form-merge.sh) to manually copy files from `tangy-form` and `tangy-form-editor`. Those repos are no longer separate components. They live as files in this repo. The script copy in files that changed since the provided tag.
    ```bash
-    ./scripts/manual-tangy-form-merge.sh <tangy-form-or-tangy-form-editor> <tag>
+    ./scripts/manual-tangy-form-merge.sh <path-to-tangy-form-or-tangy-form-editor-repo> <tag>
     ```
 5. Check the files copied in are correct, then commit the changes.
 5. Push the new branch to the remote repository:
