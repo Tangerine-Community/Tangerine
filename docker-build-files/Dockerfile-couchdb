@@ -1,4 +1,14 @@
-FROM couchdb:3
+FROM couchdb:3.4.3
+
+# Upgrade OS packages to patch CVEs.
+# DEBIAN_FRONTEND=noninteractive and dpkg force-confdef/force-confold handle
+# the couchdb conffile prompt that would otherwise block the build.
+# Using ENV instead of inline ARG to ensure it's available to all shell invocations during RUN.
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY couchdb/local.ini /opt/couchdb/etc/
 

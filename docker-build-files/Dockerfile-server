@@ -6,6 +6,9 @@ ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
 
+# Upgrade all OS packages to patch CVEs
+RUN apk upgrade --no-cache
+
 #RUN apk update
 #RUN apk add git
 

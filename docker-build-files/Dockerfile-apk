@@ -1,5 +1,8 @@
 FROM alvrme/alpine-android:android-32-jdk11
 
+# Upgrade all OS packages to patch CVEs
+RUN apk upgrade --no-cache
+
 RUN apk add --update nodejs npm
 # Install Cordova and other useful globals
 RUN npm update && \
@@ -41,7 +44,8 @@ RUN cordova plugin add cordova-plugin-x-socialsharing --save && sleep 5
 #ENV JAVA_OPTS "-Xms512m -Xmx1536m"
 #ENV CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=file:///opt/gradle.zip
 
-RUN apk add --update bash vim curl wget jq git tar unzip bash-completion gradle
+RUN apk upgrade --no-cache && \
+    apk add --update bash vim curl wget jq git tar unzip bash-completion gradle
 
 ## No need to warm up cordova
 # RUN cordova build

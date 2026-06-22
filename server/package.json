@@ -58,6 +58,12 @@
     "start:prod": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json"
   },
+  "overrides": {
+    "path-to-regexp": "0.1.13",
+    "semver": "^7.6.3",
+    "tar": "^7.4.3",
+    "tmp": "^0.2.5"
+  },
   "dependencies": {
     "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.4.0",
@@ -73,9 +79,9 @@
     "cordova-hot-code-push-cli": "github:Tangerine-Community/cordova-hot-code-push-cli",
     "cors": "^2.8.5",
     "exceljs": "^4.3.0",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "express-http-proxy": "^1.6.3",
-    "express-session": "1.17.3",
+    "express-session": "^1.18.1",
     "flat": "^5.0.2",
     "fs-extra": "^11.1.1",
     "happy-dom": "^7.7.0",
@@ -88,14 +94,14 @@
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
     "memorystream": "^0.3.1",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^1.4.5-lts.2",
     "mysql": "github:mysqljs/mysql",
     "mysql2": "^3.3.0",
     "node-gyp": "^9.3.1",
     "node-gyp-build": "^4.6.0",
     "node-random-name": "^1.0.1",
     "pako": "^2.1.0",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pouchdb": "^8.0.1",
     "pouchdb-find": "^8.0.1",
@@ -109,7 +115,7 @@
     "sanitize-filename": "^1.6.3",
     "sqlstring": "^2.3.3",
     "tangy-log": "^1.0.0",
-    "underscore": "^1.13.6",
+    "underscore": "^1.13.7",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

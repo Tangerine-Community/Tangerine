@@ -6,6 +6,7 @@ ARG BUILDPLATFORM
 
 RUN echo "I'm building for $TARGETARCH" && \
     echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" && \
+    apk upgrade --no-cache && \
     apk fix && \
     apk --no-cache --update add git git-lfs gpg less openssh patch jq && \
     git lfs install && \

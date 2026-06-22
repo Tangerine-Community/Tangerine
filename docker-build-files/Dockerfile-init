@@ -1,4 +1,7 @@
-FROM alpine:latest
+FROM alpine:3.21.3
+
+# Upgrade all OS packages to patch CVEs
+RUN apk upgrade --no-cache
 
 RUN mkdir /tangerine
 COPY ./init/id_rsa /tangerine/
