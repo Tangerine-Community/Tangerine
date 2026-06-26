@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -9,7 +9,9 @@ import { CountriesService } from "../registration/services/countries.service";
 @Component({
     selector: 'profile-edit',
     templateUrl: './profile-edit.component.html',
-    styleUrls: ['./profile-edit.component.css']
+    styleUrls: ['./profile-edit.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 
 export class ProfileEditComponent implements OnInit {

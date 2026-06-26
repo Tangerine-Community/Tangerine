@@ -1,17 +1,17 @@
 // Stub emit function to please TS.
-const emit = (key, value) => {
+const emit = (key: any, value: any) => {
   return true;
 }
 
 export const TangyFormsQueries = {
   responsesByFormId: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.collection !== 'TangyFormResponse') return
       emit(`${doc.form.id}`, true)
     }.toString()
   },
   responsesCompleted: {
-    map: function (doc) {
+    map: function (doc: any) {
       if ((doc.collection === 'TangyFormResponse' && doc.complete === true ||
         (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile'))) {
         emit(doc._id, true)
@@ -20,28 +20,28 @@ export const TangyFormsQueries = {
   },
   // @TODO These views are for Sync Protocol 1 only. We should move these to another module specific to SP1.
   responsesLockedAndNotUploaded: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.collection === 'TangyFormResponse' && doc.complete === true && (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesUnLockedAndNotUploaded: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.collection === 'TangyFormResponse' && doc.complete === false && (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesLockedAndUploaded: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.collection === 'TangyFormResponse' && doc.complete === true && (doc.uploadDatetime && doc.uploadDatetime > doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesUnLockedAndUploaded: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (
         (doc.collection === 'TangyFormResponse' && doc.complete === false && doc.uploadDatetime && ((doc.uploadDatetime > doc.lastModified) || (doc.uploadDatetime > doc.tangerineModifiedOn)))
       ) {
@@ -50,12 +50,12 @@ export const TangyFormsQueries = {
     }.toString()
   },
   responsesByLocationId: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
         if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
-        let inputs = [];
-        doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-        let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+        let inputs: any[] = [];
+        doc.items.forEach((item: any) => inputs = [...inputs, ...item.inputs])
+        let location = inputs.find((input: any) => (input.tagName === 'TANGY-LOCATION') ? true : false)
         if (location) {
           let lowestLevelLocation = location.value.pop()
           emit(lowestLevelLocation.value, true);
@@ -66,14 +66,14 @@ export const TangyFormsQueries = {
     }.toString()
   },
   responsesByYearMonthLocationId: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
         if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
         // @TODO Take into account timezone.
         const startDatetime = new Date(doc.startUnixtime);
-        let inputs = [];
-        doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-        let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+        let inputs: any[] = [];
+        doc.items.forEach((item: any) => inputs = [...inputs, ...item.inputs])
+        let location = inputs.find((input: any) => (input.tagName === 'TANGY-LOCATION') ? true : false)
         if (location) {
           const lowestLevelLocation = location.value.pop()
           const thisLocationId = lowestLevelLocation.value;
@@ -85,13 +85,13 @@ export const TangyFormsQueries = {
     }.toString()
   },
   responsesByFormIdAndStartDatetime: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.collection !== 'TangyFormResponse') return
       emit(`${doc.form.id}-${doc.startUnixtime}`, true)
     }.toString()
   },
   responseByUploadDatetime: {
-    map: function (doc) {
+    map: function (doc: any) {
       if (doc.collection !== 'TangyFormResponse' || !doc.uploadDatetime) return
       emit(doc.uploadDatetime, true)
     }.toString()

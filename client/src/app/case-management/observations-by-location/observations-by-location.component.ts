@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CaseManagementService } from '../_services/case-management.service';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 @Component({
-  selector: 'app-observations-by-location',
-  templateUrl: './observations-by-location.component.html',
-  styleUrls: ['./observations-by-location.component.css']
+    selector: 'app-observations-by-location',
+    templateUrl: './observations-by-location.component.html',
+    styleUrls: ['./observations-by-location.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ObservationsByLocationComponent implements OnInit {
   observations = [];

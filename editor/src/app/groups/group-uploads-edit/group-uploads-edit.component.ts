@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
@@ -7,9 +7,11 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Component({
-  selector: 'app-group-uploads-edit',
-  templateUrl: './group-uploads-edit.component.html',
-  styleUrls: ['./group-uploads-edit.component.css']
+    selector: 'app-group-uploads-edit',
+    templateUrl: './group-uploads-edit.component.html',
+    styleUrls: ['./group-uploads-edit.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupUploadsEditComponent implements OnInit {
 

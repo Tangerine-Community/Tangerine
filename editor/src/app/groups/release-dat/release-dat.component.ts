@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 
 @Component({
-  selector: 'app-release-dat',
-  templateUrl: './release-dat.component.html',
-  styleUrls: ['./release-dat.component.css']
+    selector: 'app-release-dat',
+    templateUrl: './release-dat.component.html',
+    styleUrls: ['./release-dat.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ReleaseDatComponent implements OnInit {
 

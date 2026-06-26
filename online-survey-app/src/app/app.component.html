@@ -3,18 +3,22 @@
     <tr>
       <td width="100%"></td>
       <td>
-        <div *ngIf="loggedIn">
-          <a (click)="logout()">
-            <iron-icon icon="lock"></iron-icon>
-          </a>
-        </div>
+        @if (loggedIn) {
+          <div>
+            <a (click)="logout()">
+              <iron-icon icon="lock"></iron-icon>
+            </a>
+          </div>
+        }
       </td>
       <td>
-        <div *ngIf="hasHelpLink">
-          <a href="{{helpLink}}" target="_blank">
-            <iron-icon icon="help"></iron-icon>
-          </a>
-        </div>
+        @if (hasHelpLink) {
+          <div>
+            <a href="{{helpLink}}" target="_blank">
+              <iron-icon icon="help"></iron-icon>
+            </a>
+          </div>
+        }
       </td>
       <td>
         <iron-icon icon="language"></iron-icon>

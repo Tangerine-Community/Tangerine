@@ -1,7 +1,7 @@
 import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../../sync/sync.service';
 import { Subject } from 'rxjs';
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import { VariableService } from 'src/app/shared/_services/variable.service';
 import { Router } from '@angular/router';
 
@@ -12,9 +12,11 @@ export enum FIRST_SYNC_STATUS {
 
 
 @Component({
-  selector: 'app-device-sync',
-  templateUrl: './device-sync.component.html',
-  styleUrls: ['./device-sync.component.css']
+    selector: 'app-device-sync',
+    templateUrl: './device-sync.component.html',
+    styleUrls: ['./device-sync.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DeviceSyncComponent implements OnInit, OnDestroy {
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -7,9 +7,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
-  selector: 'app-edit-event-definition',
-  templateUrl: './edit-event-definition.component.html',
-  styleUrls: ['./edit-event-definition.component.css']
+    selector: 'app-edit-event-definition',
+    templateUrl: './edit-event-definition.component.html',
+    styleUrls: ['./edit-event-definition.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EditEventDefinitionComponent implements OnInit, OnDestroy {
   eventForm = {

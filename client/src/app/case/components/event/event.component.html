@@ -1,28 +1,35 @@
-<div *ngIf="loaded">
-  <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
-  <app-case-notifications></app-case-notifications>
-  <div class="wrapper">
-    <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
-    <app-event-form-list-item
-      *ngFor="let eventFormInfo of noRoleEventFormInfos"
-      [case]="caseService.case"
-      [caseDefinition]="caseService.caseDefinition"
-      [caseEvent]="caseEvent"
-      [caseEventDefinition]="caseEventDefinition"
-      [eventForm]="eventFormInfo.eventForm"
-      [eventFormDefinition]="eventFormInfo.eventFormDefinition"
-      [caseService]="caseService"
-      class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-    >
-    </app-event-form-list-item>
-    <app-event-forms-for-participant
-      [caseId]="caseService.case._id"
-      [eventId]="caseEvent.id"
-      [participantId]="participant.id"
-      [caseService]="caseService"
-      *ngFor="let participant of caseService.case.participants"
-    >
-    </app-event-forms-for-participant>
-     
+@if (loaded) {
+  <div>
+    @if (caseService && caseService.case && caseService.case._id) {
+      <app-case-breadcrumb [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
+    }
+    <app-case-notifications></app-case-notifications>
+    <div class="wrapper">
+      @if (hasNotificationEnforcingAttention) {
+        <div class="screen"></div>
+      }
+      @for (eventFormInfo of noRoleEventFormInfos; track eventFormInfo) {
+        <app-event-form-list-item
+          [case]="caseService.case"
+          [caseDefinition]="caseService.caseDefinition"
+          [caseEvent]="caseEvent"
+          [caseEventDefinition]="caseEventDefinition"
+          [eventForm]="eventFormInfo.eventForm"
+          [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+          [caseService]="caseService"
+          class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}"
+          >
+        </app-event-form-list-item>
+      }
+      @for (participant of caseService.case.participants; track participant) {
+        <app-event-forms-for-participant
+          [caseId]="caseService.case._id"
+          [eventId]="caseEvent.id"
+          [participantId]="participant.id"
+          [caseService]="caseService"
+          >
+        </app-event-forms-for-participant>
+      }
+    </div>
   </div>
-</div>
+}

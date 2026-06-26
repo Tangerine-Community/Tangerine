@@ -1,5 +1,5 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
@@ -12,9 +12,11 @@ import { ServerConfigService } from 'src/app/shared/_services/server-config.serv
 
 
 @Component({
-  selector: 'app-group-forms-csv',
-  templateUrl: './group-forms-csv.component.html',
-  styleUrls: ['./group-forms-csv.component.css']
+    selector: 'app-group-forms-csv',
+    templateUrl: './group-forms-csv.component.html',
+    styleUrls: ['./group-forms-csv.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupFormsCsvComponent implements OnInit, AfterViewInit {
 

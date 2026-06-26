@@ -6,97 +6,123 @@
   </h1>
   <div secondary>
     <span [innerHTML]="templateDescription|unsanitizeHtml" class="description"></span>
-    <div class="confirm-correct-case-prompt" *ngIf="caseService.openCaseConfirmed === false">
-      <paper-button class="button" (click)="onOpenCaseConfirmButtonClick()">Confirm</paper-button>
-    </div>
+    @if (caseService.openCaseConfirmed === false) {
+      <div class="confirm-correct-case-prompt">
+        <paper-button class="button" (click)="onOpenCaseConfirmButtonClick()">Confirm</paper-button>
+      </div>
+    }
   </div>
 </div>
 
 <div class="wrapper">
-  <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
+  @if (caseService.openCaseConfirmed === false) {
+    <div class="cover-when-not-confirmed"></div>
+  }
   <mat-toolbar id="menu-container">
     <span class="tangy-spacer"></span>
     <mat-checkbox class="mat-small-checkbox-transform" [checked]="showArchivedSliderState"
-      (change)="showArchivedSliderChange()">Show Archived Events</mat-checkbox>
+    (change)="showArchivedSliderChange()">Show Archived Events</mat-checkbox>
   </mat-toolbar>
-  <div *ngFor="let eventInfo of caseEventsInfo">
-    <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
-      [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
-      [case]="caseService.case"
-      [showArchived]="showArchivedSliderState"
-      (caseEventArchiveEvent)="onCaseEventArchive(caseEvent.id)"
-      (caseEventUnarchiveEvent)="onCaseEventUnarchive(caseEvent.id)">
-    </app-case-event-list-item>
-  </div>
+  @for (eventInfo of caseEventsInfo; track eventInfo) {
+    <div>
+      @for (caseEvent of eventInfo.caseEvents; track caseEvent) {
+        <app-case-event-list-item [caseEvent]="caseEvent"
+          [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
+          [case]="caseService.case"
+          [showArchived]="showArchivedSliderState"
+          (caseEventArchiveEvent)="onCaseEventArchive(caseEvent.id)"
+          (caseEventUnarchiveEvent)="onCaseEventUnarchive(caseEvent.id)">
+        </app-case-event-list-item>
+      }
+    </div>
+  }
   <div class="icon-list-item event new-event">
     <mwc-icon slot="item-icon">event</mwc-icon>
     <div>
       <div>{{'New Event'|translate}}</div>
       <div>
-          <form (ngSubmit)="onSubmit()" #form="ngForm">
-            <div class="dropdown-container">
-              <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
-                <option value="" disabled selected>{{'Choose type...'|translate}}</option>
-                <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">
-                  {{eventInfo.caseEventDefinition.name}}</option>
-              </select>
-            </div>         
-            <div class="text-right">
-              <paper-button (click)="onSubmit()" class="button">{{'Create'|translate}}</paper-button>
-            </div>
-          </form>
-        </div>
+        <form (ngSubmit)="onSubmit()" #form="ngForm">
+          <div class="dropdown-container">
+            <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
+              <option value="" disabled selected>{{'Choose type...'|translate}}</option>
+              @for (eventInfo of creatableCaseEventsInfo; track eventInfo) {
+                <option [value]="eventInfo.caseEventDefinition.id">
+                {{eventInfo.caseEventDefinition.name}}</option>
+              }
+            </select>
+          </div>
+          <div class="text-right">
+            <paper-button (click)="onSubmit()" class="button">{{'Create'|translate}}</paper-button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
 <div *appHasAPermission="let i;group:groupId; permission:'can_access_issues'">
-    <mat-expansion-panel *ngIf="issues.length > 0" [expanded]="step === 0" (opened)="setStep(0)">
+  @if (issues.length > 0) {
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Issues
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="/groups/{{groupId}}/data/issues/{{issue._id}}">
-        <mwc-icon slot="item-icon">receipt</mwc-icon>
-        <div>
-          <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
+      @for (issue of issues; track issue) {
+        <div class="icon-list-item search-result" routerLink="/groups/{{groupId}}/data/issues/{{issue._id}}">
+          <mwc-icon slot="item-icon">receipt</mwc-icon>
+          <div>
+            <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
           </div>
           <div secondary>
             Status: {{issue.status}}
-            <span *ngIf="issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.issue">Merged: {{issue.events[0].data.issue.merged}}</span>
-            <span class="secondarySpacer" *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
-            <span class="secondarySpacer" *ngIf="issue.caseId">Case id: {{issue.caseId | slice:0:8}}</span>
+            @if (issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.issue) {
+              <span>Merged: {{issue.events[0].data.issue.merged}}</span>
+            }
+            @if (issue.formResponseId) {
+              <span class="secondarySpacer">Response id: {{issue.formResponseId | slice:0:8}}</span>
+            }
+            @if (issue.caseId) {
+              <span class="secondarySpacer">Case id: {{issue.caseId | slice:0:8}}</span>
+            }
             Device: {{issue.tangerineModifiedByDeviceId | slice:0:8}}
           </div>
         </div>
       </div>
-    </mat-expansion-panel>
+    }
+  </mat-expansion-panel>
+}
 </div>
 
 <div *appHasAPermission="let i;group:groupId; permission:'can_restore_conflict_event'">
-  <mat-expansion-panel *ngIf="conflictingEvents.length > 0" [expanded]="step === 1" (opened)="setStep(1)">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Conflicting Events
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <div *ngFor="let conflict of conflictingEvents" class="icon-list-item conflict">
-      <mwc-icon slot="item-icon">receipt</mwc-icon>
-      <div>
-        <div><strong>{{conflict.name}}</strong></div>
-        <div>
-          <div secondary>
-            Complete: {{conflict.complete}}
-            <span *ngFor="let eventForm of conflict.eventForms">
-              ID: {{eventForm.formResponseId | slice:0:8}} Rev: {{conflict.conflictRevisionId| slice:0:8}}
-            </span>
-          </div>
-          <div class="text-right">
-            <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
+  @if (conflictingEvents.length > 0) {
+    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Conflicting Events
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      @for (conflict of conflictingEvents; track conflict) {
+        <div class="icon-list-item conflict">
+          <mwc-icon slot="item-icon">receipt</mwc-icon>
+          <div>
+            <div><strong>{{conflict.name}}</strong></div>
+            <div>
+              <div secondary>
+                Complete: {{conflict.complete}}
+                @for (eventForm of conflict.eventForms; track eventForm) {
+                  <span>
+                    ID: {{eventForm.formResponseId | slice:0:8}} Rev: {{conflict.conflictRevisionId| slice:0:8}}
+                  </span>
+                }
+              </div>
+              <div class="text-right">
+                <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </mat-expansion-panel>
+      }
+    </mat-expansion-panel>
+  }
 </div>

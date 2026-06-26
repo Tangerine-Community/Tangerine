@@ -1,5 +1,5 @@
 import { TangerineFormsService } from './../../services/tangerine-forms.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -7,9 +7,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
-  selector: 'app-create-case-definition',
-  templateUrl: './create-case-definition.component.html',
-  styleUrls: ['./create-case-definition.component.css']
+    selector: 'app-create-case-definition',
+    templateUrl: './create-case-definition.component.html',
+    styleUrls: ['./create-case-definition.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CreateCaseDefinitionComponent implements OnInit {
   groupId;

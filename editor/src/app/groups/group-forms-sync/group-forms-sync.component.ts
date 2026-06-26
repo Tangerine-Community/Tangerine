@@ -1,6 +1,6 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
@@ -29,9 +29,11 @@ export interface FormSyncSetting {
 }
 
 @Component({
-  selector: 'app-group-forms-sync',
-  templateUrl: './group-forms-sync.component.html',
-  styleUrls: ['./group-forms-sync.component.css']
+    selector: 'app-group-forms-sync',
+    templateUrl: './group-forms-sync.component.html',
+    styleUrls: ['./group-forms-sync.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
   title = _TRANSLATE("Sync Settings")

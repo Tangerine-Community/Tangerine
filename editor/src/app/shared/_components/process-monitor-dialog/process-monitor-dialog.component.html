@@ -1,18 +1,24 @@
 <mat-dialog-content>
   <div id="messages">
-    <span *ngIf="data.messages.length === 1">
-      {{data.messages[0]}}
-    </span>
-    <ul *ngIf="data.messages.length > 1">
-      <li *ngFor="let message of data.messages">{{message}}</li>
-    </ul>
+    @if (data.messages.length === 1) {
+      <span>
+        {{data.messages[0]}}
+      </span>
+    }
+    @if (data.messages.length > 1) {
+      <ul>
+        @for (message of data.messages; track message) {
+          <li>{{message}}</li>
+        }
+      </ul>
+    }
   </div>
   <br>
-  <div id="progress-bar-container">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
-  <br>
-  <div id="actions">
-    <button mat-button (click)="cancel()">Cancel</button>
-  </div>
-</mat-dialog-content>
+    <div id="progress-bar-container">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <br>
+      <div id="actions">
+        <button mat-button (click)="cancel()">Cancel</button>
+      </div>
+    </mat-dialog-content>

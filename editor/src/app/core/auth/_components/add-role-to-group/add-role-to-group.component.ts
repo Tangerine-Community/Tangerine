@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
@@ -7,9 +7,11 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
-  selector: 'app-add-role-to-group',
-  templateUrl: './add-role-to-group.component.html',
-  styleUrls: ['./add-role-to-group.component.css']
+    selector: 'app-add-role-to-group',
+    templateUrl: './add-role-to-group.component.html',
+    styleUrls: ['./add-role-to-group.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AddRoleToGroupComponent implements OnInit {
   title = _TRANSLATE('Security');

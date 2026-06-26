@@ -5,7 +5,7 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { IssueEventType, IssueStatus } from './../../classes/issue.class';
 import { Issue } from '../../classes/issue.class';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { CaseService } from '../../services/case.service';
 import moment from 'moment';
 import { diffTemplate } from './diff-template';
@@ -47,9 +47,11 @@ interface EventInfo {
 }
 
 @Component({
-  selector: 'app-issue',
-  templateUrl: './issue.component.html',
-  styleUrls: ['./issue.component.css']
+    selector: 'app-issue',
+    templateUrl: './issue.component.html',
+    styleUrls: ['./issue.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class IssueComponent implements OnInit {
 

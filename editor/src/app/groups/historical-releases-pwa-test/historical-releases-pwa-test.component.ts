@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
@@ -10,9 +10,11 @@ import {_TRANSLATE} from "../../shared/_services/translation-marker";
 import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
-  selector: 'app-historical-releases-pwa-test',
-  templateUrl: './historical-releases-pwa-test.component.html',
-  styleUrls: ['./historical-releases-pwa-test.component.css']
+    selector: 'app-historical-releases-pwa-test',
+    templateUrl: './historical-releases-pwa-test.component.html',
+    styleUrls: ['./historical-releases-pwa-test.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class HistoricalReleasesPwaTestComponent implements OnInit {
 

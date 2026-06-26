@@ -1,16 +1,18 @@
 import { CsvTemplate, TangerineFormsService } from './../services/tangerine-forms.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TangerineFormInfo } from 'src/app/shared/_classes/tangerine-form.class';
 
 
 @Component({
-  selector: 'app-csv-template',
-  templateUrl: './csv-template.component.html',
-  styleUrls: ['./csv-template.component.css']
+    selector: 'app-csv-template',
+    templateUrl: './csv-template.component.html',
+    styleUrls: ['./csv-template.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CsvTemplateComponent implements OnInit {
 

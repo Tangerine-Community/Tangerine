@@ -1,6 +1,6 @@
 import { CaseEventOperation } from './../../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -17,10 +17,12 @@ class CaseEventInfo {
 }
 
 @Component({
-  selector: 'app-case',
-  templateUrl: './case.component.html',
-  styleUrls: ['./case.component.css'],
-  providers: [ CaseService ]
+    selector: 'app-case',
+    templateUrl: './case.component.html',
+    styleUrls: ['./case.component.css'],
+    providers: [CaseService],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseComponent implements AfterContentInit, OnDestroy {
 

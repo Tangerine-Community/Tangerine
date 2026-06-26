@@ -9,7 +9,7 @@ import { DeviceSyncComponent } from './../device-sync/device-sync.component';
 import { DeviceRegistrationComponent } from './../device-registration/device-registration.component';
 import { Observable, Subject } from 'rxjs';
 import { LanguagesService } from './../../../shared/_services/languages.service';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 import { LockBoxContents } from 'src/app/shared/_classes/lock-box-contents.class';
 import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
@@ -21,9 +21,11 @@ const STEP_DEVICE_REGISTRATION = 'STEP_DEVICE_REGISTRATION'
 const STEP_SYNC = 'STEP_SYNC'
 
 @Component({
-  selector: 'app-device-setup',
-  templateUrl: './device-setup.component.html',
-  styleUrls: ['./device-setup.component.css']
+    selector: 'app-device-setup',
+    templateUrl: './device-setup.component.html',
+    styleUrls: ['./device-setup.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DeviceSetupComponent implements OnInit {
 

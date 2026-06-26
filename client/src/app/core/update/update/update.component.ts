@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './../../../shared/_services/update.service';
 import { DeviceService } from './../../../device/services/device.service';
 import { AppConfigService } from './../../../shared/_services/app-config.service';
-import { Component, AfterContentInit } from '@angular/core';
+import { Component, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { updates } from './updates';
@@ -17,9 +17,11 @@ import {ReplicationStatus} from "../../../sync/classes/replication-status.class"
 export const VARIABLE_FINISH_UPDATE_ON_LOGIN = 'VARIABLE_FINISH_UPDATE_ON_LOGIN'
 
 @Component({
-  selector: 'app-update',
-  templateUrl: './update.component.html',
-  styleUrls: ['./update.component.css']
+    selector: 'app-update',
+    templateUrl: './update.component.html',
+    styleUrls: ['./update.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class UpdateComponent implements AfterContentInit {
 

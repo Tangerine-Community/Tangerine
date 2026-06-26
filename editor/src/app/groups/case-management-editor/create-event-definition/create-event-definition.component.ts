@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
@@ -7,9 +7,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
-  selector: 'app-create-event-definition',
-  templateUrl: './create-event-definition.component.html',
-  styleUrls: ['./create-event-definition.component.css']
+    selector: 'app-create-event-definition',
+    templateUrl: './create-event-definition.component.html',
+    styleUrls: ['./create-event-definition.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CreateEventDefinitionComponent implements OnInit, OnDestroy {
   eventForm = {

@@ -1,13 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../../app/shared/_services/tangy-error-handler.service';
 import { GroupsService } from '../services/groups.service';
 
 @Component({
-  selector: 'app-manage-location-list-levels',
-  templateUrl: './manage-location-list-levels.component.html',
-  styleUrls: ['./manage-location-list-levels.component.css']
+    selector: 'app-manage-location-list-levels',
+    templateUrl: './manage-location-list-levels.component.html',
+    styleUrls: ['./manage-location-list-levels.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ManageLocationListLevelsComponent implements OnInit {
   

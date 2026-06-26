@@ -1,14 +1,16 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import {GroupsService} from "../services/groups.service";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-group-database-conflicts',
-  templateUrl: './group-database-conflicts.component.html',
-  styleUrls: ['./group-database-conflicts.component.css']
+    selector: 'app-group-database-conflicts',
+    templateUrl: './group-database-conflicts.component.html',
+    styleUrls: ['./group-database-conflicts.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDatabaseConflictsComponent implements OnInit {
 

@@ -1,13 +1,15 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService } from './../services/groups.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 
 @Component({
-  selector: 'app-group',
-  templateUrl: './group.component.html',
-  styleUrls: ['./group.component.css']
+    selector: 'app-group',
+    templateUrl: './group.component.html',
+    styleUrls: ['./group.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupComponent implements OnInit {
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from '../../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -7,9 +7,11 @@ import { Subscription } from 'rxjs';
 import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
-  selector: 'app-edit-case-definition',
-  templateUrl: './edit-case-definition.component.html',
-  styleUrls: ['./edit-case-definition.component.css']
+    selector: 'app-edit-case-definition',
+    templateUrl: './edit-case-definition.component.html',
+    styleUrls: ['./edit-case-definition.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EditCaseDefinitionComponent implements OnInit, OnDestroy {
   formInActive = true;

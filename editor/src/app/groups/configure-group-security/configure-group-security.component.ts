@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 
 @Component({
-  selector: 'app-configure-group-security',
-  templateUrl: './configure-group-security.component.html',
-  styleUrls: ['./configure-group-security.component.css']
+    selector: 'app-configure-group-security',
+    templateUrl: './configure-group-security.component.html',
+    styleUrls: ['./configure-group-security.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ConfigureGroupSecurityComponent implements OnInit {
   title = _TRANSLATE('Security');

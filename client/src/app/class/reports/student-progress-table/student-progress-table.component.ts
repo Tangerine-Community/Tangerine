@@ -1,5 +1,5 @@
 import { UserService } from 'src/app/shared/_services/user.service';
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {ClassFormService} from '../../_services/class-form.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {DashboardService} from '../../_services/dashboard.service';
@@ -18,9 +18,11 @@ export interface ClassProgressReport {
 }
 
 @Component({
-  selector: 'app-student-progress-table',
-  templateUrl: './student-progress-table.component.html',
-  styleUrls: ['./student-progress-table.component.css']
+    selector: 'app-student-progress-table',
+    templateUrl: './student-progress-table.component.html',
+    styleUrls: ['./student-progress-table.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class StudentProgressTableComponent implements OnInit {
 

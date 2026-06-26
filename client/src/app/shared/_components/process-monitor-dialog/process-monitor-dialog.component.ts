@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { _TRANSLATE } from '../../translation-marker';
 import {ProcessMonitorService} from "../../_services/process-monitor.service";
@@ -8,8 +8,10 @@ interface DialogData {
 }
 
 @Component({
-  selector: 'app-process-monitor-dialog',
-  templateUrl: 'process-monitor-dialog.component.html',
+    selector: 'app-process-monitor-dialog',
+    templateUrl: 'process-monitor-dialog.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ProcessMonitorDialogComponent {
   constructor(

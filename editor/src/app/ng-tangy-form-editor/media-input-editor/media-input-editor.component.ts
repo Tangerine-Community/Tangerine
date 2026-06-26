@@ -1,5 +1,5 @@
-import {AfterContentInit, Component, ElementRef, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {AfterContentInit, Component, ElementRef, Inject, Input, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 import {FeedbackService} from "../feedback-editor/feedback.service";
 import {FormMetadata} from "../feedback-editor/form-metadata";
 import {Feedback} from "../feedback-editor/feedback";
@@ -12,9 +12,11 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'media-input-editor',
-  templateUrl: './media-input-editor.component.html',
-  styleUrls: ['./media-input-editor.component.css']
+    selector: 'media-input-editor',
+    templateUrl: './media-input-editor.component.html',
+    styleUrls: ['./media-input-editor.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 
 export class MediaInputEditorComponent implements OnInit, AfterContentInit {
@@ -109,8 +111,10 @@ export class MediaInputEditorComponent implements OnInit, AfterContentInit {
 }
 
 @Component({
-  selector: 'media-list-dialog',
-  templateUrl: 'media-list-dialog.html',
+    selector: 'media-list-dialog',
+    templateUrl: 'media-list-dialog.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MediaDialog implements AfterContentInit {
   // constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}

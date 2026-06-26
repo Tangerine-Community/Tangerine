@@ -1,13 +1,15 @@
 import { MenuService } from './../../../../shared/_services/menu.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '../../_services/user.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 
 @Component({
-  selector: 'app-manage-users',
-  templateUrl: './manage-users.component.html',
-  styleUrls: ['./manage-users.component.css']
+    selector: 'app-manage-users',
+    templateUrl: './manage-users.component.html',
+    styleUrls: ['./manage-users.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ManageUsersComponent implements OnInit {
   activeUsers;

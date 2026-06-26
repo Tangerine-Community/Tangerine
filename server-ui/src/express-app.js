@@ -77,6 +77,8 @@ app.get('/version',
 //     return express.static(contentPath).apply(this, arguments);
 //   });
 app.use('/client', express.static('/tangerine/client/dev'));
+app.use('/tangy-form', express.static('/tangerine/tangy-form'));
+app.use('/npm', express.static('/tangerine/editor/node_modules'));
 // app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
   app.use('/', function (req, res, next) {
     // console.log("server assets: " + req.url)

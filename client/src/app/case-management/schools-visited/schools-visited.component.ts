@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CaseManagementService } from '../_services/case-management.service';
 
 @Component({
-  selector: 'app-schools-visited',
-  templateUrl: './schools-visited.component.html',
-  styleUrls: ['./schools-visited.component.css']
+    selector: 'app-schools-visited',
+    templateUrl: './schools-visited.component.html',
+    styleUrls: ['./schools-visited.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SchoolsVisitedComponent implements OnInit {
 

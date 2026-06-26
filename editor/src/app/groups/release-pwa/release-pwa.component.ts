@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -6,9 +6,11 @@ import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { WindowRef } from 'src/app/core/window-ref.service';
 
 @Component({
-  selector: 'app-release-pwa',
-  templateUrl: './release-pwa.component.html',
-  styleUrls: ['./release-pwa.component.css']
+    selector: 'app-release-pwa',
+    templateUrl: './release-pwa.component.html',
+    styleUrls: ['./release-pwa.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ReleasePwaComponent implements OnInit {
 

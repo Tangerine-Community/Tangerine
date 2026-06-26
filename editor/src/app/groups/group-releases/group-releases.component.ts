@@ -1,13 +1,15 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 
 @Component({
-  selector: 'app-group-releases',
-  templateUrl: './group-releases.component.html',
-  styleUrls: ['./group-releases.component.css']
+    selector: 'app-group-releases',
+    templateUrl: './group-releases.component.html',
+    styleUrls: ['./group-releases.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupReleasesComponent implements OnInit {
 

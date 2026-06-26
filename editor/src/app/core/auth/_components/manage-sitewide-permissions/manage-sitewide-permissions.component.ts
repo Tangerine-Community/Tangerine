@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -6,9 +6,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 
 @Component({
-  selector: 'app-manage-sitewide-permissions',
-  templateUrl: './manage-sitewide-permissions.component.html',
-  styleUrls: ['./manage-sitewide-permissions.component.css']
+    selector: 'app-manage-sitewide-permissions',
+    templateUrl: './manage-sitewide-permissions.component.html',
+    styleUrls: ['./manage-sitewide-permissions.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ManageSitewidePermissionsComponent implements OnInit {
   username;

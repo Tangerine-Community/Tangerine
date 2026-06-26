@@ -1,23 +1,33 @@
- <div class="tangy-content tangy-full-width">
-    <div>
-      <div #container></div>
-      {{'Group'|translate}}: {{groupDetails?.label}}<br>
-      {{'Group ID'}}: {{groupDetails?._id}}<br>
-      {{'Form'|translate}}: {{meta?.form.title}}
-    </div>
-    <br><br><br>
-      <p style="page-break-after: always;" *ngFor="let section of meta?.items">
-        <span style="font-size: 32px;" *ngFor="let input of section.inputs; let index=index">
+<div class="tangy-content tangy-full-width">
+  <div>
+    <div #container></div>
+    {{'Group'|translate}}: {{groupDetails?.label}}<br>
+    {{'Group ID'}}: {{groupDetails?._id}}<br>
+    {{'Form'|translate}}: {{meta?.form.title}}
+  </div>
+  <br><br><br>
+  @for (section of meta?.items; track section) {
+    <p style="page-break-after: always;">
+      @for (input of section.inputs; track input; let index = $index) {
+        <span style="font-size: 32px;">
           {{input.label}}
-          <span *ngIf="input.gridItem">{{input.name}}</span>
+          @if (input.gridItem) {
+            <span>{{input.name}}</span>
+          }
           <br><br>
           <table >
-          <ng-container *ngIf="input.gridItem">
-            <tr *ngFor="let parts of input.gridParts">
-              <td *ngFor="let part of parts">{{part.label +'  '}}</td>
-            </tr>
-          </ng-container>
+            @if (input.gridItem) {
+              @for (parts of input.gridParts; track parts) {
+                <tr>
+                  @for (part of parts; track part) {
+                    <td>{{part.label +'  '}}</td>
+                  }
+                </tr>
+              }
+            }
           </table>
-      </span>
-      </p>
-  </div>
+        </span>
+      }
+    </p>
+  }
+</div>

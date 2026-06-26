@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DateTime} from "luxon";
 import {StudentResult} from "../../dashboard/dashboard.component";
@@ -8,9 +8,11 @@ import {Router} from "@angular/router";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import { TangySnackbarService } from 'src/app/shared/_services/tangy-snackbar.service';
 @Component({
-  selector: 'app-attendance-scores',
-  templateUrl: './attendance-scores.component.html',
-  styleUrls: ['../../dashboard/dashboard.component.css', './attendance-scores.component.css']
+    selector: 'app-attendance-scores',
+    templateUrl: './attendance-scores.component.html',
+    styleUrls: ['../../dashboard/dashboard.component.css', './attendance-scores.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AttendanceScoresComponent implements OnInit {
 

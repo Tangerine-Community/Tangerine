@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {SyncMediaService} from "../../../sync/sync-media.service";
 import {Subscription} from "rxjs";
-import {HttpEventType} from "@angular/common/http";
+import { HttpEventType } from "@angular/common/http";
 
 @Component({
-  selector: 'app-sync-records',
-  templateUrl: './sync-records.component.html',
-  styleUrls: ['./sync-records.component.css']
+    selector: 'app-sync-records',
+    templateUrl: './sync-records.component.html',
+    styleUrls: ['./sync-records.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SyncRecordsComponent implements OnInit {
   isSyncSuccesful: boolean = undefined;

@@ -257,7 +257,7 @@ app.use('/', function (req, res, next) {
   const params = JSON.stringify(req.params)
   console.log("route: / : " + params + " req.url: " + req.url)
   console.dir(req.originalUrl)
-  return express.static('/tangerine/editor/dist/tangerine-editor').apply(this, arguments);
+  return express.static('/tangerine/editor/dist/tangerine-editor/browser').apply(this, arguments);
 });
 // app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
 // app.use('/assets/:file', isAuthenticated, function (req, res, next) {

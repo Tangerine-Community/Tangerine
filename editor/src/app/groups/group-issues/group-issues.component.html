@@ -13,23 +13,35 @@
     <paper-button id="search-button" (click)="onSearchClick()" [disabled]="loading === true">search</paper-button>
   </div>
 </div>
-<div class="loading" *ngIf="loading">Loading...</div>
-<div class="no-issues-found" *ngIf="issues && issues.length === 0">No issues found.</div>
+@if (loading) {
+  <div class="loading">Loading...</div>
+}
+@if (issues && issues.length === 0) {
+  <div class="no-issues-found">No issues found.</div>
+}
 <div [hidden]="loading">
-  <div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="{{issue._id}}">
-    <mwc-icon slot="item-icon">receipt</mwc-icon>
-    <div>
-      <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
+  @for (issue of issues; track issue) {
+    <div class="icon-list-item search-result" routerLink="{{issue._id}}">
+      <mwc-icon slot="item-icon">receipt</mwc-icon>
+      <div>
+        <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
       </div>
       <div secondary>
         Status: {{issue.status}}
-        <span *ngIf="issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.conflict">Merged: {{issue.events[0].data.conflict.merged}}</span>
-        <span class="secondarySpacer" *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
-        <span class="secondarySpacer" *ngIf="issue.caseId">Case id: {{issue.caseId | slice:0:8}}</span>
+        @if (issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.conflict) {
+          <span>Merged: {{issue.events[0].data.conflict.merged}}</span>
+        }
+        @if (issue.formResponseId) {
+          <span class="secondarySpacer">Response id: {{issue.formResponseId | slice:0:8}}</span>
+        }
+        @if (issue.caseId) {
+          <span class="secondarySpacer">Case id: {{issue.caseId | slice:0:8}}</span>
+        }
         Device: {{issue.tangerineModifiedByDeviceId | slice:0:8}}
       </div>
     </div>
   </div>
+}
 </div>
 <div id="paginator" [hidden]="loading">
   <paper-icon-button icon="arrow-back" class="previous" (click)="onPreviousClick()" [disabled]="skip === 0 || loading === true"></paper-icon-button>

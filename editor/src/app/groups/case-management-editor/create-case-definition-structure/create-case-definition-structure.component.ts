@@ -1,5 +1,5 @@
 import { TangerineFormsService } from './../../services/tangerine-forms.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
 import { Subscription } from 'rxjs';
@@ -8,9 +8,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
-  selector: 'app-create-case-definition-structure',
-  templateUrl: './create-case-definition-structure.component.html',
-  styleUrls: ['./create-case-definition-structure.component.css']
+    selector: 'app-create-case-definition-structure',
+    templateUrl: './create-case-definition-structure.component.html',
+    styleUrls: ['./create-case-definition-structure.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy {
 

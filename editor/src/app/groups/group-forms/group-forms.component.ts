@@ -1,6 +1,6 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 // import { CouchdbSyncSettings, TangerineForm, TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
@@ -15,9 +15,11 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 @Component({
-  selector: 'app-group-forms',
-  templateUrl: './group-forms.component.html',
-  styleUrls: ['./group-forms.component.css']
+    selector: 'app-group-forms',
+    templateUrl: './group-forms.component.html',
+    styleUrls: ['./group-forms.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupFormsComponent implements OnInit, AfterViewInit {
 

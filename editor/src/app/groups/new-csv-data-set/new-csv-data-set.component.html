@@ -13,20 +13,24 @@
             name="selectedMonth"
             class="month"
             [(ngModel)]="selectedMonth"
-          >
+            >
             <mat-option value="*" selected="selected">All months</mat-option>
-            <mat-option *ngFor="let month of months" value="{{ month }}">{{
-              month
-            }}</mat-option>
+            @for (month of months; track month) {
+              <mat-option value="{{ month }}">{{
+                month
+              }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill" color="primary">
           <mat-label>{{ "Year" | translate }}</mat-label>
           <mat-select name="selectedYear" class="year" [(ngModel)]="selectedYear">
             <mat-option value="*" selected="selected">All years</mat-option>
-            <mat-option *ngFor="let year of years" value="{{ year }}">{{
-              year
-            }}</mat-option>
+            @for (year of years; track year) {
+              <mat-option value="{{ year }}">{{
+                year
+              }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-checkbox name="excludePII" [(ngModel)]="excludePII"
@@ -35,15 +39,15 @@
       </div>
       <div
         id="description"
-      >
+        >
         <mat-form-field>
           <input
-              name="descriptionInput"
-              [(ngModel)]="description"
-              #groupNameInput="ngModel"
-              matInput
-              placeholder="{{'Description'|translate}}"
-          >
+            name="descriptionInput"
+            [(ngModel)]="description"
+            #groupNameInput="ngModel"
+            matInput
+            placeholder="{{'Description'|translate}}"
+            >
         </mat-form-field>
       </div>
       <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a Spreadsheet Template available for a form, it will be displayed in the form's Spreadsheet Template dropdown." | translate }}</div>
@@ -67,7 +71,9 @@
           <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
             <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
               <mat-option value="" selected>{{ "All data" | translate }}</mat-option>
-              <mat-option *ngFor="let csvTemplate of form.csvTemplates" [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
+              @for (csvTemplate of form.csvTemplates; track csvTemplate) {
+                <mat-option [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
+              }
             </mat-select>
           </mat-form-field>
         </td>
@@ -95,7 +101,9 @@
           <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
             <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
               <mat-option value="" selected>{{ "All data" | translate }}</mat-option>
-              <mat-option *ngFor="let csvTemplate of form.csvTemplates" [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
+              @for (csvTemplate of form.csvTemplates; track csvTemplate) {
+                <mat-option [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
+              }
             </mat-select>
           </mat-form-field>
         </td>

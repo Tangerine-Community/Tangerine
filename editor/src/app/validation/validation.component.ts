@@ -1,10 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ValidationService } from './validation.service';
 
 @Component({
-  selector: 'control-messages',
-  template: `<div class="xmdl-textfield__error" *ngIf="errorMessage !== null">{{errorMessage}}</div>`
+    selector: 'control-messages',
+    template: `@if (errorMessage !== null) {<div class="xmdl-textfield__error">{{errorMessage}}</div>}`,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ControlMessages {
   //errorMessage: string;

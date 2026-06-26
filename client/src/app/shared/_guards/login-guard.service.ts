@@ -2,12 +2,12 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { DeviceService } from './../../device/services/device.service';
 import { AppConfigService } from './../_services/app-config.service';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { VariableService } from '../_services/variable.service';
 import { FIRST_SYNC_STATUS } from 'src/app/device/components/device-sync/device-sync.component';
 
 @Injectable()
-export class LoginGuard implements CanActivate {
+export class LoginGuard  {
   constructor(
     private router: Router,
     private userService: UserService,

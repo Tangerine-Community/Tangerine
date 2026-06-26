@@ -1,6 +1,6 @@
 import { SyncModule } from './../../sync/sync.module';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import {} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,6 +34,6 @@ import {MatIconModule} from "@angular/material/icon";
     MatIconModule
   ],
   declarations: [SyncRecordsComponent],
-  providers: [SyncingService, HttpClientModule],
+  providers: [SyncingService],
 })
 export class SyncRecordsModule { }

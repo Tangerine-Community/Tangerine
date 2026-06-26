@@ -1,5 +1,5 @@
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { fromEvent, of } from 'rxjs';
@@ -9,9 +9,11 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 import {Breadcrumb} from '../../shared/_components/breadcrumb/breadcrumb.component';
 import { UserService } from 'src/app/core/auth/_services/user.service';
 @Component({
-  selector: 'app-add-user',
-  templateUrl: './add-user.component.html',
-  styleUrls: ['./add-user.component.css']
+    selector: 'app-add-user',
+    templateUrl: './add-user.component.html',
+    styleUrls: ['./add-user.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
 {

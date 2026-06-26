@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { User } from '../user-resgistration/user.model.interface';
 import { UserService } from '../../_services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-edit-user',
-  templateUrl: './edit-user.component.html',
-  styleUrls: ['./edit-user.component.css']
+    selector: 'app-edit-user',
+    templateUrl: './edit-user.component.html',
+    styleUrls: ['./edit-user.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EditUserComponent implements OnInit {
   user: User;

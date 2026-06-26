@@ -1,11 +1,13 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
-  selector: 'app-copy-form',
-  templateUrl: './copy-form.component.html',
-  styleUrls: ['./copy-form.component.css']
+    selector: 'app-copy-form',
+    templateUrl: './copy-form.component.html',
+    styleUrls: ['./copy-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CopyFormComponent implements OnInit {
 

@@ -1,13 +1,15 @@
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-manage-group-roles-permissions',
-  templateUrl: './manage-group-roles-permissions.component.html',
-  styleUrls: ['./manage-group-roles-permissions.component.css']
+    selector: 'app-manage-group-roles-permissions',
+    templateUrl: './manage-group-roles-permissions.component.html',
+    styleUrls: ['./manage-group-roles-permissions.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ManageGroupRolesPermissionsComponent implements OnInit {
 

@@ -2,12 +2,14 @@ import { TangyFormsPlayerComponent } from './../../tangy-forms/tangy-forms-playe
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-group-device-user',
-  templateUrl: './group-device-user.component.html',
-  styleUrls: ['./group-device-user.component.css']
+    selector: 'app-group-device-user',
+    templateUrl: './group-device-user.component.html',
+    styleUrls: ['./group-device-user.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDeviceUserComponent implements OnInit {
 

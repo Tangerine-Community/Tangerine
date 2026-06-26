@@ -14,7 +14,7 @@ import { CaseService } from 'src/app/case/services/case.service';
 import { VariableService } from './shared/_services/variable.service';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
-import { Component, OnInit, QueryList, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
@@ -36,9 +36,11 @@ import {ClassNavBarComponent} from "./class/class-nav-bar/class-nav-bar.componen
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AppComponent implements OnInit {
 

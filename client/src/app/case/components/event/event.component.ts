@@ -1,7 +1,7 @@
 import { NotificationStatus } from './../../classes/notification.class';
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 
-import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterContentInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
@@ -24,10 +24,12 @@ interface ParticipantInfo {
 }
 
 @Component({
-  selector: 'app-event',
-  templateUrl: './event.component.html',
-  styleUrls: ['./event.component.css'],
-  providers: [ CaseService ]
+    selector: 'app-event',
+    templateUrl: './event.component.html',
+    styleUrls: ['./event.component.css'],
+    providers: [CaseService],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EventComponent implements OnInit {
 

@@ -1,15 +1,17 @@
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CaseManagementService } from '../_services/case-management.service';
 
 @Component({
-  selector: 'app-form-list',
-  templateUrl: './form-list.component.html',
-  styleUrls: ['./form-list.component.css']
+    selector: 'app-form-list',
+    templateUrl: './form-list.component.html',
+    styleUrls: ['./form-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FormListComponent implements OnInit {
   formList;

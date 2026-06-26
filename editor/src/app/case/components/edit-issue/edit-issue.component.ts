@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/core/auth/_services/user.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -6,9 +6,11 @@ import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model';
 import { CaseService } from '../../services/case.service';
 
 @Component({
-  selector: 'app-edit-issue',
-  templateUrl: './edit-issue.component.html',
-  styleUrls: ['./edit-issue.component.css']
+    selector: 'app-edit-issue',
+    templateUrl: './edit-issue.component.html',
+    styleUrls: ['./edit-issue.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EditIssueComponent implements OnInit {
 

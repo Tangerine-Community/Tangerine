@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -18,9 +18,11 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
-  selector: 'app-event-form-list-item',
-  templateUrl: './event-form-list-item.component.html',
-  styleUrls: ['./event-form-list-item.component.css']
+    selector: 'app-event-form-list-item',
+    templateUrl: './event-form-list-item.component.html',
+    styleUrls: ['./event-form-list-item.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EventFormListItemComponent implements OnInit {
 

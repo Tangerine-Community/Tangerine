@@ -1,6 +1,6 @@
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { GroupsService } from '../services/groups.service';
@@ -17,9 +17,11 @@ interface CaseNode {
 
 
 @Component({
-  selector: 'app-case-management-editor',
-  templateUrl: './case-management-editor.component.html',
-  styleUrls: ['./case-management-editor.component.css']
+    selector: 'app-case-management-editor',
+    templateUrl: './case-management-editor.component.html',
+    styleUrls: ['./case-management-editor.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseManagementEditorComponent implements OnInit, OnDestroy {
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -8,9 +8,11 @@ import { DatePipe } from '@angular/common';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
-  selector: 'app-csv-data-set-detail',
-  templateUrl: './csv-data-set-detail.component.html',
-  styleUrls: ['./csv-data-set-detail.component.css']
+    selector: 'app-csv-data-set-detail',
+    templateUrl: './csv-data-set-detail.component.html',
+    styleUrls: ['./csv-data-set-detail.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
   breadcrumbs: Array<Breadcrumb> = [

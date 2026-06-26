@@ -2,25 +2,26 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "preserveSymlinks": true,
+    "ignoreDeprecations": "6.0",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
+    "esModuleInterop": true,
     "target": "ES2022",
     "module": "ES2022",
-    "paths" : {
-      "assert": ["./node_modules/assert"]
+    "paths": {
+      "assert": [
+        "./node_modules/assert"
+      ]
     },
     "typeRoots": [
       "node_modules/@types"
-    ],
-    "lib": [
-      "ES2022",
-      "dom"
     ],
     "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true

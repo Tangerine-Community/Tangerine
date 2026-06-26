@@ -1,5 +1,5 @@
 import { ServerConfigService } from './../../shared/_services/server-config.service';
-import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
+import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MatTabChangeEvent } from "@angular/material/tabs";
@@ -11,9 +11,11 @@ import {FilesService} from "../../groups/services/files.service";
 import { GroupsService } from 'src/app/groups/services/groups.service';
 
 @Component({
-  selector: 'app-ng-tangy-form-editor',
-  templateUrl: './ng-tangy-form-editor.component.html',
-  styleUrls: ['./ng-tangy-form-editor.component.css']
+    selector: 'app-ng-tangy-form-editor',
+    templateUrl: './ng-tangy-form-editor.component.html',
+    styleUrls: ['./ng-tangy-form-editor.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NgTangyFormEditorComponent implements OnInit {
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TangerineFormInfo } from 'src/app/shared/_classes/tangerine-form.class';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
@@ -11,9 +11,11 @@ import { HttpClient } from '@angular/common/http';
 import {AppConfig} from "../../shared/_classes/app-config.class";
 
 @Component({
-  selector: 'app-new-csv-data-set',
-  templateUrl: './new-csv-data-set.component.html',
-  styleUrls: ['./new-csv-data-set.component.css']
+    selector: 'app-new-csv-data-set',
+    templateUrl: './new-csv-data-set.component.html',
+    styleUrls: ['./new-csv-data-set.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NewCsvDataSetComponent implements OnInit {
   title = _TRANSLATE('Request Spreadsheets')

@@ -27,15 +27,17 @@
 
 <div id="scan-screen" [hidden]="showScan === false">
   <app-search-barcode (change)="onScanChange($event)" (cancel)="onScanCancel()" (error)="onScanError()"
-    #scanner></app-search-barcode>
+  #scanner></app-search-barcode>
 </div>
 
 <div id="search-results" #searchResults>
 </div>
 
-<div id="more" *ngIf="thereIsMore && searchDocs.length > 0 && isLoading === false">
-  <paper-button raised (click)="loadMore()"><mwc-icon>expand_more</mwc-icon>{{'Load More'|translate}}</paper-button>
-</div>
+@if (thereIsMore && searchDocs.length > 0 && isLoading === false) {
+  <div id="more">
+    <paper-button raised (click)="loadMore()"><mwc-icon>expand_more</mwc-icon>{{'Load More'|translate}}</paper-button>
+  </div>
+}
 <div id="loading" [hidden]="isLoading === false">
   <paper-progress id="progress-bar" indeterminate></paper-progress>
 </div>

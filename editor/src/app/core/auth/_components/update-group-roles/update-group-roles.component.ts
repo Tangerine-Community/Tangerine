@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
@@ -6,9 +6,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 
 @Component({
-  selector: 'app-update-group-roles',
-  templateUrl: './update-group-roles.component.html',
-  styleUrls: ['./update-group-roles.component.css']
+    selector: 'app-update-group-roles',
+    templateUrl: './update-group-roles.component.html',
+    styleUrls: ['./update-group-roles.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class UpdateGroupRolesComponent implements OnInit {
   breadcrumbs;

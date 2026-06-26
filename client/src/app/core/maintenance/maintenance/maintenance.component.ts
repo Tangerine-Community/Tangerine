@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { UserService } from 'src/app/shared/_services/user.service';
@@ -7,9 +7,11 @@ import * as moment from 'moment'
 import {VariableService} from "../../../shared/_services/variable.service";
 
 @Component({
-  selector: 'app-maintenance',
-  templateUrl: './maintenance.component.html',
-  styleUrls: ['./maintenance.component.css']
+    selector: 'app-maintenance',
+    templateUrl: './maintenance.component.html',
+    styleUrls: ['./maintenance.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MaintenanceComponent implements OnInit {
 
@@ -211,22 +213,22 @@ export class MaintenanceComponent implements OnInit {
       this.displayPruningComplete = false
       const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Cleaning up files...'))
       try {
-        await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
+        await this.pruneFilesInPath((window as any)['cordova'].file.externalDataDirectory)
       } catch (e) {
         // console.log("Error pruning files: " + e)
       }
       try {
-        await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
+        await this.pruneFilesInPath((window as any)['cordova'].file.externalRootDirectory + 'Download/restore/')
       } catch (e) {
         // console.log("Error pruning files: " + e)
       }
       try {
-        await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
+        await this.pruneFilesInPath((window as any)['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
       } catch (e) {
         // console.log("Error pruning files: " + e)
       }
       try {
-        await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
+        await this.pruneFilesInPath((window as any)['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
       } catch (e) {
         // console.log("Error pruning files: " + e)
       }

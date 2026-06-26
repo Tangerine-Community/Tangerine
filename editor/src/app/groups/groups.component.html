@@ -3,19 +3,21 @@
 </paper-fab>
 </span>
 <div id="content">
-<mat-grid-list [cols]="breakpoint" rowHeight="120" (window:resize)="onResize($event.target)">
-    <mat-grid-tile *ngFor="let group of groups">
-            <mat-card appearance="outlined" class="mat-elevation-z3 group-card" (click)="navigateToGroup(group._id)">
-                <mat-card-header>
-<!--                    <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">supervisor_account</i>-->
-<!--                    </div>-->
-                    <div mat-card-avatar class="material-icons tangy-foreground-secondary group-avatar">supervisor_account</div>
-                    <mat-card-title>
-                        {{group.label}}
-                    </mat-card-title>
-                    <mat-card-subtitle>Created: {{moment(group.created).format('YYYY-MM-DD hh:mm a')}}</mat-card-subtitle>
-                </mat-card-header>
-            </mat-card>
+  <mat-grid-list [cols]="breakpoint" rowHeight="120" (window:resize)="onResize($event.target)">
+    @for (group of groups; track group) {
+      <mat-grid-tile>
+        <mat-card appearance="outlined" class="mat-elevation-z3 group-card" (click)="navigateToGroup(group._id)">
+          <mat-card-header>
+            <!--                    <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">supervisor_account</i>-->
+          <!--                    </div>-->
+          <div mat-card-avatar class="material-icons tangy-foreground-secondary group-avatar">supervisor_account</div>
+          <mat-card-title>
+            {{group.label}}
+          </mat-card-title>
+          <mat-card-subtitle>Created: {{moment(group.created).format('YYYY-MM-DD hh:mm a')}}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
     </mat-grid-tile>
+  }
 </mat-grid-list>
 </div>

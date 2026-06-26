@@ -1,81 +1,98 @@
-<div *ngIf="ready" class="header">
-  <h1>{{issue.label}}</h1>
-  <div class="header-actions">
-    <paper-button *ngIf="issue.merged && !isOpen" class="status status-merged"><mwc-icon>call_merge</mwc-icon>{{'merged'|translate}}</paper-button>
-    <paper-button *ngIf="!issue.merged && !isOpen" class="status status-closed"><mwc-icon>check</mwc-icon>{{'closed'|translate}}</paper-button>
-    <paper-button *ngIf="isOpen" class="status status-open"><mwc-icon>list</mwc-icon>{{'open'|translate}}</paper-button>
-    <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> {{'review case'|translate}}</paper-button></a>
-    <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon>{{'review form'|translate}}</paper-button></a>
+@if (ready) {
+  <div class="header">
+    <h1>{{issue.label}}</h1>
+    <div class="header-actions">
+      @if (issue.merged && !isOpen) {
+        <paper-button class="status status-merged"><mwc-icon>call_merge</mwc-icon>{{'merged'|translate}}</paper-button>
+      }
+      @if (!issue.merged && !isOpen) {
+        <paper-button class="status status-closed"><mwc-icon>check</mwc-icon>{{'closed'|translate}}</paper-button>
+      }
+      @if (isOpen) {
+        <paper-button class="status status-open"><mwc-icon>list</mwc-icon>{{'open'|translate}}</paper-button>
+      }
+      <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> {{'review case'|translate}}</paper-button></a>
+      <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon>{{'review form'|translate}}</paper-button></a>
+    </div>
+    <paper-tabs class="tabs" selected="0">
+      <paper-tab (click)="tab = 'activity'">{{'Activity'|translate}}</paper-tab>
+      <paper-tab (click)="tab = 'current'">{{'Current'|translate}}</paper-tab>
+      <paper-tab (click)="tab = 'proposed'">{{'Proposed'|translate}}</paper-tab>
+      <paper-tab (click)="tab = 'differences'">{{'Differences'|translate}}</paper-tab>
+    </paper-tabs>
   </div>
-  <paper-tabs class="tabs" selected="0">
-    <paper-tab (click)="tab = 'activity'">{{'Activity'|translate}}</paper-tab>
-    <paper-tab (click)="tab = 'current'">{{'Current'|translate}}</paper-tab>
-    <paper-tab (click)="tab = 'proposed'">{{'Proposed'|translate}}</paper-tab>
-    <paper-tab (click)="tab = 'differences'">{{'Differences'|translate}}</paper-tab>
-  </paper-tabs>
-</div>
+}
 
 <div class="page">
 
-  <div [hidden]="tab !== 'activity'" *ngIf="ready">
-
-    <paper-card class="issue-event" alt="Issue Event" *ngFor="let eventInfo of eventInfos">
-      <div class="card-content">
-        <div class="issue-event--label">
-          <mwc-icon slot="item-icon">{{eventInfo.icon}}</mwc-icon>
-          {{eventInfo.label}} {{'by'|translate}} {{eventInfo.userName}} <span class="issue-event--date">{{eventInfo.date}}</span>
+  @if (ready) {
+    <div [hidden]="tab !== 'activity'">
+      @for (eventInfo of eventInfos; track eventInfo) {
+        <paper-card class="issue-event" alt="Issue Event">
+          <div class="card-content">
+            <div class="issue-event--label">
+              <mwc-icon slot="item-icon">{{eventInfo.icon}}</mwc-icon>
+              {{eventInfo.label}} {{'by'|translate}} {{eventInfo.userName}} <span class="issue-event--date">{{eventInfo.date}}</span>
+            </div>
+            <div class="issue-event--primary" [innerHTML]="eventInfo.primary|unsanitizeHtml">
+            </div>
+          </div>
+          @if (eventInfo.type === 'ProposedChange') {
+            <div class="card-actions">
+              <paper-button class="card-action" routerLink="form-revision/{{eventInfo.id}}">view</paper-button>
+            </div>
+          }
+        </paper-card>
+      }
+      @if (canMergeProposedChange) {
+        <paper-card class="issue-event issue-actions">
+          <div class="card-content">
+            <div class="issue-event--label">
+              <mwc-icon slot="item-icon">done</mwc-icon>
+              {{numberOfChanges}} {{ numberOfChanges === 1 ? 'change' : 'changes'|translate}} {{'and'|translate}} {{numberOfRevisions}} {{ numberOfRevisions === 1 ? 'revision' : 'revisions'|translate}}
+            </div>
+          </div>
+          <div class="card-actions">
+            <paper-button routerLink="form-revision"><mwc-icon>call_split</mwc-icon>{{'Propose'|translate}}</paper-button>
+            @if (hasProposedChange && hasMergeChangePermission) {
+              <paper-button (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Commit</paper-button>
+            }
+          </div>
+        </paper-card>
+      }
+      @if (!canMergeProposedChange && isOpen) {
+        <paper-card class="issue-event issue-actions">
+          <div class="card-content">
+            <div class="issue-event--label">
+              <mwc-icon slot="item-icon">error</mwc-icon>
+              {{'You cannot merge the proposed changes because the Form Response has been updated since the Issue was created. Propose a new change based on the current version of the Form Response.'|translate}}
+            </div>
+          </div>
+          <div class="card-actions">
+            @if (issue.formResponseId) {
+              <paper-button (click)="onRebaseClick()"><mwc-icon>call_split</mwc-icon>{{'Rebase issue on current response'|translate}}</paper-button>
+            }
+          </div>
+        </paper-card>
+      }
+      <paper-card class="comment-form issue-event">
+        <div class="card-content">
+          <div class="issue-event--label">
+            <mwc-icon slot="item-icon">comment</mwc-icon>
+            {{'New comment by you'|translate}}
+          </div>
+          <div class="issue-event--primary">
+            <paper-textarea #commentForm></paper-textarea>
+          </div>
         </div>
-        <div class="issue-event--primary" [innerHTML]="eventInfo.primary|unsanitizeHtml">
+        <div class="card-actions">
+          <!-- paper-button *ngIf="isOpen" (click)="onCloseClick()">close issue</paper-button -->
+          <!-- paper-button *ngIf="!isOpen && !issue.merged" (click)="onOpenClick()">open issue</paper-button -->
+          <paper-button (click)="onCommentFormSubmit()">{{'comment'|translate}}</paper-button>
         </div>
-      </div>
-      <div class="card-actions" *ngIf="eventInfo.type === 'ProposedChange'">
-        <paper-button class="card-action" routerLink="form-revision/{{eventInfo.id}}">view</paper-button>
-      </div>
-    </paper-card>
-
-    <paper-card class="issue-event issue-actions" *ngIf="canMergeProposedChange">
-      <div class="card-content">
-        <div class="issue-event--label">
-          <mwc-icon slot="item-icon">done</mwc-icon>
-          {{numberOfChanges}} {{ numberOfChanges === 1 ? 'change' : 'changes'|translate}} {{'and'|translate}} {{numberOfRevisions}} {{ numberOfRevisions === 1 ? 'revision' : 'revisions'|translate}}
-        </div>
-      </div>
-      <div class="card-actions">
-        <paper-button routerLink="form-revision"><mwc-icon>call_split</mwc-icon>{{'Propose'|translate}}</paper-button>
-        <paper-button *ngIf="hasProposedChange && hasMergeChangePermission" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Commit</paper-button>
-      </div>
-    </paper-card>
-
-    <paper-card class="issue-event issue-actions" *ngIf="!canMergeProposedChange && isOpen">
-      <div class="card-content">
-        <div class="issue-event--label">
-          <mwc-icon slot="item-icon">error</mwc-icon>
-          {{'You cannot merge the proposed changes because the Form Response has been updated since the Issue was created. Propose a new change based on the current version of the Form Response.'|translate}}
-        </div>
-      </div>
-      <div class="card-actions">
-        <paper-button (click)="onRebaseClick()" *ngIf="issue.formResponseId"><mwc-icon>call_split</mwc-icon>{{'Rebase issue on current response'|translate}}</paper-button>
-      </div>
-    </paper-card>
-
-    <paper-card class="comment-form issue-event">
-      <div class="card-content">
-        <div class="issue-event--label">
-          <mwc-icon slot="item-icon">comment</mwc-icon>
-          {{'New comment by you'|translate}}
-        </div>
-        <div class="issue-event--primary">
-          <paper-textarea #commentForm></paper-textarea>
-        </div>
-      </div>
-      <div class="card-actions">
-        <!-- paper-button *ngIf="isOpen" (click)="onCloseClick()">close issue</paper-button -->
-        <!-- paper-button *ngIf="!isOpen && !issue.merged" (click)="onOpenClick()">open issue</paper-button -->
-        <paper-button (click)="onCommentFormSubmit()">{{'comment'|translate}}</paper-button>
-      </div>
-    </paper-card>
-
-  </div>
+      </paper-card>
+    </div>
+  }
 
   <div [hidden]="tab !== 'current'">
     <app-tangy-forms-player [skipSaving]="true" #currentFormResponseContainer></app-tangy-forms-player>

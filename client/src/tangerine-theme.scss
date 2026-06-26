@@ -11,10 +11,11 @@
 */
 @import '_tangy-app-variables.scss';
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 //$tangerine-app-theme: mat.define-light-theme($tangerine-app-primary, $tangerine-app-accent, $tangerine-app-warn);
-$tangerine-app-theme: mat.define-light-theme(
+$tangerine-app-theme: mat.m2-define-light-theme(
     (
       color: (
         primary:$tangerine-app-primary,

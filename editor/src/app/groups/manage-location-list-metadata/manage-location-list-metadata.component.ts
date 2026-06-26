@@ -1,6 +1,6 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -8,9 +8,11 @@ import { GroupsService } from '../services/groups.service';
 // import * as snakeCase from 'just-snake-case';
 import snakeCase from '@queso/snake-case'
 @Component({
-  selector: 'app-manage-location-list-metadata',
-  templateUrl: './manage-location-list-metadata.component.html',
-  styleUrls: ['./manage-location-list-metadata.component.css']
+    selector: 'app-manage-location-list-metadata',
+    templateUrl: './manage-location-list-metadata.component.html',
+    styleUrls: ['./manage-location-list-metadata.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ManageLocationListMetadataComponent implements OnInit {
 

@@ -3,16 +3,18 @@ import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.cl
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { Component, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, ChangeDetectionStrategy } from '@angular/core';
 import { _TRANSLATE } from '../shared/translation-marker';
 import { TangyFormService } from '../tangy-forms/tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 
 @Component({
-  selector: 'app-class-forms-player',
-  templateUrl: './class-forms-player.component.html',
-  styleUrls: ['../tangy-forms/tangy-forms-player/tangy-forms-player.component.css']
+    selector: 'app-class-forms-player',
+    templateUrl: './class-forms-player.component.html',
+    styleUrls: ['../tangy-forms/tangy-forms-player/tangy-forms-player.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ClassFormsPlayerComponent {
 

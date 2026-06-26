@@ -1,12 +1,14 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 
 @Component({
-  selector: 'survey-login',
-  templateUrl: './survey-login.component.html',
-  styleUrls: ['./survey-login.component.css']
+    selector: 'survey-login',
+    templateUrl: './survey-login.component.html',
+    styleUrls: ['./survey-login.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SurveyLoginComponent implements OnInit {
 

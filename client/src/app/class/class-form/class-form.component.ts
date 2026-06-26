@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClassUtils} from "../class-utils";
 import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
@@ -14,9 +14,11 @@ import {AppConfigService} from "../../shared/_services/app-config.service";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
-  selector: 'app-class-form',
-  templateUrl: './class-form.component.html',
-  styleUrls: ['./class-form.component.css']
+    selector: 'app-class-form',
+    templateUrl: './class-form.component.html',
+    styleUrls: ['./class-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ClassFormComponent implements OnInit {
 

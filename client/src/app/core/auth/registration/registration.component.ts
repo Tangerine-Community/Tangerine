@@ -3,7 +3,7 @@ import { DeviceService } from './../../../device/services/device.service';
 import {from as observableFrom,  Observable } from 'rxjs';
 
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
@@ -15,7 +15,9 @@ import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 @Component({
     selector: 'app-registration',
     templateUrl: './registration.component.html',
-    styleUrls: ['./registration.component.css']
+    styleUrls: ['./registration.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class RegistrationComponent implements OnInit {
 

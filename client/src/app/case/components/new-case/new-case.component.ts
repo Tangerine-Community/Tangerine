@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'
@@ -7,10 +7,12 @@ import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 @Component({
-  selector: 'app-new-case',
-  templateUrl: './new-case.component.html',
-  styleUrls: ['./new-case.component.css'],
-  providers: [ CaseService ]
+    selector: 'app-new-case',
+    templateUrl: './new-case.component.html',
+    styleUrls: ['./new-case.component.css'],
+    providers: [CaseService],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NewCaseComponent implements AfterContentInit {
 

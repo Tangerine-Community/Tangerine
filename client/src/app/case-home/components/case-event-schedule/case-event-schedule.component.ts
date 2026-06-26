@@ -8,7 +8,7 @@ import { TangyFormsInfoService } from './../../../tangy-forms/tangy-forms-info-s
 import { SearchService } from './../../../shared/_services/search.service';
 import { UserService } from './../../../shared/_services/user.service';
 import { CasesService } from './../../../case/services/cases.service';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { DateTime } from 'luxon';
 import { CaseEvent } from 'src/app/case/classes/case-event.class';
@@ -30,9 +30,11 @@ class CaseEventInfo {
 }
 
 @Component({
-  selector: 'app-case-event-schedule',
-  templateUrl: './case-event-schedule.component.html',
-  styleUrls: ['./case-event-schedule.component.css']
+    selector: 'app-case-event-schedule',
+    templateUrl: './case-event-schedule.component.html',
+    styleUrls: ['./case-event-schedule.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseEventScheduleComponent implements OnInit {
 

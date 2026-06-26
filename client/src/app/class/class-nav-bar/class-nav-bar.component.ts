@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {TangyFormResponse} from "../../tangy-forms/tangy-form-response.class";
 import {DashboardService} from "../_services/dashboard.service";
 import {ClassUtils} from '../class-utils';
@@ -9,9 +9,11 @@ import {BehaviorSubject, Subject, Subscription} from "rxjs";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 
 @Component({
-  selector: 'app-class-nav-bar',
-  templateUrl: './class-nav-bar.component.html',
-  styleUrls: ['./class-nav-bar.component.css']
+    selector: 'app-class-nav-bar',
+    templateUrl: './class-nav-bar.component.html',
+    styleUrls: ['./class-nav-bar.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ClassNavBarComponent implements OnInit {
   formList = [];

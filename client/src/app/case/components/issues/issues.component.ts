@@ -1,13 +1,15 @@
 import { DeviceService } from './../../../device/services/device.service';
 import { AppContext } from 'src/app/app-context.enum';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { Issue } from '../../classes/issue.class';
 
 @Component({
-  selector: 'app-issues',
-  templateUrl: './issues.component.html',
-  styleUrls: ['./issues.component.css']
+    selector: 'app-issues',
+    templateUrl: './issues.component.html',
+    styleUrls: ['./issues.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class IssuesComponent implements OnInit {
 

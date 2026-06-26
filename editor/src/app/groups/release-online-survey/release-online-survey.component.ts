@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -10,9 +10,11 @@ import { ProcessMonitorDialogComponent } from 'src/app/shared/_components/proces
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-release-online-survey',
-  templateUrl: './release-online-survey.component.html',
-  styleUrls: ['./release-online-survey.component.css']
+    selector: 'app-release-online-survey',
+    templateUrl: './release-online-survey.component.html',
+    styleUrls: ['./release-online-survey.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ReleaseOnlineSurveyComponent implements OnInit {
   title = _TRANSLATE('Release Survey');

@@ -1,5 +1,5 @@
 import { TangerineFormsService } from './../services/tangerine-forms.service';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
@@ -9,9 +9,11 @@ import {_TRANSLATE} from "../../shared/_services/translation-marker";
 import * as XLSX from "xlsx";
 
 @Component({
-  selector: 'app-print-form-as-table',
-  templateUrl: './print-form-as-table.component.html',
-  styleUrls: ['./print-form-as-table.component.css']
+    selector: 'app-print-form-as-table',
+    templateUrl: './print-form-as-table.component.html',
+    styleUrls: ['./print-form-as-table.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PrintFormAsTableComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;

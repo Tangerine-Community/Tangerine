@@ -2,14 +2,16 @@ import { TangyFormsPlayerComponent } from './../../tangy-forms/tangy-forms-playe
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
 @Component({
-  selector: 'app-group-uploads-view',
-  templateUrl: './group-uploads-view.component.html',
-  styleUrls: ['./group-uploads-view.component.css']
+    selector: 'app-group-uploads-view',
+    templateUrl: './group-uploads-view.component.html',
+    styleUrls: ['./group-uploads-view.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupUploadsViewComponent implements OnInit {
 

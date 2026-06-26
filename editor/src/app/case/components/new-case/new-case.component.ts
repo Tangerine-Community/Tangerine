@@ -1,13 +1,15 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'
 import { EventForm } from '../../classes/event-form.class';
 
 @Component({
-  selector: 'app-new-case',
-  templateUrl: './new-case.component.html',
-  styleUrls: ['./new-case.component.css']
+    selector: 'app-new-case',
+    templateUrl: './new-case.component.html',
+    styleUrls: ['./new-case.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NewCaseComponent implements AfterContentInit {
 

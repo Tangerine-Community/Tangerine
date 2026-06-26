@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
@@ -9,9 +9,11 @@ import { GroupsService } from '../services/groups.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
-  selector: 'app-download-statistical-file',
-  templateUrl: './download-statistical-file.component.html',
-  styleUrls: ['./download-statistical-file.component.css']
+    selector: 'app-download-statistical-file',
+    templateUrl: './download-statistical-file.component.html',
+    styleUrls: ['./download-statistical-file.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DownloadStatisticalFileComponent implements OnInit {
 
@@ -70,7 +72,7 @@ export class DownloadStatisticalFileComponent implements OnInit {
     const domFromFromHTML = Array.from(document.createRange().createContextualFragment(formHtml).querySelectorAll('template'))
     const structure = domFromFromHTML.flatMap(e=>{
       return Array.from(e.content.children).map(el=>{
-        let obj ={ name: el.getAttribute('name'), label: el.getAttribute('label'??'' ), type: el.getAttribute('type'?? undefined )}
+        let obj ={ name: el.getAttribute('name'), label: el.getAttribute('label') ?? '' , type: el.getAttribute('type') ?? undefined }
         if(el.tagName==='TANGY-RADIO-BUTTONS'|| el.tagName==='TANGY-SELECT'||el.tagName==='TANGY-CHECKBOXES'||el.tagName==='TANGY-TIMED'||el.tagName==='TANGY-UNTIMED'){
           obj['options'] = [...Array.from(el.children).map(c=>({value:c.getAttribute('value'), label:c['label']}))]
         }

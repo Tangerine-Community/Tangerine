@@ -1,7 +1,8 @@
 import { Directive, Input, AfterViewInit, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
 import { AuthenticationService } from '../_services/authentication.service';
 @Directive({
-  selector: '[appHasAllPermissions]'
+    selector: '[appHasAllPermissions]',
+    standalone: false
 })
 export class HasAllPermissionsDirective implements OnInit {
   private _groupId;

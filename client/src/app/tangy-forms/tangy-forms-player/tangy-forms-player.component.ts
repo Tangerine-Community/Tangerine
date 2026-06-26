@@ -3,7 +3,7 @@ import {FormInfo, FormTemplate} from 'src/app/tangy-forms/classes/form-info.clas
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js';
 import {Subject} from 'rxjs';
 import {TangyFormsInfoService} from 'src/app/tangy-forms/tangy-forms-info-service';
-import {Component, ViewChild, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ViewChild, ElementRef, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {TangyFormService} from '../tangy-form.service';
 import {AppConfigService} from "../../shared/_services/app-config.service";
@@ -14,9 +14,11 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 declare const cordova: any;
 
 @Component({
-  selector: 'app-tangy-forms-player',
-  templateUrl: './tangy-forms-player.component.html',
-  styleUrls: ['./tangy-forms-player.component.css']
+    selector: 'app-tangy-forms-player',
+    templateUrl: './tangy-forms-player.component.html',
+    styleUrls: ['./tangy-forms-player.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class TangyFormsPlayerComponent implements OnInit {
 
@@ -371,7 +373,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     window.print();
   }
 
-  onErrorGetDir(e) {
+  onErrorGetDir(e: any) {
     console.log("Error: " + e)
     let errorMessage
     if (e && e.code && e.code === 1) {

@@ -1,15 +1,19 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "strict": false,
     "outDir": "../out-tsc/app",
     "types": [],
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "files": [
     "main.ts",
     "polyfills.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
-  ]
+    "**/*.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  }
 }

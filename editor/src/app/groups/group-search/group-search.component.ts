@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
@@ -24,9 +24,11 @@ export const FORM_TYPES_INFO = [
 ]
 
 @Component({
-  selector: 'app-group-search',
-  templateUrl: './group-search.component.html',
-  styleUrls: ['./group-search.component.css']
+    selector: 'app-group-search',
+    templateUrl: './group-search.component.html',
+    styleUrls: ['./group-search.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupSearchComponent implements OnInit {
 

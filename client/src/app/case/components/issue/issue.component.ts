@@ -3,12 +3,12 @@ import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
-import { CommonModule } from '@angular/common';
+
 import { IssueEventType, IssueStatus } from './../../classes/issue.class';
 import { Issue } from '../../classes/issue.class';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CasesService } from './../../services/cases.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { CaseService } from '../../services/case.service';
 import * as moment from 'moment';
 import { diffTemplate } from './diff-template';
@@ -45,9 +45,11 @@ interface EventInfo {
 }
 
 @Component({
-  selector: 'app-issue',
-  templateUrl: './issue.component.html',
-  styleUrls: ['./issue.component.css']
+    selector: 'app-issue',
+    templateUrl: './issue.component.html',
+    styleUrls: ['./issue.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class IssueComponent implements OnInit {
 

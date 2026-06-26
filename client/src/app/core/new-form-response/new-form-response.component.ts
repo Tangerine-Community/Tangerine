@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Router } from '@angular/router';
@@ -8,9 +8,11 @@ import { Subject } from 'rxjs';
 import { EventEmitter } from 'events';
 
 @Component({
-  selector: 'app-new-form-response',
-  templateUrl: './new-form-response.component.html',
-  styleUrls: ['./new-form-response.component.css']
+    selector: 'app-new-form-response',
+    templateUrl: './new-form-response.component.html',
+    styleUrls: ['./new-form-response.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NewFormResponseComponent implements OnInit {
 

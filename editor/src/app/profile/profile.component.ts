@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Router} from "@angular/router";
 import {ProfileService} from "./services/profile.service";
 import {Profile} from "./profile.model";
@@ -9,7 +9,9 @@ import {DatePipe} from '@angular/common';
     selector: 'my-profile',
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.css', './material.min.css'],
-    providers: [DatePipe]
+    providers: [DatePipe],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ProfileComponent implements OnInit {
     profile: Profile

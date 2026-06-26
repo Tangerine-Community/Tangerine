@@ -1,4 +1,4 @@
-import {Component, AfterContentInit, ChangeDetectorRef} from '@angular/core';
+import {Component, AfterContentInit, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -17,9 +17,11 @@ class CaseEventInfo {
 }
 
 @Component({
-  selector: 'app-case',
-  templateUrl: './case.component.html',
-  styleUrls: ['./case.component.css']
+    selector: 'app-case',
+    templateUrl: './case.component.html',
+    styleUrls: ['./case.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseComponent implements AfterContentInit {
 

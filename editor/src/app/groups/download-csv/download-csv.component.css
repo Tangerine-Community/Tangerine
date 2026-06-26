@@ -5,7 +5,7 @@
   height: 100px
 }
 .button {
-  background: var(--mdc-theme-secondary);
+  background: var(--mat-theme-secondary);
   color: var(--accent-text-color);
 }
 

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-form-submitted-success',
-  templateUrl: './form-submitted-success.component.html',
-  styleUrls: ['./form-submitted-success.component.css']
+    selector: 'app-form-submitted-success',
+    templateUrl: './form-submitted-success.component.html',
+    styleUrls: ['./form-submitted-success.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FormSubmittedSuccessComponent implements OnInit {
 

@@ -1,11 +1,13 @@
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { Subject } from 'rxjs';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-device-password',
-  templateUrl: './device-password.component.html',
-  styleUrls: ['./device-password.component.css']
+    selector: 'app-device-password',
+    templateUrl: './device-password.component.html',
+    styleUrls: ['./device-password.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DevicePasswordComponent implements OnInit {
 

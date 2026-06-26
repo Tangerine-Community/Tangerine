@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterContentInit, AfterViewInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,9 +10,11 @@ import { fromEvent, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-add-user-to-a-group',
-  templateUrl: './add-user-to-a-group.component.html',
-  styleUrls: ['./add-user-to-a-group.component.css']
+    selector: 'app-add-user-to-a-group',
+    templateUrl: './add-user-to-a-group.component.html',
+    styleUrls: ['./add-user-to-a-group.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AddUserToAGroupComponent implements OnInit, AfterViewInit {
   users;

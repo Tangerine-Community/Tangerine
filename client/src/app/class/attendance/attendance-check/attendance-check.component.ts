@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {DateTime} from "luxon";
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
@@ -12,9 +12,11 @@ import { TangySnackbarService } from 'src/app/shared/_services/tangy-snackbar.se
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Component({
-  selector: 'app-attendance-check',
-  templateUrl: './attendance-check.component.html',
-  styleUrls: ['./attendance-check.component.css','../../dashboard/dashboard.component.css']
+    selector: 'app-attendance-check',
+    templateUrl: './attendance-check.component.html',
+    styleUrls: ['./attendance-check.component.css', '../../dashboard/dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AttendanceCheckComponent implements OnInit {
   

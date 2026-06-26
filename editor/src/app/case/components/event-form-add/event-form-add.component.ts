@@ -1,5 +1,5 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
@@ -12,9 +12,11 @@ interface EventFormInfo {
 }
 
 @Component({
-  selector: 'app-event-form-add',
-  templateUrl: './event-form-add.component.html',
-  styleUrls: ['./event-form-add.component.css']
+    selector: 'app-event-form-add',
+    templateUrl: './event-form-add.component.html',
+    styleUrls: ['./event-form-add.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EventFormAddComponent implements AfterContentInit {
 

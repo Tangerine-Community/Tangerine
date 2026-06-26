@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
-  name: 'formTitleFromInfo',
+    name: 'formTitleFromInfo',
+    standalone: false
 })
 /*
  * Angular Pipe to format form title

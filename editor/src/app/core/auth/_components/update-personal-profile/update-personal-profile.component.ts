@@ -1,17 +1,19 @@
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MenuService } from 'src/app/shared/_services/menu.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { UserService } from '../../_services/user.service';
 import { User } from '../user-resgistration/user.model.interface';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import {ServerConfigService} from "../../../../shared/_services/server-config.service";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-update-personal-profile',
-  templateUrl: './update-personal-profile.component.html',
-  styleUrls: ['./update-personal-profile.component.css']
+    selector: 'app-update-personal-profile',
+    templateUrl: './update-personal-profile.component.html',
+    styleUrls: ['./update-personal-profile.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class UpdatePersonalProfileComponent implements OnInit {
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -12,9 +12,11 @@ const STATUS_DONE = 'STATUS_DONE'
 const STATUS_WAIT = 'STATUS_WAIT'
 
 @Component({
-  selector: 'app-release-apk',
-  templateUrl: './release-apk.component.html',
-  styleUrls: ['./release-apk.component.css']
+    selector: 'app-release-apk',
+    templateUrl: './release-apk.component.html',
+    styleUrls: ['./release-apk.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ReleaseApkComponent implements OnInit {
 

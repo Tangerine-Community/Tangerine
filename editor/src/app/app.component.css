@@ -16,7 +16,7 @@
 }
 
 .active-menu-item {
-  background: var(--mdc-theme-secondary);
+  background: var(--mat-theme-secondary);
   color: white;
 }
 

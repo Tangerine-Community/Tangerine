@@ -1,7 +1,8 @@
 import { Directive, Input, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
 
 @Directive({
-  selector: '[appProgressBarColor]'
+    selector: '[appProgressBarColor]',
+    standalone: false
 })
 
 /**

@@ -1,13 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService, LocationList } from '../services/groups.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 
 @Component({
-  selector: 'app-group-location-list-new',
-  templateUrl: './group-location-list-new.component.html',
-  styleUrls: ['./group-location-list-new.component.css']
+    selector: 'app-group-location-list-new',
+    templateUrl: './group-location-list-new.component.html',
+    styleUrls: ['./group-location-list-new.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupLocationListNewComponent implements OnInit {
 

@@ -1,13 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ActiveTask} from "./ActiveTask.class";
 import PouchDB from 'pouchdb';
 import { interval, Subscription } from 'rxjs';
 
 
 @Component({
-  selector: 'app-active-tasks',
-  templateUrl: './active-tasks.component.html',
-  styleUrls: ['./active-tasks.component.css']
+    selector: 'app-active-tasks',
+    templateUrl: './active-tasks.component.html',
+    styleUrls: ['./active-tasks.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ActiveTasksComponent implements OnInit {
   activeTasks:Array<ActiveTask> = []

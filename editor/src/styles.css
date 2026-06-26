@@ -4,14 +4,14 @@ html,
 body {
   height: 100%;
   --document-background-color: #f7f6f6;
-  --mdc-theme-primary: #3c5b8d !important;
-  --mdc-theme-secondary: #f26f10 !important;
+  --mat-theme-primary: #3c5b8d !important;
+  --mat-theme-secondary: #f26f10 !important;
   --primary-color-dark: #3c5b8d;
   --primary-color-lighter: #2d7dd2;
   --primary-text-color-overlay: #FFF;
   --primary-text-color: #555;
   --primary-color: #3c5b8d;
-  --accent-color: var(--mdc-theme-secondary);
+  --accent-color: var(--mat-theme-secondary);
   --lighter-accent-color: #ff9522;
   --accent-text-color: #fff;
   --error-color: var(--paper-red-500);

@@ -8,7 +8,7 @@ import { EventFormsForParticipantPageComponent } from './components/event-forms-
 import { Observable } from 'rxjs';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
-import { RouterModule, Routes, CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { RouterModule, Routes, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { _TRANSLATE } from '../shared/translation-marker';
 import { NewCaseComponent } from './components/new-case/new-case.component';
@@ -17,7 +17,7 @@ import { EventComponent } from './components/event/event.component'
 import { EventFormComponent } from './components/event-form/event-form.component'
 
 @Injectable()
-export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
+export class CanDeactivateEvent  {
   constructor() {}
   canDeactivate(
     component: EventComponent,
@@ -34,7 +34,7 @@ export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
 }
 
 @Injectable()
-export class CanDeactivateEventForm implements CanDeactivate<EventFormComponent> {
+export class CanDeactivateEventForm  {
 
   constructor(private caseService:CaseService) {}
 

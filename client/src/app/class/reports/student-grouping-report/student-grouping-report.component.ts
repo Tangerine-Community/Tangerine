@@ -1,5 +1,5 @@
 import { UserService } from 'src/app/shared/_services/user.service';
-import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {DashboardService} from '../../_services/dashboard.service';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,9 +12,11 @@ import { tNumber } from 'src/app/t-number.util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-student-grouping-report',
-  templateUrl: './student-grouping-report.component.html',
-  styleUrls: ['./student-grouping-report.component.css']
+    selector: 'app-student-grouping-report',
+    templateUrl: './student-grouping-report.component.html',
+    styleUrls: ['./student-grouping-report.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class StudentGroupingReportComponent implements OnInit {
 
@@ -213,8 +215,10 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'feedback-dialog',
-  templateUrl: 'feedback-dialog.html',
+    selector: 'feedback-dialog',
+    templateUrl: 'feedback-dialog.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FeedbackDialog implements OnInit {
   constructor(

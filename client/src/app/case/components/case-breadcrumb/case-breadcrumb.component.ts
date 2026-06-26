@@ -1,12 +1,14 @@
 import { NotificationStatus } from './../../classes/notification.class';
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-case-breadcrumb',
-  templateUrl: './case-breadcrumb.component.html',
-  styleUrls: ['./case-breadcrumb.component.css']
+    selector: 'app-case-breadcrumb',
+    templateUrl: './case-breadcrumb.component.html',
+    styleUrls: ['./case-breadcrumb.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseBreadcrumbComponent implements OnInit {
 

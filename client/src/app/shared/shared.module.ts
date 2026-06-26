@@ -9,7 +9,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
@@ -34,49 +34,43 @@ import { ProcessMonitorService } from './_services/process-monitor.service';
 import { MatButtonModule } from '@angular/material/button';
 import { TangyDateAdapterService } from './_services/tangy-date-adapter.service';
 
-@NgModule({
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
-  imports: [
-    CommonModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatNativeDateModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpClientLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
-  ],
-  providers: [
-    AppConfigService,
-    UserService,
-    TangySnackbarService,
-    LockBoxService,
-    VariableService,
-    {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
-    LoginGuard,
-    SearchService,
-    FormTypesService,
-    ProcessMonitorService,
-    CreateProfileGuardService,
-    { provide: DateAdapter, useClass: TangyDateAdapterService },
-  ],
-  declarations: [
-    UnsanitizeHtmlPipe,
-    TangySvgLogoComponent,
-    TruncateValuePipe,
-    ProcessMonitorDialogComponent,
-    RedirectToDefaultRouteComponent],
-
-  exports: [RedirectToDefaultRouteComponent,
-    UnsanitizeHtmlPipe,
-    TangySvgLogoComponent,
-    TruncateValuePipe, TranslateModule]
-})
+@NgModule({ schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    declarations: [
+        UnsanitizeHtmlPipe,
+        TangySvgLogoComponent,
+        TruncateValuePipe,
+        ProcessMonitorDialogComponent,
+        RedirectToDefaultRouteComponent
+    ],
+    exports: [RedirectToDefaultRouteComponent,
+        UnsanitizeHtmlPipe,
+        TangySvgLogoComponent,
+        TruncateValuePipe, TranslateModule], imports: [CommonModule,
+        BrowserAnimationsModule,
+        MatTooltipModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatNativeDateModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpClientLoaderFactory,
+                deps: [HttpClient]
+            }
+        })], providers: [
+        AppConfigService,
+        UserService,
+        TangySnackbarService,
+        LockBoxService,
+        VariableService,
+        { provide: DEFAULT_USER_DOCS, useValue: [], multi: true },
+        LoginGuard,
+        SearchService,
+        FormTypesService,
+        ProcessMonitorService,
+        CreateProfileGuardService,
+        { provide: DateAdapter, useClass: TangyDateAdapterService },
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    ] })
 export class SharedModule { }

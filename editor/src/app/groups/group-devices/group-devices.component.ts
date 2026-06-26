@@ -6,7 +6,7 @@ import { MenuService } from './../../shared/_services/menu.service';
 import { HttpClient } from '@angular/common/http';
 import { TangyFormService } from './../../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './../services/group-devices.service';
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ChangeDetectionStrategy } from '@angular/core';
 import { GroupDevice } from '../classes/group-device.class';
 import { TangerineForm } from 'src/app/shared/_classes/tangerine-form.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
@@ -67,9 +67,11 @@ interface UserField {
 }
 
 @Component({
-  selector: 'app-group-devices',
-  templateUrl: './group-devices.component.html',
-  styleUrls: ['./group-devices.component.css']
+    selector: 'app-group-devices',
+    templateUrl: './group-devices.component.html',
+    styleUrls: ['./group-devices.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDevicesComponent implements OnInit {
 

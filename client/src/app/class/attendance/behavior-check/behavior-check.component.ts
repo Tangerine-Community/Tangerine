@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
@@ -11,9 +11,11 @@ import {DateTime} from "luxon";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 
 @Component({
-  selector: 'app-behavior-check',
-  templateUrl: './behavior-check.component.html',
-  styleUrls: ['./behavior-check.component.css']
+    selector: 'app-behavior-check',
+    templateUrl: './behavior-check.component.html',
+    styleUrls: ['./behavior-check.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class BehaviorCheckComponent implements OnInit {
 

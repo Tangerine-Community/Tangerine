@@ -1,11 +1,11 @@
 import {Injectable} from "@angular/core";
-import {CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot} from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import {Observable} from "rxjs";
 import {ProcessMonitorService} from "../_services/process-monitor.service";
 import {TangyFormsPlayerComponent} from "../../tangy-forms/tangy-forms-player/tangy-forms-player.component";
 
 @Injectable()
-export class ProcessGuard implements CanDeactivate<TangyFormsPlayerComponent> {
+export class ProcessGuard  {
   constructor(
     private processMonitorService:ProcessMonitorService
   ) { }

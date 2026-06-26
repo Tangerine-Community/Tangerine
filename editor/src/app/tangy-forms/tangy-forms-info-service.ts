@@ -1,6 +1,6 @@
 import { FormInfo } from './classes/form-info.class';
 import { Inject, Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {TangerineFormInfo} from "../shared/_classes/tangerine-form.class";
 import {FilesService} from "../groups/services/files.service";
 

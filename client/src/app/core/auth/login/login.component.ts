@@ -5,7 +5,7 @@ import { DeviceService } from './../../../device/services/device.service';
 import {from as observableFrom,  Observable } from 'rxjs';
 
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
@@ -13,9 +13,11 @@ import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   errorMessage = '';

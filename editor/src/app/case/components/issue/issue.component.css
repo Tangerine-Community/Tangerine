@@ -69,12 +69,12 @@
 }
 
 paper-button {
-  background: var(--mdc-theme-secondary);
+  background: var(--mat-theme-secondary);
   color: var(--accent-text-color);
 }
 
 paper-tabs {
-  --paper-tabs-selection-bar-color: var(--mdc-theme-secondary);
+  --paper-tabs-selection-bar-color: var(--mat-theme-secondary);
 }
 
 .no-proposed-changes-message {

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { TangyErrorHandler } from '../../../../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../../../../shared/_services/translation-marker';
 import { UserService } from '../../_services/user.service';
@@ -7,9 +7,11 @@ import {ActivatedRoute} from '@angular/router';
 
 
 @Component({
-  selector: 'app-user-resgistration',
-  templateUrl: './user-resgistration.component.html',
-  styleUrls: ['./user-resgistration.component.css']
+    selector: 'app-user-resgistration',
+    templateUrl: './user-resgistration.component.html',
+    styleUrls: ['./user-resgistration.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class UserResgistrationComponent implements OnInit, AfterContentInit {
 

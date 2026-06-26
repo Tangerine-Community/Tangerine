@@ -1,14 +1,16 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 
 @Component({
-  selector: 'app-list-users',
-  templateUrl: './list-users.component.html',
-  styleUrls: ['./list-users.component.css']
+    selector: 'app-list-users',
+    templateUrl: './list-users.component.html',
+    styleUrls: ['./list-users.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ListUsersComponent implements OnInit {
   users;

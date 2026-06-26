@@ -1,19 +1,19 @@
 <div class="uploads">
-<!--  <p>Click "Select file" to select a file for uploading.</p>-->
+  <!--  <p>Click "Select file" to select a file for uploading.</p>-->
 
 
-<!--  <mat-form-field>-->
-<!--    <div>-->
-<!--      <mat-toolbar>-->
-<!--        <input matInput [value]="fileName" />-->
+  <!--  <mat-form-field>-->
+  <!--    <div>-->
+  <!--      <mat-toolbar>-->
+  <!--        <input matInput [value]="fileName" />-->
 
-<!--        <button-->
-<!--          mat-flat-button-->
-<!--          color="primary"-->
-<!--          [disabled]="!currentFile"-->
-<!--          (click)="upload()"-->
-<!--        >-->
-<!--          Upload-->
+  <!--        <button-->
+  <!--          mat-flat-button-->
+  <!--          color="primary"-->
+  <!--          [disabled]="!currentFile"-->
+  <!--          (click)="upload()"-->
+  <!--        >-->
+  <!--          Upload-->
 <!--        </button>-->
 <!--      </mat-toolbar>-->
 <!--      <mat-toolbar *ngIf="currentFile" class="progress-bar">-->
@@ -29,23 +29,27 @@
 <!--      />-->
 <!--    </div>-->
 <!--  </mat-form-field>-->
-  <form enctype="multipart/form-data" method="post">
-    <div>
-      <label for="picked">Choose a file to upload:</label>
-      <input type="file"
-             id="picked"
-             #picked
-             (click)="message=''"
-             (change)="onPicked(picked)">
+<form enctype="multipart/form-data" method="post">
+  <div>
+    <label for="picked">Choose a file to upload:</label>
+    <input type="file"
+      id="picked"
+      #picked
+      (click)="message=''"
+      (change)="onPicked(picked)">
 
-    </div>
-    <p *ngIf="message">{{message}}</p>
-  </form>
+  </div>
+  @if (message) {
+    <p>{{message}}</p>
+  }
+</form>
 </div>
 
-<div *ngIf="message" class="message">
-  {{ message }}
-</div>
+@if (message) {
+  <div class="message">
+    {{ message }}
+  </div>
+}
 <paper-button (click)="onDeleteClick()"><iron-icon icon="delete"></iron-icon>remove selected files</paper-button>
 <file-list-http #list></file-list-http>
 

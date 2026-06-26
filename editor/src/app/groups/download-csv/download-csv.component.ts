@@ -1,14 +1,16 @@
 import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectionStrategy} from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-download-csv',
-  templateUrl: './download-csv.component.html',
-  styleUrls: ['./download-csv.component.css']
+    selector: 'app-download-csv',
+    templateUrl: './download-csv.component.html',
+    styleUrls: ['./download-csv.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DownloadCsvComponent implements OnInit, OnDestroy {
 

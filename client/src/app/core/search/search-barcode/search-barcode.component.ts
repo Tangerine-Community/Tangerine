@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 const STATE_INITIAL = 'STATE_INITIAL'
@@ -8,9 +8,11 @@ const STATE_SUCCESS = 'STATE_SUCCESS'
 const STATE_ERROR = 'STATE_ERROR'
 
 @Component({
-  selector: 'app-search-barcode',
-  templateUrl: './search-barcode.component.html',
-  styleUrls: ['./search-barcode.component.css']
+    selector: 'app-search-barcode',
+    templateUrl: './search-barcode.component.html',
+    styleUrls: ['./search-barcode.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SearchBarcodeComponent implements OnInit {
 

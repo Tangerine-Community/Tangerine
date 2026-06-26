@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,9 +8,11 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import { AuthenticationService } from '../../_services/authentication.service';
 
 @Component({
-  selector: 'app-update-user-role',
-  templateUrl: './update-user-role.component.html',
-  styleUrls: ['./update-user-role.component.css']
+    selector: 'app-update-user-role',
+    templateUrl: './update-user-role.component.html',
+    styleUrls: ['./update-user-role.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class UpdateUserRoleComponent implements OnInit {
 

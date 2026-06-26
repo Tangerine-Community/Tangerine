@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import {FormBuilder, ReactiveFormsModule, FormGroup, FormControl, Validators} from '@angular/forms';
 import {ValidationService} from '../validation/validation.service';//not an injectable service
@@ -10,9 +10,11 @@ import {TruncatePipe} from '../pipes/truncate';
 declare var componentHandler: any;//needed to get js in materia.js to work with forms
 
 @Component({
-  //selector: 'app-registration-form',
-  templateUrl: './registration-form.component.html',
-  styleUrls: ['./registration-form.component.css']
+    //selector: 'app-registration-form',
+    templateUrl: './registration-form.component.html',
+    styleUrls: ['./registration-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class RegistrationFormComponent implements OnInit {
 

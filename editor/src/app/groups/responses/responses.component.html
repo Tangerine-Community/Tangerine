@@ -1,16 +1,24 @@
-<div id="filter" *ngIf="!hideFilterBy">
-  <tangy-select name="form" label="Filter by form" (change)="filterByForm($event)">
-    <option value="*">*</option>
-    <option *ngFor="let form of forms" value="{{form.id}}">{{form|formTitleFromInfo}}</option>
-  </tangy-select>
-</div>
+@if (!hideFilterBy) {
+  <div id="filter">
+    <tangy-select name="form" label="Filter by form" (change)="filterByForm($event)">
+      <option value="*">*</option>
+      @for (form of forms; track form) {
+        <option value="{{form.id}}">{{form|formTitleFromInfo}}</option>
+      }
+    </tangy-select>
+  </div>
+}
 <div>
   <paper-input id="search-bar" name="search-bar" label="{{'Search by ID'|translate}}" #searchBar></paper-input>
 </div>
 <div id="search-results" #searchResults>
 </div>
-<div class="table" *ngIf="ready">
-  <app-dynamic-table [showArchiveButton]="showArchiveButton" [data]="responses" (rowEdit)="onRowEdit($event)" (rowDelete)="onRowDelete($event)" (rowClick)="onRowClick(($event))" (rowArchive)="onRowArchive($event)"></app-dynamic-table>
-</div>
-<paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
+@if (ready) {
+  <div class="table">
+    <app-dynamic-table [showArchiveButton]="showArchiveButton" [data]="responses" (rowEdit)="onRowEdit($event)" (rowDelete)="onRowDelete($event)" (rowClick)="onRowClick(($event))" (rowArchive)="onRowArchive($event)"></app-dynamic-table>
+  </div>
+}
+@if (this.skip !== 0) {
+  <paper-button (click)="previousPage()">< back</paper-button>
+}
 <paper-button  (click)="nextPage()">next ></paper-button>

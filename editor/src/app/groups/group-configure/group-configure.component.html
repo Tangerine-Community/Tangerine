@@ -1,47 +1,49 @@
-<div *ngIf="ready">
-  <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-  <mat-card class="is-link mat-elevation-z3" routerLink="location-lists" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_location_list'">
-    <mat-card-header>
+@if (ready) {
+  <div>
+    <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+    <mat-card class="is-link mat-elevation-z3" routerLink="location-lists" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_location_list'">
+      <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">place</mwc-icon>
         </div>
         <mat-card-title>
-            <a>{{'Location Lists'|translate}}</a>
+          <a>{{'Location Lists'|translate}}</a>
         </mat-card-title>
         <mat-card-subtitle>{{'Manage locations levels and content related to choosing locations on forms, sync, and more.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-  <mat-card [hidden]="!syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_sync'">
-    <mat-card-header>
+      </mat-card-header>
+    </mat-card>
+    <mat-card [hidden]="!syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_sync'">
+      <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">sync</mwc-icon>
         </div>
         <mat-card-title>
-            <a>{{'Sync'|translate}}</a>
+          <a>{{'Sync'|translate}}</a>
         </mat-card-title>
         <mat-card-subtitle>{{'Manage which forms to enable two-way sync on.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-  <mat-card class="is-link mat-elevation-z3" routerLink="security" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
-    <mat-card-header>
+      </mat-card-header>
+    </mat-card>
+    <mat-card class="is-link mat-elevation-z3" routerLink="security" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
+      <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">people</mwc-icon>
         </div>
         <mat-card-title>
-            <a>{{'Users and Roles'|translate}}</a>
+          <a>{{'Users and Roles'|translate}}</a>
         </mat-card-title>
         <mat-card-subtitle>Manage who has server level access to this group.</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-  <mat-card class="is-link mat-elevation-z3" routerLink="device-password-policy" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
-    <mat-card-header>
+      </mat-card-header>
+    </mat-card>
+    <mat-card class="is-link mat-elevation-z3" routerLink="device-password-policy" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
+      <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">password</mwc-icon>
         </div>
         <mat-card-title>
-            <a>{{'Password Policy for Device Accounts'|translate}}</a>
+          <a>{{'Password Policy for Device Accounts'|translate}}</a>
         </mat-card-title>
         <mat-card-subtitle>Configure the password complexity required when creating accounts on Devices.</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-</div>
+      </mat-card-header>
+    </mat-card>
+  </div>
+}

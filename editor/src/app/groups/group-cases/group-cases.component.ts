@@ -6,8 +6,8 @@ import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js'
 import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info-service';
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupResponsesService } from './../services/group-responses.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -26,9 +26,11 @@ export const FORM_TYPES_INFO = [
 ]
 
 @Component({
-  selector: 'app-group-cases',
-  templateUrl: './group-cases.component.html',
-  styleUrls: ['./group-cases.component.css']
+    selector: 'app-group-cases',
+    templateUrl: './group-cases.component.html',
+    styleUrls: ['./group-cases.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupCasesComponent implements OnInit {
 

@@ -12,8 +12,8 @@ import { CaseDefinition } from '../classes/case-definition.class';
 import { EventFormDefinition } from '../classes/event-form-definition.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import PouchDB from 'pouchdb';
-import { HttpClient } from '@angular/common/http';
-import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CaseParticipant } from '../classes/case-participant.class';
 import moment from 'moment/src/moment';
 class MockCaseDefinitionsService {
@@ -180,45 +180,45 @@ describe('CaseService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        { 
-          provide: CaseDefinitionsService,
-          useClass: MockCaseDefinitionsService
+    imports: [],
+    providers: [
+        {
+            provide: CaseDefinitionsService,
+            useClass: MockCaseDefinitionsService
         },
         {
-          provide: TangyFormService,
-          useClass: MockTangyFormService
+            provide: TangyFormService,
+            useClass: MockTangyFormService
         },
         {
-          provide: UserService,
-          useClass: MockUserService
+            provide: UserService,
+            useClass: MockUserService
         },
         {
-          provide: AppConfigService,
-          useClass: AppConfigService 
-        }
-      ]
-    })
-    httpClient = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+            provide: AppConfigService,
+            useClass: AppConfigService
+        },
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   it('should be created', () => {
-    const service: CaseService = TestBed.get(CaseService);
+    const service: CaseService = TestBed.inject(CaseService);
     expect(service).toBeTruthy();
   });
 
   it('should create a case' , async () => {
-    const service: CaseService = TestBed.get(CaseService);
+    const service: CaseService = TestBed.inject(CaseService);
     await service.create('caseDefinition1')
     expect(service.case._id).toBeTruthy()
   })
 
   it('should set an event ocurred on date', async () => {
-    const service: CaseService = TestBed.get(CaseService)
+    const service: CaseService = TestBed.inject(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
@@ -227,7 +227,7 @@ describe('CaseService', () => {
     expect(service.case.events[0].occurredOnDay).toEqual(date)
   })
   it('should set an event EstimatedDay date', async () => {
-    const service: CaseService = TestBed.get(CaseService)
+    const service: CaseService = TestBed.inject(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
@@ -236,7 +236,7 @@ describe('CaseService', () => {
     expect(service.case.events[0].estimatedDay).toEqual(date)
   })
   it('should set an event ScheduledDay date', async () => {
-    const service: CaseService = TestBed.get(CaseService)
+    const service: CaseService = TestBed.inject(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
@@ -245,7 +245,7 @@ describe('CaseService', () => {
     expect(service.case.events[0].scheduledDay).toEqual(date)
   })
   it('should set an event Window period', async () => {
-    const service: CaseService = TestBed.get(CaseService)
+    const service: CaseService = TestBed.inject(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const windowStartDayTimeInMs = new Date().getTime()
@@ -258,7 +258,7 @@ describe('CaseService', () => {
   })
 
   it('should create participant and create forms for existing events', async () => {
-    const service: CaseService = TestBed.get(CaseService)
+    const service: CaseService = TestBed.inject(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-screening', true)
     expect(service.case.events[0].eventForms.length).toEqual(0)
@@ -268,7 +268,7 @@ describe('CaseService', () => {
   })
 
   it('should create CaseEvent and also create corresponding required EventForms for Participants', async() => {
-    const service: CaseService = TestBed.get(CaseService);
+    const service: CaseService = TestBed.inject(CaseService);
     await service.create('caseDefinition1')
     const caseParticipant = await service.createParticipant('role1')
     await service.createEvent('event-definition-screening', true)
@@ -277,7 +277,7 @@ describe('CaseService', () => {
   })
 
   it('CaseEvent should have status of comleted when all required forms are completed', async () => {
-    const service: CaseService = TestBed.get(CaseService);
+    const service: CaseService = TestBed.inject(CaseService);
     await service.create('caseDefinition1')
     const caseParticipant = await service.createParticipant('role1')
     const caseParticipant2 = await service.createParticipant('role2')

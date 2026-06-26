@@ -14,37 +14,30 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TangySvgLogoComponent } from './shared/tangy-svg-logo/tangy-svg-logo.component';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { FormsListComponent } from './forms-list/forms-list.component';
 import { FormSubmittedSuccessComponent } from './form-submitted-success/form-submitted-success.component';
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
 import { CaseModule } from './case/case.module';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    TangySvgLogoComponent,
-    FormsListComponent,
-    FormSubmittedSuccessComponent
-  ],
-  imports: [
-    AuthModule,
-    AppRoutingModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    CaseModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatIconModule,
-    HttpClientModule,
-    MatCardModule,
-    MatTabsModule,
-    MatListModule,
-    MatSnackBarModule,
-    TangyFormsModule
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [TangyErrorHandler],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        TangySvgLogoComponent,
+        FormsListComponent,
+        FormSubmittedSuccessComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent], imports: [AuthModule,
+        AppRoutingModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        CaseModule,
+        MatToolbarModule,
+        MatMenuModule,
+        MatIconModule,
+        MatCardModule,
+        MatTabsModule,
+        MatListModule,
+        MatSnackBarModule,
+        TangyFormsModule], providers: [TangyErrorHandler, provideHttpClient(withXhr(), withInterceptorsFromDi())] })
 export class AppModule { }

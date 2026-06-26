@@ -2,10 +2,14 @@
   <h1>
     {{message}}
   </h1>
-  <h1 *ngIf="needsUpdating">
-    {{'Total Updates Applied'|translate}}: {{totalUpdatesApplied}}
-  </h1>
-  <paper-button routerLink="/home" *ngIf="complete" mat-raised-button>
-    {{'continue'|translate}}
-  </paper-button>
+  @if (needsUpdating) {
+    <h1>
+      {{'Total Updates Applied'|translate}}: {{totalUpdatesApplied}}
+    </h1>
+  }
+  @if (complete) {
+    <paper-button routerLink="/home" mat-raised-button>
+      {{'continue'|translate}}
+    </paper-button>
+  }
 </div>

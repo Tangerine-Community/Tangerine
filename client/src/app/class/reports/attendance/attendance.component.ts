@@ -1,6 +1,6 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {UserDatabase} from "../../../shared/_classes/user-database.class";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {FormGroup, FormControl} from '@angular/forms';
 import {UserService} from "../../../shared/_services/user.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -18,9 +18,11 @@ import { from } from 'rxjs';
 import { MatDatepicker } from '@angular/material/datepicker';
 
 @Component({
-  selector: 'app-attendance',
-  templateUrl: './attendance.component.html',
-  styleUrls: ['./attendance.component.css']
+    selector: 'app-attendance',
+    templateUrl: './attendance.component.html',
+    styleUrls: ['./attendance.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 
 export class AttendanceComponent implements OnInit {

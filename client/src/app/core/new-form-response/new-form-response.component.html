@@ -3,24 +3,26 @@
     <iron-icon icon="clear" routerLink="/case-home"></iron-icon>
     <span>&nbsp;&nbsp;{{'Select case type'|translate}}</span>
   </div>
- <div class="form-cards">
-    <div *ngFor='let formInfo of formsInfo' class="icon-list-item form-item form new-form" (click)="onFormInfoSelect(formInfo.id)">
-      <mwc-icon slot="item-icon">{{ formInfo.icon }}</mwc-icon>
-      <div>
-        <div><span [innerHTML]="formInfo.title|unsanitizeHtml"></span></div>
-        <div secondary [innerHTML]="formInfo.description|unsanitizeHtml"></div>
+  <div class="form-cards">
+    @for (formInfo of formsInfo; track formInfo) {
+      <div class="icon-list-item form-item form new-form" (click)="onFormInfoSelect(formInfo.id)">
+        <mwc-icon slot="item-icon">{{ formInfo.icon }}</mwc-icon>
+        <div>
+          <div><span [innerHTML]="formInfo.title|unsanitizeHtml"></span></div>
+          <div secondary [innerHTML]="formInfo.description|unsanitizeHtml"></div>
+        </div>
       </div>
-    </div>
+    }
   </div>
-  
+
   <div id="bottom-nav">
-      <table>
-        <tr>
-          <td routerLink="/case-home"><iron-icon icon="home"></iron-icon></td>
-        </tr>
-        <tr>
-          <td routerLink="/case-home">{{'Home'|translate}}</td>
-        </tr>
-      </table>
-    </div>
+    <table>
+      <tr>
+        <td routerLink="/case-home"><iron-icon icon="home"></iron-icon></td>
+      </tr>
+      <tr>
+        <td routerLink="/case-home">{{'Home'|translate}}</td>
+      </tr>
+    </table>
+  </div>
 </div>

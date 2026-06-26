@@ -11,23 +11,27 @@
     <date-carousel useEthiopianCalendar (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
   </span>
 </div>
-<div class="event-info" *ngFor="let caseEventInfo of caseEventInfos" routerLink="{{caseEventInfo.openLink}}">
-  <div *ngIf="caseEventInfo.dateNumber" class="new-date"> 
-    <div class="new-date-container">
-      <div class="new-date-number">
-        {{caseEventInfo.dateNumber}}
+@for (caseEventInfo of caseEventInfos; track caseEventInfo) {
+  <div class="event-info" routerLink="{{caseEventInfo.openLink}}">
+    @if (caseEventInfo.dateNumber) {
+      <div class="new-date">
+        <div class="new-date-container">
+          <div class="new-date-number">
+            {{caseEventInfo.dateNumber}}
+          </div>
+          <div class="new-date-label">
+            {{caseEventInfo.dateLabel}}
+          </div>
+          <iron-icon icon="av:fiber-manual-record" class="new-date-dot"></iron-icon>
+        </div>
       </div>
-      <div class="new-date-label">
-        {{caseEventInfo.dateLabel}}
+    }
+    <div class="icon-list-item">
+      <mwc-icon [innerHTML]="caseEventInfo.scheduleListItemIcon" slot="item-icon"></mwc-icon>
+      <div>
+        <div [innerHTML]="caseEventInfo.scheduleListItemPrimary|unsanitizeHtml"></div>
+        <div [innerHTML]="caseEventInfo.scheduleListItemSecondary|unsanitizeHtml" secondary></div>
       </div>
-      <iron-icon icon="av:fiber-manual-record" class="new-date-dot"></iron-icon>  
     </div>
   </div>
-  <div class="icon-list-item">
-    <mwc-icon [innerHTML]="caseEventInfo.scheduleListItemIcon" slot="item-icon"></mwc-icon>
-    <div>
-      <div [innerHTML]="caseEventInfo.scheduleListItemPrimary|unsanitizeHtml"></div>
-      <div [innerHTML]="caseEventInfo.scheduleListItemSecondary|unsanitizeHtml" secondary></div>
-    </div>
-  </div>
-</div>
+}

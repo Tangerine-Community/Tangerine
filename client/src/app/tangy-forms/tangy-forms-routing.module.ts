@@ -8,11 +8,11 @@ import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
 import { _TRANSLATE } from '../shared/translation-marker';
 
-import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 
 
 @Injectable()
-export class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
+export class CanDeactivateForm  {
   window:any;
   constructor() {
     this.window = window;

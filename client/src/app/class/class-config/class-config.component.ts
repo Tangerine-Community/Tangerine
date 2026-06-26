@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {DashboardService} from "../_services/dashboard.service";
 import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
 import {ClassFormService} from "../_services/class-form.service";
@@ -7,9 +7,11 @@ import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 @Component({
-  selector: 'app-class-config',
-  templateUrl: './class-config.component.html',
-  styleUrls: ['./class-config.component.css']
+    selector: 'app-class-config',
+    templateUrl: './class-config.component.html',
+    styleUrls: ['./class-config.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ClassConfigComponent implements OnInit {
   classes: any;

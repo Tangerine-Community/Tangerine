@@ -1,68 +1,87 @@
-<div *ngIf="syncProtocol === '2'">
-  <app-sync-menu></app-sync-menu>
-</div>
-<div *ngIf="syncProtocol === '1' ">
-  <mat-card appearance="outlined">
-    <mat-card-content>
-      <p class="mat-headline-5">{{'Syncing Status Summary'|translate}}</p>
-      <p>{{'This page will sync records first and any video files afterwards.'|translate}}</p>
-      <h3>{{'Record Sync Progress'|translate}}</h3>
-      <span *ngIf="isSyncSuccesful">{{'Sync Successful'|translate}}</span>
-      <span
-        *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined" class="error">{{'Sync unsuccessful, please retry.'|translate}}</span>
-      <div *ngIf="syncProtocol != 'replication'">
-        <ul>
-        <li>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</li>
-        <li>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</li>
-        <li>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</li>
-        </ul>
-      </div>
-      <div *ngIf="syncComplete">
-        <h3>{{'File Upload Progress'|translate}}</h3>
-        <div *ngIf="!syncMediaService.mediaFilesToSync">
-          <p>{{'No files to upload.'|translate}}</p>
+@if (syncProtocol === '2') {
+  <div>
+    <app-sync-menu></app-sync-menu>
+  </div>
+}
+@if (syncProtocol === '1' ) {
+  <div>
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <p class="mat-headline-5">{{'Syncing Status Summary'|translate}}</p>
+        <p>{{'This page will sync records first and any video files afterwards.'|translate}}</p>
+        <h3>{{'Record Sync Progress'|translate}}</h3>
+        @if (isSyncSuccesful) {
+          <span>{{'Sync Successful'|translate}}</span>
+        }
+        @if (!isSyncSuccesful&&isSyncSuccesful!==undefined) {
+          <span
+          class="error">{{'Sync unsuccessful, please retry.'|translate}}</span>
+        }
+        @if (syncProtocol != 'replication') {
+          <div>
+            <ul>
+              <li>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</li>
+              <li>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</li>
+              <li>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</li>
+            </ul>
+          </div>
+        }
+        @if (syncComplete) {
+          <div>
+            <h3>{{'File Upload Progress'|translate}}</h3>
+            @if (!syncMediaService.mediaFilesToSync) {
+              <div>
+                <p>{{'No files to upload.'|translate}}</p>
+              </div>
+            }
+            @if (showDirectoryDialog) {
+              <div>
+                <label for="folder">{{'Select folder'|translate}}</label>
+                <input type="file" id="folder" webkitdirectory multiple (change)="restoreBackups($event.target.files)"/>
+              </div>
+            }
+            {{statusMessage}}
+            <div class="progress">
+              @if (uploadProgress) {
+                <mat-progress-bar class="progress-bar" mode="determinate"
+                  [value]="progress">
+                </mat-progress-bar>
+              }
+              <!--        <mat-icon class="cancel-upload" (click)="cancelUpload()"-->
+            <!--                  *ngIf="uploadProgress">delete_forever</mat-icon>-->
+          </div>
         </div>
-        <div *ngIf="showDirectoryDialog">
-          <label for="folder">{{'Select folder'|translate}}</label>
-          <input type="file" id="folder" webkitdirectory multiple (change)="restoreBackups($event.target.files)"/>
-        </div>
-        {{statusMessage}}
-        <div class="progress">
-          <mat-progress-bar class="progress-bar" mode="determinate"
-                            [value]="progress" *ngIf="uploadProgress">
-          </mat-progress-bar>
-
-          <!--        <mat-icon class="cancel-upload" (click)="cancelUpload()"-->
-          <!--                  *ngIf="uploadProgress">delete_forever</mat-icon>-->
-        </div>
-      </div>
-      
-
-
+      }
     </mat-card-content>
     <mat-card-actions>
       <button color="primary" mat-raised-button (click)="sync()">{{'SYNC DATA FOR ALL USERS'|translate}}</button>
     </mat-card-actions>
   </mat-card>
   <br>
-  <br>
-  <p class="mat-headline-5">{{'Syncing Status By User'|translate}}</p>
-  <mat-accordion>
-    <mat-expansion-panel *ngFor="let syncData of allUsersSyncData">
-      <mat-expansion-panel-header>
-        {{'Username'|translate}}: {{syncData.username}}
-      </mat-expansion-panel-header>
-
-      <p>{{'Docs Uploaded'|translate}}: {{syncData.docsUploaded}}</p>
-      <p>{{'Docs Not Uploaded'|translate}}: {{syncData.docsNotUploaded}}</p>
-      <ul *ngIf="syncData.uploadQueueResults.length > 0">
-        <li *ngFor="let formResponseId of syncData.uploadQueueResults">{{formResponseId}}</li>
-      </ul>
-      <p>{{'Percentage Complete'|translate}}: {{syncData.syncPercentageComplete|number:'1.2-2'}}%</p>
-
-    </mat-expansion-panel>
-
-  </mat-accordion>
-</div>
-<br><br>
-<div *ngIf="contentVersion">Content version: {{contentVersion}}</div>
+    <br>
+      <p class="mat-headline-5">{{'Syncing Status By User'|translate}}</p>
+      <mat-accordion>
+        @for (syncData of allUsersSyncData; track syncData) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              {{'Username'|translate}}: {{syncData.username}}
+            </mat-expansion-panel-header>
+            <p>{{'Docs Uploaded'|translate}}: {{syncData.docsUploaded}}</p>
+            <p>{{'Docs Not Uploaded'|translate}}: {{syncData.docsNotUploaded}}</p>
+            @if (syncData.uploadQueueResults.length > 0) {
+              <ul>
+                @for (formResponseId of syncData.uploadQueueResults; track formResponseId) {
+                  <li>{{formResponseId}}</li>
+                }
+              </ul>
+            }
+            <p>{{'Percentage Complete'|translate}}: {{syncData.syncPercentageComplete|number:'1.2-2'}}%</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  }
+  <br><br>
+  @if (contentVersion) {
+    <div>Content version: {{contentVersion}}</div>
+  }

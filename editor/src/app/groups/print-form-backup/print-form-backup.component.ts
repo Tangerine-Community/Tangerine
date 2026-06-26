@@ -1,13 +1,15 @@
 import { TangerineFormsService } from './../services/tangerine-forms.service';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-print-form-backup',
-  templateUrl: './print-form-backup.component.html',
-  styleUrls: ['./print-form-backup.component.css']
+    selector: 'app-print-form-backup',
+    templateUrl: './print-form-backup.component.html',
+    styleUrls: ['./print-form-backup.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PrintFormBackupComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;

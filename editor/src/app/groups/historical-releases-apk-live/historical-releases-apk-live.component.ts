@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
@@ -10,9 +10,11 @@ import {Breadcrumb} from "../../shared/_components/breadcrumb/breadcrumb.compone
 import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
-  selector: 'app-historical-releases-apk-live',
-  templateUrl: './historical-releases-apk-live.component.html',
-  styleUrls: ['./historical-releases-apk-live.component.css']
+    selector: 'app-historical-releases-apk-live',
+    templateUrl: './historical-releases-apk-live.component.html',
+    styleUrls: ['./historical-releases-apk-live.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class HistoricalReleasesApkLiveComponent implements OnInit {
   title = _TRANSLATE('APK Live Archives')

@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {_TRANSLATE} from "../../shared/_services/translation-marker";
 import {GroupDevicesService} from "../services/group-devices.service";
 import {ActivatedRoute} from "@angular/router";
 import {GroupsService} from "../services/groups.service";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Loc } from 'tangy-form/util/loc.js';
 import * as qrcode from 'qrcode-generator-es6';
 import * as moment from 'moment'
@@ -24,9 +24,11 @@ interface DeviceInfo {
   desc:string
 }
 @Component({
-  selector: 'app-group-device-sheet',
-  templateUrl: './group-device-sheet.component.html',
-  styleUrls: ['./group-device-sheet.component.css']
+    selector: 'app-group-device-sheet',
+    templateUrl: './group-device-sheet.component.html',
+    styleUrls: ['./group-device-sheet.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDeviceSheetComponent implements OnInit {
 

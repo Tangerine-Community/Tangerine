@@ -2,8 +2,10 @@
   <iron-icon icon="clear" (click)="onCloseClick()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
 </div>
-<div class="secondary" *ngIf="secondaryText">
+@if (secondaryText) {
+  <div class="secondary">
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>
     <span [innerHTML]="secondaryText|unsanitizeHtml"></span>
-</div>
+  </div>
+}
 <mwc-icon class="notification" [hidden]="!hasActiveNotification">notifications</mwc-icon>

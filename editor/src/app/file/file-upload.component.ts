@@ -1,14 +1,16 @@
-import {AfterContentInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
+import {AfterContentInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
+import { HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
 import {Observable, of, throwError} from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import {FileUploadService} from "./services/file-upload.service";
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Component({
-  selector: 'app-file-upload',
-  templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css'],
+    selector: 'app-file-upload',
+    templateUrl: './file-upload.component.html',
+    styleUrls: ['./file-upload.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FileUploadComponent implements OnInit, AfterContentInit {
 

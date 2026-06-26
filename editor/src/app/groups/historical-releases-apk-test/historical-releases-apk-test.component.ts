@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
@@ -11,9 +11,11 @@ import {Breadcrumb} from "../../shared/_components/breadcrumb/breadcrumb.compone
 import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
-  selector: 'app-historical-releases-apk-test',
-  templateUrl: './historical-releases-apk-test.component.html',
-  styleUrls: ['./historical-releases-apk-test.component.css']
+    selector: 'app-historical-releases-apk-test',
+    templateUrl: './historical-releases-apk-test.component.html',
+    styleUrls: ['./historical-releases-apk-test.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class HistoricalReleasesApkTestComponent implements OnInit {
   

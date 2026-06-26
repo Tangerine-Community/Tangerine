@@ -1,6 +1,6 @@
 import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
-import {Component, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, Renderer2, ChangeDetectionStrategy} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
 import { SyncDirection } from '../../sync-direction.enum';
 import {SyncMediaService} from "../../sync-media.service";
@@ -11,9 +11,11 @@ const STATUS_COMPLETED = 'STATUS_COMPLETED'
 const STATUS_ERROR = 'STATUS_ERROR'
 
 @Component({
-  selector: 'app-sync',
-  templateUrl: './sync.component.html',
-  styleUrls: ['./sync.component.css']
+    selector: 'app-sync',
+    templateUrl: './sync.component.html',
+    styleUrls: ['./sync.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SyncComponent implements OnInit, OnDestroy {
 
@@ -47,13 +49,16 @@ export class SyncComponent implements OnInit, OnDestroy {
 
   @Input() fullSync: string;
   currentCheckedValue: boolean = null
+  syncMediaService: SyncMediaService
 
   constructor(
     private syncService: SyncService,
     private userService: UserService,
     private ren: Renderer2,
-    private syncMediaService: SyncMediaService
-  ) { }
+    syncMediaService: SyncMediaService
+  ) {
+    this.syncMediaService = syncMediaService
+  }
 
   async ngOnInit() {
     this.syncMessage = ''

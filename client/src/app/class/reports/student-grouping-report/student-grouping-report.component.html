@@ -2,100 +2,121 @@
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"  [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
   </span>
-<mat-menu #reportsMenu="matMenu">
-  <ng-template matMenuContent>
-    <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-    <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
-  </ng-template>
-</mat-menu>
+  <mat-menu #reportsMenu="matMenu">
+    <ng-template matMenuContent>
+      @for (item of formList; track item) {
+        <button mat-menu-item routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+      }
+      <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
+    </ng-template>
+  </mat-menu>
 </mat-toolbar>
 
-  <mat-card appearance="outlined" class="tangy-card-content-container" *ngIf="ready">
+@if (ready) {
+  <mat-card appearance="outlined" class="tangy-card-content-container">
     <div id="overview">
       <h2 title="{{'Student Grouping'|translate}}">{{'Student Grouping'|translate}}: {{classGroupReport?.subtestName}}</h2>
       <div class="flexbox-horizontal-container">
         <div>
           <p>
             {{'Students Assessed'|translate}}:
-            {{tNumber(classGroupReport?.studentsAssessed)}}
-            / 
-            {{tNumber(classGroupReport?.classSize)}}
+            {{tNumber($safeNavigationMigration(classGroupReport?.studentsAssessed))}}
+            /
+            {{tNumber($safeNavigationMigration(classGroupReport?.classSize))}}
           </p>
-          <p *ngIf="classGroupReport?.studentsToWatch.length > 0">{{'Students to watch'|translate}}:
-            <span *ngFor="let student of classGroupReport?.studentsToWatch">
-              {{student}} &nbsp;
-            </span>
-          </p>
+          @if (classGroupReport?.studentsToWatch.length > 0) {
+            <p>{{'Students to watch'|translate}}:
+              @for (student of classGroupReport?.studentsToWatch; track student) {
+                <span>
+                  {{student}} &nbsp;
+                </span>
+              }
+            </p>
+          }
         </div>
-        <div *ngIf="classGroupReport?.studentsAssessed > 0">
-          <p *ngIf="classGroupReport?.max">
-            {{'Average Correct'|translate}}: 
-              {{tNumber(classGroupReport?.aveCorrect)}}
-              /
-              {{tNumber(classGroupReport?.max)}}
-              ({{tNumber(classGroupReport?.aveCorrectPerc)}}%)
-          </p>
-          <p *ngIf="!classGroupReport?.max">
-            {{'Average Correct'|translate}}: 
-            {{tNumber(classGroupReport?.aveCorrect)}}
-            / 
-            {{tNumber(classGroupReport?.attempted)}}
-            ({{tNumber(classGroupReport?.aveCorrectPerc)}}%)
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <h2 title="{{'Student Grouping'|translate}}" *ngIf="classGroupReport?.studentsAssessed > 0">{{'Student Grouping'|translate}}</h2>
-      <div id="feedback-info" *ngIf="classGroupReport?.studentsAssessed > 0">
-        <p>{{'Click on a percentile to view related feedback.'|translate}}</p>
-        <p>&nbsp;</p>
-      </div>
-    </div>
-   <div id="reportContainer">
-     <div id="stats">
-        <table cdk-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport?.studentsAssessed > 0">
-          <!-- Student Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef title="{{'Student'|translate}}"> {{'Student'|translate}} </th>
-            <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name, element.id)"> {{element["name"]}} </td>
-          </ng-container>
-
-          <!-- calculatedScore Column -->
-          <ng-container matColumnDef="calculatedScore">
-            <th mat-header-cell *matHeaderCellDef title="{{'Score'|translate}}"> {{'Score'|translate}} </th>
-            <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name, element.id)">
-              <span *ngIf="element.score !== undefined">
-                {{element.customScore?element.customScore:tNumber(element.score)}}
+        @if (classGroupReport?.studentsAssessed > 0) {
+          <div>
+            @if (classGroupReport?.max) {
+              <p>
+                {{'Average Correct'|translate}}:
+                {{tNumber($safeNavigationMigration(classGroupReport?.aveCorrect))}}
                 /
-                {{tNumber(element.maxValueAnswer)}}
-              </span>
-            </td>
-          </ng-container>
-
-          <!-- Percentile Column -->
-          <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef title="{{'Percentile'|translate}}"> {{'Percentile'|translate}} </th>
-            <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name,element.id)">
-              <span *ngIf="element.scorePercentageCorrect > -1">{{tNumber(element.scorePercentageCorrect)}} % </span>
-            </td>
-          </ng-container>
-
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef title="{{'Status'|translate}}"> {{'Status'|translate}} </th>
-            <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name, element.id)">
-              <span *ngIf="element.status">{{element.status}}</span>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-          <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
-        </table>
+                {{tNumber($safeNavigationMigration(classGroupReport?.max))}}
+                ({{tNumber($safeNavigationMigration(classGroupReport?.aveCorrectPerc))}}%)
+              </p>
+            }
+            @if (!classGroupReport?.max) {
+              <p>
+                {{'Average Correct'|translate}}:
+                {{tNumber($safeNavigationMigration(classGroupReport?.aveCorrect))}}
+                /
+                {{tNumber($safeNavigationMigration(classGroupReport?.attempted))}}
+                ({{tNumber($safeNavigationMigration(classGroupReport?.aveCorrectPerc))}}%)
+              </p>
+            }
+          </div>
+        }
       </div>
+    </div>
+    <div>
+      @if (classGroupReport?.studentsAssessed > 0) {
+        <h2 title="{{'Student Grouping'|translate}}">{{'Student Grouping'|translate}}</h2>
+      }
+      @if (classGroupReport?.studentsAssessed > 0) {
+        <div id="feedback-info">
+          <p>{{'Click on a percentile to view related feedback.'|translate}}</p>
+          <p>&nbsp;</p>
+        </div>
+      }
+    </div>
+    <div id="reportContainer">
+      <div id="stats">
+        @if (classGroupReport?.studentsAssessed > 0) {
+          <table cdk-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <!-- Student Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef title="{{'Student'|translate}}"> {{'Student'|translate}} </th>
+              <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name, element.id)"> {{element["name"]}} </td>
+            </ng-container>
+            <!-- calculatedScore Column -->
+            <ng-container matColumnDef="calculatedScore">
+              <th mat-header-cell *matHeaderCellDef title="{{'Score'|translate}}"> {{'Score'|translate}} </th>
+              <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name, element.id)">
+                @if (element.score !== undefined) {
+                  <span>
+                    {{element.customScore?element.customScore:tNumber(element.score)}}
+                    /
+                    {{tNumber(element.maxValueAnswer)}}
+                  </span>
+                }
+              </td>
+            </ng-container>
+            <!-- Percentile Column -->
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef title="{{'Percentile'|translate}}"> {{'Percentile'|translate}} </th>
+              <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name,element.id)">
+                @if (element.scorePercentageCorrect > -1) {
+                  <span>{{tNumber(element.scorePercentageCorrect)}} % </span>
+                }
+              </td>
+            </ng-container>
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef title="{{'Status'|translate}}"> {{'Status'|translate}} </th>
+              <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile(element.percentile, classGroupReport.curriculumId, classGroupReport.itemId, element.name, element.id)">
+                @if (element.status) {
+                  <span>{{element.status}}</span>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+            <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
+          </table>
+        }
       </div>
-</mat-card>
+    </div>
+  </mat-card>
+}
 
 <div #container class = "hideme"> </div>
 

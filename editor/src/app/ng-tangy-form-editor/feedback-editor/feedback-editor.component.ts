@@ -1,17 +1,19 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatTable } from "@angular/material/table";
 import {FormMetadata} from "./form-metadata";
 import {Feedback} from "./feedback";
 import {FeedbackService} from "./feedback.service";
 import {ActivatedRoute} from "@angular/router";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 
 @Component({
-  selector: 'feedback-editor',
-  templateUrl: './feedback-editor.component.html',
-  styleUrls: ['./feedback-editor.component.css']
+    selector: 'feedback-editor',
+    templateUrl: './feedback-editor.component.html',
+    styleUrls: ['./feedback-editor.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FeedbackEditorComponent implements OnInit {
 

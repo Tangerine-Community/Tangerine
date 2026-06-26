@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { ActivatedRoute } from '@angular/router';
@@ -7,9 +7,11 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 
 @Component({
-  selector: 'app-case-settings',
-  templateUrl: './case-settings.component.html',
-  styleUrls: ['./case-settings.component.css']
+    selector: 'app-case-settings',
+    templateUrl: './case-settings.component.html',
+    styleUrls: ['./case-settings.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseSettingsComponent implements OnInit {
   allowDeleteIfFormNotStarted = false;

@@ -39,7 +39,7 @@ tangy-location {
 }
 
 #header-buttons paper-button {
-  background: var(--mdc-theme-secondary);
+  background: var(--mat-theme-secondary);
   color: var(--accent-text-color);
   margin-bottom: 15px;
 }

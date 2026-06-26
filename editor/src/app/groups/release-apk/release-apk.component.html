@@ -1,20 +1,30 @@
-<p *ngIf="status==code.STATUS_WAIT">
-  {{'Starting your APK release...'|translate}}
-</p>
+@if (status==code.STATUS_WAIT) {
+  <p>
+    {{'Starting your APK release...'|translate}}
+  </p>
+}
 
-<p *ngIf="status==code.STATUS_BUILDING">
-  {{'Your APK is building...'|translate}}
-</p>
+@if (status==code.STATUS_BUILDING) {
+  <p>
+    {{'Your APK is building...'|translate}}
+  </p>
+}
 
-<p *ngIf="status==code.STATUS_ERROR">
-  {{'Could Not Generate APK'|translate}}
-</p>
+@if (status==code.STATUS_ERROR) {
+  <p>
+    {{'Could Not Generate APK'|translate}}
+  </p>
+}
 
-<p *ngIf="step">
-  {{step}}
-</p>
+@if (step) {
+  <p>
+    {{step}}
+  </p>
+}
 
-<p *ngIf="status==code.STATUS_DONE">
-  {{'Download your APK'|translate}}
-  <a target='_new' href="/releases/{{releaseType}}/apks/{{filepath}}">{{'here'|translate}}</a>.
-</p>
+@if (status==code.STATUS_DONE) {
+  <p>
+    {{'Download your APK'|translate}}
+    <a target='_new' href="/releases/{{releaseType}}/apks/{{filepath}}">{{'here'|translate}}</a>.
+  </p>
+}

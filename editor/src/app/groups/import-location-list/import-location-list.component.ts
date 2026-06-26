@@ -1,6 +1,6 @@
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -10,9 +10,11 @@ import { Loc } from 'tangy-form/util/loc.js';
 import { _ } from 'underscore';
 type AOA = any[][];
 @Component({
-  selector: 'app-import-location-list',
-  templateUrl: './import-location-list.component.html',
-  styleUrls: ['./import-location-list.component.css']
+    selector: 'app-import-location-list',
+    templateUrl: './import-location-list.component.html',
+    styleUrls: ['./import-location-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ImportLocationListComponent implements OnInit {
   constructor(

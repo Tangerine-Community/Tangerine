@@ -1,6 +1,7 @@
 import {
   Component,
-  OnInit
+  OnInit,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
@@ -12,9 +13,11 @@ import {AppConfigService} from "../../../shared/_services/app-config.service";
 declare const sms: any;
 
 @Component({
-  selector: 'app-attendance-dashboard',
-  templateUrl: './attendance-dashboard.component.html',
-  styleUrls: ['./attendance-dashboard.component.css']
+    selector: 'app-attendance-dashboard',
+    templateUrl: './attendance-dashboard.component.html',
+    styleUrls: ['./attendance-dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AttendanceDashboardComponent implements OnInit {
 

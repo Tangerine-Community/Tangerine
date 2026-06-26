@@ -2,7 +2,8 @@ import { Directive, Input, TemplateRef, ViewContainerRef, OnInit } from '@angula
 import { AuthenticationService } from '../_services/authentication.service';
 
 @Directive({
-  selector: '[appHasSomePermissions]'
+    selector: '[appHasSomePermissions]',
+    standalone: false
 })
 export class HasSomePermissionsDirective implements OnInit {
   private _groupId;

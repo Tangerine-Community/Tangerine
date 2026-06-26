@@ -1,40 +1,45 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
 <div id="download-all-container" >
-  <button mat-raised-button color="warn" *ngIf="datasetDetail?.status === 'Available' " class="download-all-button" (click)="download(datasetDetail.downloadUrl)">
-    <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-    {{'download all'|translate}}
-  </button>
- <button mat-raised-button color="warn" *ngIf="datasetDetail?.status === 'In progress'" disabled>
-    <mat-spinner diameter=25></mat-spinner> {{'download all'|translate}}
-  </button>
+  @if (datasetDetail?.status === 'Available' ) {
+    <button mat-raised-button color="warn" class="download-all-button" (click)="download(datasetDetail.downloadUrl)">
+      <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+      {{'download all'|translate}}
+    </button>
+  }
+  @if (datasetDetail?.status === 'In progress') {
+    <button mat-raised-button color="warn" disabled>
+      <mat-spinner diameter=25></mat-spinner> {{'download all'|translate}}
+    </button>
+  }
 </div>
-<div *ngIf="datasetDetail && !stateUnavailable" class="tangy-full-width">
+@if (datasetDetail && !stateUnavailable) {
+  <div class="tangy-full-width">
     <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail?.status}}</p>
-    <p [hidden]="!datasetDetail?.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail?.description}}</p>    
-    <p><strong>{{'Exclude PII'|translate}}</strong>: 
-      {{datasetDetail.excludePii ? 'true' : 'false'}}
-    </p>
-    <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail?.month === '*' ? 'All months' : datasetDetail?.month }}</p>
-    <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail?.year === '*' ? 'All years' : datasetDetail?.year }}</p>
+    <p [hidden]="!datasetDetail?.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail?.description}}</p>
+    <p><strong>{{'Exclude PII'|translate}}</strong>:
+    {{datasetDetail.excludePii ? 'true' : 'false'}}
+  </p>
+  <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail?.month === '*' ? 'All months' : datasetDetail?.month }}</p>
+  <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail?.year === '*' ? 'All years' : datasetDetail?.year }}</p>
 </div>
-<table *ngIf="datasetDetail && !stateUnavailable"
+}
+@if (datasetDetail && !stateUnavailable) {
+  <table
     mat-table
     [dataSource]="datasetDetail.csvs"
     class="mat-elevation-z8 full-width"
-  >
+    >
     <ng-container matColumnDef="formTitle">
       <th mat-header-cell *matHeaderCellDef>{{'Form'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
         {{ dataSet|formTitleFromInfo }}
       </td>
     </ng-container>
-
     <ng-container matColumnDef="csvTemplateTitle">
       <th mat-header-cell *matHeaderCellDef>{{'Spreadsheet Template'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">{{ dataSet?.csvTemplateTitle }}</td>
     </ng-container>
-    
     <ng-container matColumnDef="inProgress">
       <th mat-header-cell *matHeaderCellDef>{{'Status'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
@@ -43,21 +48,24 @@
         {{ !dataSet?.complete && !dataSet?.inProgress ? 'Queued' : '' | translate}}
       </td>
     </ng-container>
-    
     <ng-container matColumnDef="outputPath">
       <th mat-header-cell *matHeaderCellDef>{{'Download File'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
         <mat-spinner diameter=25 [hidden]="dataSet?.complete || !dataSet?.inProgress"></mat-spinner>
-        <a *ngIf="dataSet?.complete" mat-icon-button [href]="datasetDetail?.baseUrl+ dataSet?.outputPath">
-          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i><span class="download-text">download file</span>
-        </a>
+        @if (dataSet?.complete) {
+          <a mat-icon-button [href]="$safeNavigationMigration(datasetDetail?.baseUrl)+ $safeNavigationMigration(dataSet?.outputPath)">
+            <i class="material-icons mat-32 tangy-location-list-icon">get_app</i><span class="download-text">download file</span>
+          </a>
+        }
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+}
 
-<div *ngIf="stateUnavailable" class="tangy-full-width">
-  <p>{{'Looking for data...'|translate}}</p>
-</div>
+@if (stateUnavailable) {
+  <div class="tangy-full-width">
+    <p>{{'Looking for data...'|translate}}</p>
+  </div>
+}

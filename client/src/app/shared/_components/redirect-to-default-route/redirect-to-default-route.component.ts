@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
@@ -6,9 +6,11 @@ import { AppConfigService } from '../../_services/app-config.service';
 import {VariableService} from "../../_services/variable.service";
 
 @Component({
-  selector: 'app-redirect-to-default-route',
-  templateUrl: './redirect-to-default-route.component.html',
-  styleUrls: ['./redirect-to-default-route.component.css']
+    selector: 'app-redirect-to-default-route',
+    templateUrl: './redirect-to-default-route.component.html',
+    styleUrls: ['./redirect-to-default-route.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class RedirectToDefaultRouteComponent implements OnInit {
   window:any;

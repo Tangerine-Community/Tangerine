@@ -2,13 +2,15 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from './../groups/services/groups.service';
 import { MenuService } from './../shared/_services/menu.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-support',
-  templateUrl: './support.component.html',
-  styleUrls: ['./support.component.css']
+    selector: 'app-support',
+    templateUrl: './support.component.html',
+    styleUrls: ['./support.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SupportComponent implements OnInit {
 

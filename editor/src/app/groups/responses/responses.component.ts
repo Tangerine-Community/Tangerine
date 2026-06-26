@@ -2,7 +2,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { generateFlatResponse } from './tangy-form-response-flatten';
 import { TangerineFormsService } from './../services/tangerine-forms.service';
-import { Component, OnInit, Input,ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment'
@@ -12,9 +12,11 @@ import { debounceTime } from 'rxjs/operators';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 @Component({
-  selector: 'app-responses',
-  templateUrl: './responses.component.html',
-  styleUrls: ['./responses.component.css']
+    selector: 'app-responses',
+    templateUrl: './responses.component.html',
+    styleUrls: ['./responses.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ResponsesComponent implements OnInit {
 

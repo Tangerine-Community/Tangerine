@@ -9,14 +9,18 @@
       <app-case-event-schedule></app-case-event-schedule>
     </ng-template>
   </mat-tab>
-  <mat-tab *ngIf="showIssues" label="{{'ISSUES'|translate}}">
-    <ng-template matTabContent>
-      <app-issues></app-issues>
-    </ng-template>
-  </mat-tab>
-  <mat-tab *ngIf="showCaseReports" label="{{'REPORTS'|translate}}">
-    <ng-template matTabContent>
-      <app-case-reports></app-case-reports>
-    </ng-template>
-  </mat-tab>
+  @if (showIssues) {
+    <mat-tab label="{{'ISSUES'|translate}}">
+      <ng-template matTabContent>
+        <app-issues></app-issues>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (showCaseReports) {
+    <mat-tab label="{{'REPORTS'|translate}}">
+      <ng-template matTabContent>
+        <app-case-reports></app-case-reports>
+      </ng-template>
+    </mat-tab>
+  }
 </mat-tab-group>

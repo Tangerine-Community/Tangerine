@@ -1,13 +1,15 @@
 import { TangerineFormsService } from './../services/tangerine-forms.service';
-import { Component, OnInit, ElementRef, ViewChild} from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-print-stimuli-screen',
-  templateUrl: './print-stimuli-screen.component.html',
-  styleUrls: ['./print-stimuli-screen.component.css']
+    selector: 'app-print-stimuli-screen',
+    templateUrl: './print-stimuli-screen.component.html',
+    styleUrls: ['./print-stimuli-screen.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PrintStimuliScreenComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;

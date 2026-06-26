@@ -1,12 +1,14 @@
-import { AfterContentInit, OnInit, ElementRef, Component, ViewChild } from '@angular/core';
+import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '../../shared/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-case-details',
-  templateUrl: './case-details.component.html',
-  styleUrls: ['./case-details.component.css']
+    selector: 'app-case-details',
+    templateUrl: './case-details.component.html',
+    styleUrls: ['./case-details.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseDetailsComponent implements OnInit, AfterContentInit {
   locationId;

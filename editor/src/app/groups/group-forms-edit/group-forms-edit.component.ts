@@ -1,12 +1,14 @@
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-group-forms-edit',
-  templateUrl: './group-forms-edit.component.html',
-  styleUrls: ['./group-forms-edit.component.css']
+    selector: 'app-group-forms-edit',
+    templateUrl: './group-forms-edit.component.html',
+    styleUrls: ['./group-forms-edit.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupFormsEditComponent implements OnInit {
 

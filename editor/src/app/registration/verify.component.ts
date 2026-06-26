@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  //selector: 'app-verify',
-  templateUrl: './verify.component.html',
-  //styleUrls: ['./verify.component.css']
+    //selector: 'app-verify',
+    templateUrl: './verify.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class VerifyComponent implements OnInit {
 

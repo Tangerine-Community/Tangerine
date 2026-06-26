@@ -1,7 +1,7 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -10,9 +10,11 @@ import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
 
 @Component({
-  selector: 'app-event-form',
-  templateUrl: './event-form.component.html',
-  styleUrls: ['./event-form.component.css']
+    selector: 'app-event-form',
+    templateUrl: './event-form.component.html',
+    styleUrls: ['./event-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EventFormComponent implements OnInit, OnDestroy {
 

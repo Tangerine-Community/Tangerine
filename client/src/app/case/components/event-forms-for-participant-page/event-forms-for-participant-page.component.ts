@@ -1,10 +1,12 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-event-forms-for-participant-page',
-  templateUrl: './event-forms-for-participant-page.component.html',
-  styleUrls: ['./event-forms-for-participant-page.component.css']
+    selector: 'app-event-forms-for-participant-page',
+    templateUrl: './event-forms-for-participant-page.component.html',
+    styleUrls: ['./event-forms-for-participant-page.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EventFormsForParticipantPageComponent implements OnInit {
 

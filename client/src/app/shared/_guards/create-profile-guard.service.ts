@@ -1,10 +1,10 @@
 import { AppConfigService } from './../_services/app-config.service';
 import { Injectable } from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { UserService } from '../_services/user.service';
 
 @Injectable()
-export class CreateProfileGuardService implements CanActivate {
+export class CreateProfileGuardService  {
 
   constructor(
     private router: Router,

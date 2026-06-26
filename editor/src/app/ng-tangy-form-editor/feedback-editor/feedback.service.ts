@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Feedback} from "./feedback";
 import {ActivatedRoute} from "@angular/router";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {FormMetadata} from "./form-metadata";
 import { catchError, map, tap } from 'rxjs/operators';
 import {Observable, of} from "rxjs";

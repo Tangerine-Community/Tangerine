@@ -1,30 +1,37 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <form class="tangy-full-width" novalidate #addUserToGroupForm="ngForm">
-  <div *ngIf="newUser; else showSelected">
-    Begin typing the username to choose the user:
-    <mat-form-field class="tangy-full-width">
-      <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
-        <mat-option *ngFor="let username of users" [value]="username">
-          {{ username }}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-  </div>
-  <ng-template #showSelected>
+  @if (newUser) {
+    <div>
+      Begin typing the username to choose the user:
+      <mat-form-field class="tangy-full-width">
+        <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
+          @for (username of users; track username) {
+            <mat-option [value]="username">
+              {{ username }}
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  } @else {
     <div>
       User: {{ selectedUser }}
     </div>
-  </ng-template>
+  }
   <br>
 
-  <p *ngIf="roles" class="tangy-input-width">
-    <mat-checkbox #f (change)="onSelectChange(r.role, f.checked)"
-        [checked]="doesUserHaveRole(r.role)" *ngFor="let r of roles"
-        [name]="r.role">
-        {{r.role}}
-    </mat-checkbox>
-</p>
+    @if (roles) {
+      <p class="tangy-input-width">
+        @for (r of roles; track r) {
+          <mat-checkbox #f (change)="onSelectChange(r.role, f.checked)"
+            [checked]="doesUserHaveRole(r.role)"
+            [name]="r.role">
+            {{r.role}}
+          </mat-checkbox>
+        }
+      </p>
+    }
 
-  <button [disabled]="role==='_'||!role||!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
-</form>
+    <button [disabled]="role==='_'||!role||!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
+  </form>

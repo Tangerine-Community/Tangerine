@@ -1,13 +1,15 @@
 import { Subject } from 'rxjs';
 import { DeviceService } from './../../services/device.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker"
 import { Device } from '../../classes/device.class';
 
 @Component({
-  selector: 'app-device-registration',
-  templateUrl: './device-registration.component.html',
-  styleUrls: ['./device-registration.component.css']
+    selector: 'app-device-registration',
+    templateUrl: './device-registration.component.html',
+    styleUrls: ['./device-registration.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DeviceRegistrationComponent implements OnInit {
 

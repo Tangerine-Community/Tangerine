@@ -1,5 +1,5 @@
 import { DeviceService } from './../../device/services/device.service';
-import { InjectionToken } from '@angular/core';
+import { InjectionToken, ChangeDetectionStrategy } from '@angular/core';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { SyncService } from './../../sync/sync.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
@@ -9,13 +9,15 @@ import { Router } from '@angular/router';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'app-associate-user-profile',
-  templateUrl: './associate-user-profile.component.html',
-  styleUrls: ['./associate-user-profile.component.css']
+    selector: 'app-associate-user-profile',
+    templateUrl: './associate-user-profile.component.html',
+    styleUrls: ['./associate-user-profile.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AssociateUserProfileComponent implements OnInit {
 
-  @ViewChild('container', {static: true}) container: ElementRef;
+  @ViewChild('container', {static: true}) container!: ElementRef;
 
   constructor(
     private router: Router,
@@ -33,22 +35,22 @@ export class AssociateUserProfileComponent implements OnInit {
     const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
     let userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
     // Filter out any Device Admin profiles which have no content.
-    userProfiles = userProfiles.filter(userProfile => userProfile.items && userProfile.items[0])
+    userProfiles = userProfiles.filter((userProfile: any) => userProfile.items && userProfile.items[0])
     if (!appConfig.disableDeviceUserFilteringByAssignment) {
-      const localUserProfiles = userProfiles.filter(profile => profile.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
+      const localUserProfiles = userProfiles.filter((profile: any) => profile.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
       userProfiles = localUserProfiles
     }
     const userAccounts = await this.userService.getAllUserAccounts()
-    const availableUserProfiles = userProfiles.filter((userProfile) => !userAccounts.find(userAccount => userAccount.userUUID === userProfile._id))
+    const availableUserProfiles = userProfiles.filter((userProfile: any) => !userAccounts.find((userAccount: any) => userAccount.userUUID === userProfile._id))
     this.container.nativeElement.innerHTML = `
       <tangy-form id="user-profile-select-form">
         <tangy-form-item id="user-profile-select-item">
           <tangy-select name="user-profile-select" required>
-            ${availableUserProfiles.map(userProfile => `
+            ${availableUserProfiles.map((userProfile: any) => `
               <option value="${userProfile._id}">
                 ${userProfile.items[0].inputs
-                  .filter(input => typeof input.value === 'string')
-                  .map(input => `${input.name}: ${input.value}`).join(', ')}
+                  .filter((input: any) => typeof input.value === 'string')
+                  .map((input: any) => `${input.name}: ${input.value}`).join(', ')}
               </option>
             `).join('')}
           </tangy-select>
@@ -73,7 +75,7 @@ export class AssociateUserProfileComponent implements OnInit {
     } catch(e) {
       // It's ok if this fails. It's probably because they are trying again and the profile has already been deleted.
     }
-    userAccount.userUUID = this.container.nativeElement.querySelector('tangy-form').inputs.find(input => input.name === 'user-profile-select').value
+      userAccount.userUUID = this.container.nativeElement.querySelector('tangy-form').inputs.find((input: any) => input.name === 'user-profile-select').value
     userAccount.initialProfileComplete = true
     await usersDb.put(userAccount)
     this.router.navigate([`/${appConfig.homeUrl}`] );

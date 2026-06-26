@@ -1,48 +1,69 @@
 <div class="header">
   <div>
     <mat-chip-listbox>
-      <mat-chip-option [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
-        *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip-option>
+      @for (breadcrumb of breadcrumbs; track breadcrumb) {
+        <mat-chip-option [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
+        (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip-option>
+      }
     </mat-chip-listbox>
   </div>
   <div class="button-row">
-    <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!showLocationForm"
-      mat-raised-button (click)="showLocationForm=!showLocationForm">ADD
-      {{locationsLevels[breadcrumbs.length-1]}} to
+    @if (locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!showLocationForm) {
+      <button
+        mat-raised-button (click)="showLocationForm=!showLocationForm">ADD
+        {{locationsLevels[breadcrumbs.length-1]}} to
       {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-    <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&showLocationForm"
+    }
+    @if (locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&showLocationForm) {
+      <button
       mat-raised-button (click)="hideLocationForm()">Hide Editing Form</button>
-    <button *ngIf="breadcrumbs.length>2&&!isMoveLocationFormShown" mat-raised-button (click)="showMoveLocationForm()">MOVE
+    }
+    @if (breadcrumbs.length>2&&!isMoveLocationFormShown) {
+      <button mat-raised-button (click)="showMoveLocationForm()">MOVE
       {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-    <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="hideLocationForm()">HIDE
+    }
+    @if (breadcrumbs.length>2&&isMoveLocationFormShown) {
+      <button mat-raised-button (click)="hideLocationForm()">HIDE
       FORM</button>
+    }
   </div>
 </div>
-<span *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" class="tangy-foreground-primary">{{'Move'|translate}}
-  {{breadcrumbs[breadcrumbs.length-1]['label']}}
-
+@if (breadcrumbs.length>2&&isMoveLocationFormShown) {
+  <span class="tangy-foreground-primary">{{'Move'|translate}}
+    {{breadcrumbs[breadcrumbs.length-1]['label']}}
   to another {{locationsLevels[breadcrumbs.length-3]}}</span>
-<div *ngIf="isLoading">
-  <app-tangy-loading></app-tangy-loading>
-</div>
-<div *ngIf="showLocationForm">
-  <form name="newLocationItemForm" class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
-    <mat-form-field class="tangy-full-width">
-      <input name="newItemLabel" [(ngModel)]="form.label" matInput placeholder="{{'Label'|translate}}" required>
-    </mat-form-field>
-    <div *ngIf="levelHasMetadata">
-      <mat-form-field class="tangy-full-width" *ngFor="let item of locationList.metadata[locationsLevels[breadcrumbs.length-1]]">
-        <input [name]="item.variableName" matInput [type]="item.type" [(ngModel)]="form[item.variableName]"
-          placeholder="{{item.label}}" [required]="item.requiredField">
+}
+@if (isLoading) {
+  <div>
+    <app-tangy-loading></app-tangy-loading>
+  </div>
+}
+@if (showLocationForm) {
+  <div>
+    <form name="newLocationItemForm" class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
+      <mat-form-field class="tangy-full-width">
+        <input name="newItemLabel" [(ngModel)]="form.label" matInput placeholder="{{'Label'|translate}}" required>
       </mat-form-field>
-    </div>
-    <button [hidden]="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
+      @if (levelHasMetadata) {
+        <div>
+          @for (item of locationList.metadata[locationsLevels[breadcrumbs.length-1]]; track item) {
+            <mat-form-field class="tangy-full-width">
+              <input [name]="item.variableName" matInput [type]="item.type" [(ngModel)]="form[item.variableName]"
+                placeholder="{{item.label}}" [required]="item.requiredField">
+            </mat-form-field>
+          }
+        </div>
+      }
+      <button [hidden]="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
       mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
-    <button *ngIf="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
-      mat-raised-button color="warn" (click)="editItem()">{{'Update
-      Record'|translate}}</button>
-  </form>
-</div>
+      @if (isItemMarkedForUpdate) {
+        <button type="button" [disabled]="newLocationItemForm.invalid"
+          mat-raised-button color="warn" (click)="editItem()">{{'Update
+        Record'|translate}}</button>
+      }
+    </form>
+  </div>
+}
 <div [hidden]="!isMoveLocationFormShown">
   <div #container>
     <div></div>
@@ -54,17 +75,21 @@
 
 <mat-list>
   <mat-list-item class="tangy-location-list">
-    <span *ngIf="locationChildren.length>0" class="tangy-foreground-primary">{{'Children'|translate}} of
+    @if (locationChildren.length>0) {
+      <span class="tangy-foreground-primary">{{'Children'|translate}} of
       {{breadcrumbs[breadcrumbs.length-1]['label']}}</span>
+    }
     <span class="tangy-spacer"></span>
     <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
   </mat-list-item>
-  <mat-list-item role="listitem" *ngFor="let child of locationChildren">
-    <span class="faux-anchor tangy-foreground-secondary" (click)="onChildClick(child.id)">{{child.label}} - id
+  @for (child of locationChildren; track child) {
+    <mat-list-item role="listitem">
+      <span class="faux-anchor tangy-foreground-secondary" (click)="onChildClick(child.id)">{{child.label}} - id
       {{child.id}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-secondary faux-anchor" (click)="showEditForm(child)">
-      <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
-    </span>
-  </mat-list-item>
+      <span class="tangy-spacer"></span>
+      <span class="tangy-foreground-secondary faux-anchor" (click)="showEditForm(child)">
+        <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
+      </span>
+    </mat-list-item>
+  }
 </mat-list>

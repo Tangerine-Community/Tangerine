@@ -1,7 +1,10 @@
-<mat-card *ngIf="!ready">
-  Loading...
-</mat-card>
-<mat-card *ngIf="ready">
+@if (!ready) {
+  <mat-card>
+    Loading...
+  </mat-card>
+}
+@if (ready) {
+  <mat-card>
     <form role="form" #login='ngForm' novalidate>
       <span #customLoginMarkup></span>
       <mat-form-field>
@@ -12,10 +15,11 @@
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <br>
-      <button (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
-      <span id="err">
-        <small>{{errorMessage}}</small>
-      </span>
-    </form>
-</mat-card>
+        <br>
+          <button (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
+          <span id="err">
+            <small>{{errorMessage}}</small>
+          </span>
+        </form>
+      </mat-card>
+    }

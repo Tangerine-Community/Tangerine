@@ -1,13 +1,15 @@
 import { UserService } from 'src/app/shared/_services/user.service';
 import { TangyFormsPlayerComponent } from './../tangy-forms-player/tangy-forms-player.component';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Component({
-  selector: 'app-tangy-forms-player-route',
-  templateUrl: './tangy-forms-player-route.component.html',
-  styleUrls: ['./tangy-forms-player-route.component.css']
+    selector: 'app-tangy-forms-player-route',
+    templateUrl: './tangy-forms-player-route.component.html',
+    styleUrls: ['./tangy-forms-player-route.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class TangyFormsPlayerRouteComponent implements OnInit {
 

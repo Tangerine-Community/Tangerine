@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -6,9 +6,11 @@ import { GroupsService } from '../services/groups.service';
 import { Loc } from 'tangy-form/util/loc.js';
 
 @Component({
-  selector: 'app-location-list-editor',
-  templateUrl: './location-list-editor.component.html',
-  styleUrls: ['./location-list-editor.component.css']
+    selector: 'app-location-list-editor',
+    templateUrl: './location-list-editor.component.html',
+    styleUrls: ['./location-list-editor.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class LocationListEditorComponent implements OnInit {
 

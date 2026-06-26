@@ -1,7 +1,7 @@
 import { ServerConfigService } from './../../shared/_services/server-config.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from 'src/app/core/auth/_services/user.service';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { HttpClient } from '@angular/common/http';
@@ -11,9 +11,11 @@ import {TangerineFormsService} from "../services/tangerine-forms.service";
 import {FilesService} from "../services/files.service";
 
 @Component({
-  selector: 'app-group-data',
-  templateUrl: './group-data.component.html',
-  styleUrls: ['./group-data.component.css']
+    selector: 'app-group-data',
+    templateUrl: './group-data.component.html',
+    styleUrls: ['./group-data.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDataComponent implements OnInit {
 

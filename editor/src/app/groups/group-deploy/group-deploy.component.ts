@@ -1,14 +1,16 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 
 @Component({
-  selector: 'app-group-deploy',
-  templateUrl: './group-deploy.component.html',
-  styleUrls: ['./group-deploy.component.css']
+    selector: 'app-group-deploy',
+    templateUrl: './group-deploy.component.html',
+    styleUrls: ['./group-deploy.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDeployComponent implements OnInit {
 

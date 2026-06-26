@@ -1,22 +1,30 @@
-<div *ngIf="this.response || (!this.response && !eventForm.formResponseId)" class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
-	<mwc-icon (click)="this.navigateToEventForm()" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
-	<div (click)="this.navigateToEventForm()">
-		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
-		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
-	</div>
-	<span class="tangy-spacer"></span>
-	<span *ngIf="canUserDeleteForms">
-		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
-	</span>
-</div>
-<div *ngIf="!this.response && eventForm.formResponseId" class="no-response icon-list-item {{eventForm.required ? 'required' : ''}}" >
-	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
-	<div>
-		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
-		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
-	</div>
-	<span class="tangy-spacer"></span>
-	<span *ngIf="canUserDeleteForms">
-		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
-	</span>
-</div>
+@if (this.response || (!this.response && !eventForm.formResponseId)) {
+  <div class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
+    <mwc-icon (click)="this.navigateToEventForm()" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
+    <div (click)="this.navigateToEventForm()">
+      <div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
+      <div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
+    </div>
+    <span class="tangy-spacer"></span>
+    @if (canUserDeleteForms) {
+      <span>
+        <paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
+      </span>
+    }
+  </div>
+}
+@if (!this.response && eventForm.formResponseId) {
+  <div class="no-response icon-list-item {{eventForm.required ? 'required' : ''}}" >
+    <mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
+    <div>
+      <div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
+      <div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
+    </div>
+    <span class="tangy-spacer"></span>
+    @if (canUserDeleteForms) {
+      <span>
+        <paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
+      </span>
+    }
+  </div>
+}

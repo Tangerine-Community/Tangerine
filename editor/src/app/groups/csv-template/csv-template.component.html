@@ -9,45 +9,55 @@
       <mat-label>Form</mat-label>
       <select matNativeControl required (change)="onFormIdSelect($event)" [(ngModel)]="formId" name="formId">
         <option value="" selected></option>
-        <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo|formTitleFromInfo}}</option>
+        @for (formInfo of formsInfo; track formInfo) {
+          <option [value]="formInfo.id">{{formInfo|formTitleFromInfo}}</option>
+        }
       </select>
-    </mat-form-field> 
-    <h2 *ngIf="formId">Included Columns</h2>
+    </mat-form-field>
+    @if (formId) {
+      <h2>Included Columns</h2>
+    }
     <ol  class="headers">
-      <li *ngFor="let header of headers">
-        <table>
-          <tr>
-            <td>
-              {{header}}
-            </td>
-            <td class="actions-column">
-              <span>
-                <paper-button class="button" (click)="headerRemove(header)">X</paper-button>
-              </span>
-            </td>
-          </tr>
-        </table>
-      </li>
-    </ol>
-    <span *ngIf="removedHeaders.length > 0">
-      <h2>Excluded Columns</h2>
-      <ol  class="headers">
-        <li *ngFor="let header of removedHeaders">
+      @for (header of headers; track header) {
+        <li>
           <table>
             <tr>
               <td>
                 {{header}}
               </td>
               <td class="actions-column">
-                <span >
-                  <paper-button class="button" (click)="headerAdd(header)">+</paper-button>
-                </span> 
+                <span>
+                  <paper-button class="button" (click)="headerRemove(header)">X</paper-button>
+                </span>
               </td>
             </tr>
           </table>
         </li>
-      </ol>
-    </span>
+      }
+    </ol>
+    @if (removedHeaders.length > 0) {
+      <span>
+        <h2>Excluded Columns</h2>
+        <ol  class="headers">
+          @for (header of removedHeaders; track header) {
+            <li>
+              <table>
+                <tr>
+                  <td>
+                    {{header}}
+                  </td>
+                  <td class="actions-column">
+                    <span >
+                      <paper-button class="button" (click)="headerAdd(header)">+</paper-button>
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </li>
+          }
+        </ol>
+      </span>
+    }
     <paper-button class="button" (click)="onSubmit()">submit</paper-button>
   </form>
 </div>

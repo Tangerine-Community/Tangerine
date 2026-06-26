@@ -1,5 +1,5 @@
 import { UserService } from 'src/app/shared/_services/user.service';
-import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, Renderer2, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {ClassFormService} from '../../_services/class-form.service';
 import {ClassUtils} from '../../class-utils';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -13,9 +13,11 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { tNumber } from 'src/app/t-number.util';
 
 @Component({
-  selector: 'app-task-report',
-  templateUrl: './task-report.component.html',
-  styleUrls: ['./task-report.component.css']
+    selector: 'app-task-report',
+    templateUrl: './task-report.component.html',
+    styleUrls: ['./task-report.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class TaskReportComponent implements OnInit {
 

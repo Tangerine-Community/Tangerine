@@ -1,6 +1,6 @@
 import { NotificationType, Notification, NotificationStatus } from './../../classes/notification.class';
 import { CaseService } from 'src/app/case/services/case.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 interface NotificationInfo {
   id:string
@@ -18,9 +18,11 @@ const NotificationTypeIconMap = {
 }
 
 @Component({
-  selector: 'app-case-notifications',
-  templateUrl: './case-notifications.component.html',
-  styleUrls: ['./case-notifications.component.css']
+    selector: 'app-case-notifications',
+    templateUrl: './case-notifications.component.html',
+    styleUrls: ['./case-notifications.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseNotificationsComponent implements OnInit {
 

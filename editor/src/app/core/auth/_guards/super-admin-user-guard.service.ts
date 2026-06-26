@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { UserService } from '../_services/user.service';
 import { TangyErrorHandler } from '../../../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../../../shared/_services/translation-marker';
 
 @Injectable()
-export class SuperAdminUserGuard implements CanActivate {
+export class SuperAdminUserGuard  {
 
   constructor(
     private router: Router,

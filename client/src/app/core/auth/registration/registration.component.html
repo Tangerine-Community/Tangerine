@@ -3,7 +3,7 @@
     <img id="logo" src='./logo.png'/>
     <paper-tabs selected="1">
       <paper-tab routerLink="/login">
-          {{'LOGIN'|translate}}
+        {{'LOGIN'|translate}}
       </paper-tab>
       <paper-tab>{{'REGISTER'|translate}}</paper-tab>
     </paper-tabs>
@@ -12,50 +12,58 @@
 <div class="login-app-content">
   <div class="group container content-inner">
     <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
-      <mat-form-field *ngIf="requiresAdminPassword === true">
-        <input name="admin-password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="userSignup.adminPassword" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>{{'Admin Password'|translate}}
-        </mat-placeholder>
-        <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </mat-form-field>
+      @if (requiresAdminPassword === true) {
+        <mat-form-field>
+          <input name="admin-password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="userSignup.adminPassword" required>
+          <mat-placeholder>
+            <i class="material-icons app-input-icon">lock_open</i>{{'Admin Password'|translate}}
+          </mat-placeholder>
+          <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </mat-form-field>
+      }
       <mat-form-field appearance="fill" floatLabel="always">
         <mat-label><mat-icon matSuffix>face</mat-icon>  {{'Username'|translate}}</mat-label>
         <input name="username" type="text" matInput [(ngModel)]="userSignup.username" (blur)="doesUserExist(userSignup.username)" required>
-<!--        <mat-placeholder>-->
-<!--          <i class="material-icons app-input-icon">face</i>{{'Username'|translate}}-->
-<!--        </mat-placeholder>-->
-      </mat-form-field>
+        <!--        <mat-placeholder>-->
+        <!--          <i class="material-icons app-input-icon">face</i>{{'Username'|translate}}-->
+      <!--        </mat-placeholder>-->
+    </mat-form-field>
+    <br>
+      @if (!noPassword) {
+        <mat-form-field>
+          <input name="password" matInput [(ngModel)]="userSignup.password" [type]="hidePassword ? 'password' : 'text'" required>
+          <mat-placeholder>
+            <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
+          </mat-placeholder>
+          <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </mat-form-field>
+      }
       <br>
-      <mat-form-field *ngIf="!noPassword">
-        <input name="password" matInput [(ngModel)]="userSignup.password" [type]="hidePassword ? 'password' : 'text'" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
-        </mat-placeholder>
-        <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </mat-form-field>
-      <br>
-      <mat-form-field *ngIf="!noPassword">
-        <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" [type]="hidePassword ? 'password' : 'text'" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
-        </mat-placeholder>
-      </mat-form-field>
-      <br>
-      <mat-form-field *ngIf="!noPassword" appearance="fill" floatLabel="always">
-        <mat-label><mat-icon matSuffix>security</mat-icon>  {{securityQuestionText}}</mat-label>
-        <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="userSignup.securityQuestionResponse" required>
-<!--        <mat-placeholder>-->
-<!--          <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}-->
-<!--        </mat-placeholder>-->
-      </mat-form-field>
-      <br>
-      <button [disabled]="disableSubmit" mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>
-      <br>
-      <br>
-      <span [id]="statusMessage.type">
-        <small>{{statusMessage.message}}</small>
-      </span>
-    </form>
-  </div>
-</div>
+        @if (!noPassword) {
+          <mat-form-field>
+            <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" [type]="hidePassword ? 'password' : 'text'" required>
+            <mat-placeholder>
+              <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
+            </mat-placeholder>
+          </mat-form-field>
+        }
+        <br>
+          @if (!noPassword) {
+            <mat-form-field appearance="fill" floatLabel="always">
+              <mat-label><mat-icon matSuffix>security</mat-icon>  {{securityQuestionText}}</mat-label>
+              <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="userSignup.securityQuestionResponse" required>
+              <!--        <mat-placeholder>-->
+              <!--          <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}-->
+            <!--        </mat-placeholder>-->
+          </mat-form-field>
+        }
+        <br>
+          <button [disabled]="disableSubmit" mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>
+          <br>
+            <br>
+              <span [id]="statusMessage.type">
+                <small>{{statusMessage.message}}</small>
+              </span>
+            </form>
+          </div>
+        </div>

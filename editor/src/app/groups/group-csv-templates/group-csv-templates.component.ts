@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { CsvTemplate, TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
-  selector: 'app-group-csv-templates',
-  templateUrl: './group-csv-templates.component.html',
-  styleUrls: ['./group-csv-templates.component.css']
+    selector: 'app-group-csv-templates',
+    templateUrl: './group-csv-templates.component.html',
+    styleUrls: ['./group-csv-templates.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupCsvTemplatesComponent implements OnInit {
 

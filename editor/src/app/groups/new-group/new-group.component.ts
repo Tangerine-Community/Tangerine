@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -9,9 +9,11 @@ import {ProcessMonitorService} from "../../shared/_services/process-monitor.serv
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
-  selector: 'app-new-group',
-  templateUrl: './new-group.component.html',
-  styleUrls: ['./new-group.component.css']
+    selector: 'app-new-group',
+    templateUrl: './new-group.component.html',
+    styleUrls: ['./new-group.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NewGroupComponent implements OnInit {
   contentSet:string

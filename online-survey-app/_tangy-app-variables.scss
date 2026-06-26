@@ -1,9 +1,9 @@
 @use '@angular/material' as mat;
 
-$tangerine-app-primary: mat.define-palette(mat.$blue-palette, 700);
-$tangerine-app-accent:  mat.define-palette(mat.$orange-palette, 800);
-$tangerine-app-warn:    mat.define-palette(mat.$red-palette);
-$tangy-app-foreground:mat.define-palette(mat.$green-palette);
+$tangerine-app-primary: mat.m2-define-palette(mat.$m2-blue-palette, 700);
+$tangerine-app-accent:  mat.m2-define-palette(mat.$m2-orange-palette, 800);
+$tangerine-app-warn:    mat.m2-define-palette(mat.$m2-red-palette);
+$tangy-app-foreground:mat.m2-define-palette(mat.$m2-green-palette);
 $tangy-foreground-error-message:red;
 $tangy-foreground-success-message:green;
 $tangy-foreground-primary: #3c5b8d;

@@ -2,7 +2,7 @@ import { UserService } from './../../../core/auth/_services/user.service';
 import { Issue, IssueEventType } from '../../classes/issue.class';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -12,9 +12,11 @@ import { EventFormDefinition } from '../../classes/event-form-definition.class';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
-  selector: 'app-issue-form',
-  templateUrl: './issue-form.component.html',
-  styleUrls: ['./issue-form.component.css']
+    selector: 'app-issue-form',
+    templateUrl: './issue-form.component.html',
+    styleUrls: ['./issue-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class IssueFormComponent implements OnInit {
 

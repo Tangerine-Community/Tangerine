@@ -93,9 +93,6 @@ registerLocaleData(localeEsGt);
     // }),
   ],
   declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent, BehaviorCheckComponent, StudentDetailsComponent],
-  entryComponents: [
-    StudentDetailsComponent
-  ],
   providers: [UserService, ClassFormService, DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {

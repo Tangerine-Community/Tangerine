@@ -3,7 +3,7 @@ import {Feedback} from "../feedback-editor/feedback";
 import {FormMetadata} from "../feedback-editor/form-metadata";
 import {FeedbackService} from "../feedback-editor/feedback.service";
 import {MediaInput} from "./media-input-item";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'

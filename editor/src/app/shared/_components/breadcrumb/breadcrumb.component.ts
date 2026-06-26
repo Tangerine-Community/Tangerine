@@ -1,6 +1,6 @@
 import { MenuService } from './../../_services/menu.service';
 import { GroupsService } from './../../../groups/services/groups.service';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 export interface Breadcrumb {
   url:string
@@ -8,9 +8,11 @@ export interface Breadcrumb {
 }
 
 @Component({
-  selector: 'app-breadcrumb',
-  templateUrl: './breadcrumb.component.html',
-  styleUrls: ['./breadcrumb.component.css']
+    selector: 'app-breadcrumb',
+    templateUrl: './breadcrumb.component.html',
+    styleUrls: ['./breadcrumb.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class BreadcrumbComponent {
 

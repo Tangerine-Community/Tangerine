@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders } from "@angular/common/http";
 import {DeviceService} from "../device/services/device.service";
 import {AppConfigService} from "../shared/_services/app-config.service";
 import {Subject, Subscription, throwError} from "rxjs";
@@ -121,7 +121,7 @@ export class SyncMediaService {
         await new Promise<void>(resolve => {
           (fileEntry as FileEntry).remove(resolve)
         });
-      } catch (e) {
+      } catch (e: any) {
         this.statusMessage = _TRANSLATE("ERROR: Upload failed") + " : " + JSON.stringify(e.error)
         console.log(e)
       }

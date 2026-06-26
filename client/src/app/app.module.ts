@@ -6,7 +6,7 @@ import { DeviceModule } from './device/device.module';
 import { SharedModule } from './shared/shared.module';
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,21 +49,18 @@ export function initializeApp1(appInit: AppInit) {
   }
 }
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    ActiveTasksComponent,
-    ClassNavBarComponent
-  ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
-    imports: [
-        BrowserModule,
+@NgModule({ declarations: [
+        AppComponent,
+        ActiveTasksComponent,
+        ClassNavBarComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,
-        HttpClientModule,
         BrowserAnimationsModule,
         MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatDividerModule,
-	MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule, MatTableModule,
-	MatListModule,
+        MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule, MatTableModule,
+        MatListModule,
         OverlayModule,
         TangyFormsModule,
         AuthModule,
@@ -85,16 +82,11 @@ export function initializeApp1(appInit: AppInit) {
         ExportDataModule,
         // Make sure any new modules with route are placed above AppRoutingModule.
         AppRoutingModule,
-        SharedModule
-    ],
-  providers: [AppInit,
-    { provide: APP_INITIALIZER, useFactory: initializeApp1, deps: [AppInit], multi: true},
-    {
-      provide: DEFAULT_USER_DOCS,
-      useValue: AppDocs,
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
-})
+        SharedModule], providers: [AppInit,
+        { provide: APP_INITIALIZER, useFactory: initializeApp1, deps: [AppInit], multi: true },
+        {
+            provide: DEFAULT_USER_DOCS,
+            useValue: AppDocs,
+            multi: true
+        }, provideHttpClient(withXhr(), withInterceptorsFromDi())] })
 export class AppModule { }

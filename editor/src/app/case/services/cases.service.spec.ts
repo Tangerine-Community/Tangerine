@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { CasesService } from './cases.service';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { CaseEventInfo } from './case-event-info.class';
 import { CASE_EVENT_STATUS_IN_PROGRESS } from '../classes/case-event.class';
 
@@ -234,29 +234,30 @@ class MockCasesService {
 describe('CasesService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports:[HttpClientModule],
+    imports: [],
     providers: [
-      {provide:CasesService, useClass:MockCasesService},
-      {
-        provide: UserService,
-        useClass: MockUserService
-      }
+        { provide: CasesService, useClass: MockCasesService },
+        {
+            provide: UserService,
+            useClass: MockUserService
+        },
+        provideHttpClient(withXhr(), withInterceptorsFromDi())
     ]
-  }));
+}));
 
   it('should be created', () => {
-    const service:CasesService = TestBed.get(CasesService);
+    const service:CasesService = TestBed.inject(CasesService);
     expect(service).toBeTruthy();
   });
 
   it('should be give events by date', async() => {
-    const service:CasesService = TestBed.get(CasesService);
+    const service:CasesService = TestBed.inject(CasesService);
     const result = await service.getEventsByDate(5, 15, false)
     expect(result.length).toEqual(1)
   })
 
   it('should be give events by date with estimates excluded', async() => {
-    const service:CasesService = TestBed.get(CasesService);
+    const service:CasesService = TestBed.inject(CasesService);
     const result = await service.getEventsByDate(5, 15, true)
     expect(result.length).toEqual(1)
   })

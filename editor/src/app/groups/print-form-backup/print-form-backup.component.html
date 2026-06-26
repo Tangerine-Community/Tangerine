@@ -1,14 +1,18 @@
 <div class="tangy-content tangy-full-width">
-    <div>
-      <div #container></div>
-      {{'Group'|translate}}: {{groupDetails?.label}}<br>
-      {{'Group ID'}}: {{groupDetails?._id}}<br>
-      {{'Form'|translate}}: {{meta?.form?.title}}
-    </div>
-    <br><br><br>
   <div>
-      <div style="page-break-after: always;" *ngFor="let section of meta?.items">
-        <p style="font-size: 32px;" *ngFor="let input of section.inputs; let index=index">{{index+1}}. {{input.label}}</p>
+    <div #container></div>
+    {{'Group'|translate}}: {{groupDetails?.label}}<br>
+    {{'Group ID'}}: {{groupDetails?._id}}<br>
+    {{'Form'|translate}}: {{meta?.form?.title}}
+  </div>
+  <br><br><br>
+  <div>
+    @for (section of meta?.items; track section) {
+      <div style="page-break-after: always;">
+        @for (input of section.inputs; track input; let index = $index) {
+          <p style="font-size: 32px;">{{index+1}}. {{input.label}}</p>
+        }
       </div>
-    </div>
+    }
+  </div>
 </div>

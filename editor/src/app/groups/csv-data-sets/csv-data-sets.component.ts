@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -7,9 +7,11 @@ import { GroupsService } from '../services/groups.service';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
-  selector: 'app-csv-data-sets',
-  templateUrl: './csv-data-sets.component.html',
-  styleUrls: ['./csv-data-sets.component.css']
+    selector: 'app-csv-data-sets',
+    templateUrl: './csv-data-sets.component.html',
+    styleUrls: ['./csv-data-sets.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CsvDataSetsComponent implements OnInit, OnDestroy {
   title = _TRANSLATE('Spreadsheet Requests')

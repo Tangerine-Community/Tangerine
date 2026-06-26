@@ -5,7 +5,7 @@ import { AppConfigService } from './app-config.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Injectable } from '@angular/core';
 import { updates } from '../../core/update/update/updates';
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {UserDatabase} from "../_classes/user-database.class";
 import {SyncService} from "../../sync/sync.service";
 

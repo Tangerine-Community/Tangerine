@@ -1,12 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { DeviceSyncComponent } from '../device-sync/device-sync.component';
 
 @Component({
-  selector: 'app-device-resync',
-  templateUrl: './device-resync.component.html',
-  styleUrls: ['./device-resync.component.css']
+    selector: 'app-device-resync',
+    templateUrl: './device-resync.component.html',
+    styleUrls: ['./device-resync.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DeviceResyncComponent implements OnInit {
 

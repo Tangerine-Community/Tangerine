@@ -1,5 +1,5 @@
 import { UserService } from 'src/app/shared/_services/user.service';
-import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ClassFormService} from '../../_services/class-form.service';
 import {DashboardService} from '../../_services/dashboard.service';
@@ -23,9 +23,11 @@ export class SubtestReport {
 }
 
 @Component({
-  selector: 'app-student-subtest-report',
-  templateUrl: './student-subtest-report.component.html',
-  styleUrls: ['./student-subtest-report.component.css']
+    selector: 'app-student-subtest-report',
+    templateUrl: './student-subtest-report.component.html',
+    styleUrls: ['./student-subtest-report.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
 

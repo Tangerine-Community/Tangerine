@@ -1,13 +1,15 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {Case} from "../../classes/case.class";
 
 @Component({
-  selector: 'app-case-breadcrumb',
-  templateUrl: './case-breadcrumb.component.html',
-  styleUrls: ['./case-breadcrumb.component.css']
+    selector: 'app-case-breadcrumb',
+    templateUrl: './case-breadcrumb.component.html',
+    styleUrls: ['./case-breadcrumb.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseBreadcrumbComponent implements OnInit {
 

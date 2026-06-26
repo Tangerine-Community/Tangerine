@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../shared/_services/user.service';
 import { Router } from '@angular/router';
@@ -9,9 +9,11 @@ import { VariableService } from 'src/app/shared/_services/variable.service';
 
 
 @Component({
-  selector: 'app-import-user-profile',
-  templateUrl: './import-user-profile.component.html',
-  styleUrls: ['./import-user-profile.component.css']
+    selector: 'app-import-user-profile',
+    templateUrl: './import-user-profile.component.html',
+    styleUrls: ['./import-user-profile.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ImportUserProfileComponent implements AfterContentInit {
 
@@ -19,15 +21,15 @@ export class ImportUserProfileComponent implements AfterContentInit {
   STATE_INPUT = 'STATE_INPUT'
   STATE_ERROR = 'STATE_ERROR'
   STATE_NOT_FOUND ='STATE_NOT_FOUND'
-  appConfig: AppConfig
+  appConfig!: AppConfig
   state = this.STATE_INPUT
-  docs;
-  totalDocs;
+  docs: any;
+  totalDocs: any;
   processedDocs = 0;
-  userAccount;
-  db;
-  shortCode
-  @ViewChild('userShortCode', {static: true}) userShortCodeInput: ElementRef;
+  userAccount: any;
+  db: any;
+  shortCode: string = ''
+  @ViewChild('userShortCode', {static: true}) userShortCodeInput!: ElementRef;
 
   constructor(
     private router: Router,
@@ -57,12 +59,12 @@ export class ImportUserProfileComponent implements AfterContentInit {
     try {
       this.appConfig = await this.appConfigService.getAppConfig()
       this.shortCode = this.userShortCodeInput.nativeElement.value;
-      let existingUserProfile = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/userProfileByShortCode/${this.shortCode}`).toPromise()
+      let existingUserProfile: any = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/userProfileByShortCode/${this.shortCode}`).toPromise()
       if(!!existingUserProfile){
         const username = this.userService.getCurrentUser()
         this.state = this.STATE_SYNCING
         await this.userService.saveUserAccount({ ...this.userAccount, userUUID: existingUserProfile['_id'], initialProfileComplete: true })
-        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
+        this.totalDocs = (await this.http.get<any>(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
         const docsToQuery = 1000;
         let previousProcessedDocs = await this.variableService.get(`${username}-processedDocs`)
         let processedDocs = parseInt(previousProcessedDocs) || 0;

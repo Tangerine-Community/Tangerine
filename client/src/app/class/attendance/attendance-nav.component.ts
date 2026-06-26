@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-attendance-nav',
-  template: `
+    selector: 'app-attendance-nav',
+    template: `
     <div>
       <button mat-stroked-button [matMenuTriggerFor]="attMenu">
         <mat-icon>post_add</mat-icon>
@@ -31,7 +31,9 @@ import { Component, OnInit } from '@angular/core';
     </div>
     
   `,
-  styleUrls: ['./attendance-dashboard/attendance-dashboard.component.css']
+    styleUrls: ['./attendance-dashboard/attendance-dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 
 export class AttendanceNavComponent implements OnInit {

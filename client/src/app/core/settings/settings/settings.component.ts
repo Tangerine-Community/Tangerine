@@ -1,5 +1,5 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { t } from 'tangy-form/util/t.js'
 import {VariableService} from "../../../shared/_services/variable.service";
@@ -13,9 +13,11 @@ import {TangyFormResponse} from "../../../tangy-forms/tangy-form-response.class"
 import { AppInfo, DeviceService } from './../../../device/services/device.service';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+    selector: 'app-settings',
+    templateUrl: './settings.component.html',
+    styleUrls: ['./settings.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SettingsComponent implements OnInit, AfterContentInit {
 

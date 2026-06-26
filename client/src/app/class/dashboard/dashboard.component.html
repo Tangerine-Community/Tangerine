@@ -1,85 +1,101 @@
-<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
-
-  <span dir="rtl" class="class-dashboard-button-spacer-left">
-    <button mat-stroked-button color="primary"
-            [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
-      {{'Add Class'|translate}}
-    </button>
-<!--    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">-->
-<!--        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>-->
-<!--    </button>-->
+@if (!selectedClass) {
+  <mat-toolbar class="classDashboard">
+    <span dir="rtl" class="class-dashboard-button-spacer-left">
+      <button mat-stroked-button color="primary"
+        [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
+        {{'Add Class'|translate}}
+      </button>
+      <!--    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">-->
+      <!--        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>-->
+    <!--    </button>-->
   </span>
 </mat-toolbar>
-<mat-toolbar *ngIf="selectedClass" class="classDashboard">
-
-  <<span dir="rtl" class="class-dashboard-button-spacer-right">
-      <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
-      <mat-menu #groupingMenu="matMenu">
-        <ng-template matMenuContent>
-        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-        </ng-template>
-      </mat-menu>
-  <!--<mat-menu #progressMenu="matMenu">-->
-  <!--<ng-template matMenuContent>-->
-  <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
+}
+@if (selectedClass) {
+  <mat-toolbar class="classDashboard">
+    <<span dir="rtl" class="class-dashboard-button-spacer-right">
+    <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+    <mat-menu #groupingMenu="matMenu">
+      <ng-template matMenuContent>
+        @for (item of formList; track item) {
+          <button mat-menu-item routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+        }
+      </ng-template>
+    </mat-menu>
+    <!--<mat-menu #progressMenu="matMenu">-->
+    <!--<ng-template matMenuContent>-->
+    <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
   <!--</ng-template>-->
-  <!--</mat-menu>-->
-      <mat-menu #reportsMenu="matMenu">
-        <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
-        <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
-        <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass._id}}">{{'Student Subtest Report'|translate}}</button>
-        <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass._id}}">{{'Task Report'|translate}}</button>
-      </mat-menu>
-    </span>
+<!--</mat-menu>-->
+<mat-menu #reportsMenu="matMenu">
+  <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+  <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
+  <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass._id}}">{{'Student Subtest Report'|translate}}</button>
+  <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass._id}}">{{'Task Report'|translate}}</button>
+</mat-menu>
+</span>
 </mat-toolbar>
-<mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
-  <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum"
-         class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
-      : {{classTitle}} - {{selectedCurriculum.label}}</p></div>
-   
-    <div class="controls-wrapper">
-      <div class="controls-one">
-        <mat-form-field>
-          <mat-label>{{'Select Subtask'|translate}}</mat-label>
-          <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
-            <mat-option>{{'None'|translate}}</mat-option>
-            <mat-option *ngFor="let item of formList;" value="{{item.id}}"
-                        (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+}
+@if (selectedClass) {
+  <mat-card class="tangy-class-card-content-container">
+    <div [hidden]="isLoading">
+      @if (selectedCurriculum) {
+        <div
+          class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
+        : {{classTitle}} - {{selectedCurriculum.label}}</p></div>
+      }
+      <div class="controls-wrapper">
+        <div class="controls-one">
+          <mat-form-field>
+            <mat-label>{{'Select Subtask'|translate}}</mat-label>
+            <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
+              <mat-option>{{'None'|translate}}</mat-option>
+              @for (item of formList; track item) {
+                <mat-option value="{{item.id}}"
+                (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div>
       <div>
-        <table class="dashboard-table">
-          <tr>
-            <th>{{'Student'|translate}}</th>
-            <th>{{'Completed?'|translate}}</th>
-          </tr>
-          <tr *ngFor="let element of allStudentResults">
-            <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["student_name"]}} {{element["student_surname"]}} </td>
-            <td class="checkbox-response" *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
-              <input type="checkbox"
-                     (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
-                     [checked]="true"/>
-            </td>
-            <ng-template #elseBlock>
-              <td class="checkbox-response">
-                <input type="checkbox" (click)="$event.stopPropagation()"
-                       (change)="$event ? selectCheckbox(element,currentItemId) : null"
-                />
-              </td>
-            </ng-template>
-          </tr>
-        </table> 
-        <span><p class="mat-h3" *ngIf="allStudentResults?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+        <div>
+          <table class="dashboard-table">
+            <tr>
+              <th>{{'Student'|translate}}</th>
+              <th>{{'Completed?'|translate}}</th>
+            </tr>
+            @for (element of allStudentResults; track element) {
+              <tr>
+                <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["student_name"]}} {{element["student_surname"]}} </td>
+                @if (element.forms[currentItemId]?.response ) {
+                  <td class="checkbox-response">
+                    <input type="checkbox"
+                      (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
+                      [checked]="true"/>
+                  </td>
+                } @else {
+                  <td class="checkbox-response">
+                    <input type="checkbox" (click)="$event.stopPropagation()"
+                      (change)="$event ? selectCheckbox(element,currentItemId) : null"
+                      />
+                  </td>
+                }
+              </tr>
+            }
+          </table>
+          <span>@if (allStudentResults?.length === 0) {
+            <p class="mat-h3">{{'No Students currently registered.'|translate}}</p>
+          }</span>
+        </div>
       </div>
     </div>
-  </div>
-</mat-card>
-<mat-card class="tangy-class-card-content-container" *ngIf="!selectedClass">
-  {{'Click the right-hand menu to the Settings to enable an archived class.'|translate}}
-</mat-card>
+  </mat-card>
+}
+@if (!selectedClass) {
+  <mat-card class="tangy-class-card-content-container">
+    {{'Click the right-hand menu to the Settings to enable an archived class.'|translate}}
+  </mat-card>
+}
 
 <div #container class="hideme"></div>

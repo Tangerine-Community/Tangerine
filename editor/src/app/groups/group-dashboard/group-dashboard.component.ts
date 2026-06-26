@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-group-dashboard',
-  templateUrl: './group-dashboard.component.html',
-  styleUrls: ['./group-dashboard.component.css']
+    selector: 'app-group-dashboard',
+    templateUrl: './group-dashboard.component.html',
+    styleUrls: ['./group-dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDashboardComponent implements OnInit {
 

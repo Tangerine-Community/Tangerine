@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {FormMetadata} from '../form-metadata';
 import {StudentResult} from '../reports/student-grouping-report/student-result';
 import {Feedback} from '../feedback';

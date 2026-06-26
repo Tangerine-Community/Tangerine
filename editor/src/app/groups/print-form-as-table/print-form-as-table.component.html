@@ -1,13 +1,13 @@
 <style>
   .tangy-main-container {
-    left: 0px;
-    position: relative !important
-  }
+  left: 0px;
+  position: relative !important
+}
 
-  mat-toolbar,
-  mat-tab-header {
-    display: none !important;
-  }
+mat-toolbar,
+mat-tab-header {
+display: none !important;
+}
 </style>
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div class="device-list-btn">
@@ -17,67 +17,75 @@
   <mat-card appearance="outlined">
     <mat-card-title>
       <div id="container" #container></div>
-      <table class="card-title" *ngIf="myForm">
-        <tr>
-          <td>{{'Group'|translate}}</td>
-          <td>{{groupDetails?.label}}</td>
-        </tr>
-        <tr>
-          <td>{{'Group ID'}}</td>
-          <td>{{groupDetails?._id}}</td>
-        </tr>
-        <tr>
-          <td>{{'Form Title'|translate}}</td>
-          <td>{{myForm?.title}}</td>
-        </tr>
-        <tr>
-          <td>{{'Form ID'|translate}}</td>
-          <td>{{myForm?.id}}</td>
-        </tr>
-      </table>
+      @if (myForm) {
+        <table class="card-title">
+          <tr>
+            <td>{{'Group'|translate}}</td>
+            <td>{{groupDetails?.label}}</td>
+          </tr>
+          <tr>
+            <td>{{'Group ID'}}</td>
+            <td>{{groupDetails?._id}}</td>
+          </tr>
+          <tr>
+            <td>{{'Form Title'|translate}}</td>
+            <td>{{myForm?.title}}</td>
+          </tr>
+          <tr>
+            <td>{{'Form ID'|translate}}</td>
+            <td>{{myForm?.id}}</td>
+          </tr>
+        </table>
+      }
     </mat-card-title>
     <br>
-    <div>
-      <table class="tangy-full-width">
-        <th>Section ID</th>
-        <th>Variable Name</th>
-        <th>Prompt</th>
-        <th>Type</th>
-        <th>Hint Text</th>
-        <th>Options</th>
-        <th>Required</th>
-        <th>Disabled</th>
-        <th>Hidden</th>
-        <th></th>
-        <ng-container *ngFor="let section of meta?.items;let index= index">
-          <tr *ngFor="let input of section.inputs">
-            <td>{{section.id}}</td>
-            <td>{{input.name}}</td>
-            <td>{{input.label}}</td>
-            <td>
-              {{input.tagName==='TANGY-SELECT'?'single':''}}
-              {{input.tagName==='TANGY-RADIO-BUTTONS'?'single':''}}
-              {{input.tagName==='TANGY-CHECKBOX'?'single':''}}
-              {{input.tagName==='TANGY-CHECKBOXES'?'multiple':''}}
-              {{input.type}}
-            </td>
-            <td>{{input.hintText}}</td>
-            <td>
-              <span *ngIf="isArray(input.value)">
-                <span *ngFor="let option of input.value; let index=index">
-                  {{option.value}} {{'"'+option.label+'"'}}{{index+1===input.value.length?'':' ,'}}
-                </span>
-              </span>
-            </td>
-            <td>{{input.required}}</td>
-            <td>{{input.disabled}}</td>
-            <td>{{input.hidden}}</td>
-          </tr>
-        </ng-container>
+      <div>
+        <table class="tangy-full-width">
+          <th>Section ID</th>
+          <th>Variable Name</th>
+          <th>Prompt</th>
+          <th>Type</th>
+          <th>Hint Text</th>
+          <th>Options</th>
+          <th>Required</th>
+          <th>Disabled</th>
+          <th>Hidden</th>
+          <th></th>
+          @for (section of meta?.items; track section; let index = $index) {
+            @for (input of section.inputs; track input) {
+              <tr>
+                <td>{{section.id}}</td>
+                <td>{{input.name}}</td>
+                <td>{{input.label}}</td>
+                <td>
+                  {{input.tagName==='TANGY-SELECT'?'single':''}}
+                  {{input.tagName==='TANGY-RADIO-BUTTONS'?'single':''}}
+                  {{input.tagName==='TANGY-CHECKBOX'?'single':''}}
+                  {{input.tagName==='TANGY-CHECKBOXES'?'multiple':''}}
+                  {{input.type}}
+                </td>
+                <td>{{input.hintText}}</td>
+                <td>
+                  @if (isArray(input.value)) {
+                    <span>
+                      @for (option of input.value; track option; let index = $index) {
+                        <span>
+                          {{option.value}} {{'"'+option.label+'"'}}{{index+1===input.value.length?'':' ,'}}
+                        </span>
+                      }
+                    </span>
+                  }
+                </td>
+                <td>{{input.required}}</td>
+                <td>{{input.disabled}}</td>
+                <td>{{input.hidden}}</td>
+              </tr>
+            }
+          }
         </table>
-<!--        <br>-->
-<!--        <hr>-->
-<!--        <br><br>-->
-    </div>
-  </mat-card>
-</div>
+        <!--        <br>-->
+        <!--        <hr>-->
+        <!--        <br><br>-->
+      </div>
+    </mat-card>
+  </div>

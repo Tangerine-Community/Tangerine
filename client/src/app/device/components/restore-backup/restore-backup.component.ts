@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DB} from "../../../shared/_factories/db.factory";
@@ -9,9 +9,11 @@ const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
 const VARIABLES_DATABASE_NAME = 'tangerine-variables';
 declare const cordova: any;
 @Component({
-  selector: 'app-restore-backup',
-  templateUrl: './restore-backup.component.html',
-  styleUrls: ['./restore-backup.component.css']
+    selector: 'app-restore-backup',
+    templateUrl: './restore-backup.component.html',
+    styleUrls: ['./restore-backup.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class RestoreBackupComponent implements OnInit {
   window:any;

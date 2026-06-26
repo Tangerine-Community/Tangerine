@@ -1,6 +1,6 @@
 import { UserService } from 'src/app/shared/_services/user.service';
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import {DashboardService} from '../_services/dashboard.service';
 import {PageEvent} from '@angular/material/paginator';
 import {ClassFormService} from '../_services/class-form.service';
@@ -25,9 +25,11 @@ export interface StudentResponse {
 }
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
 

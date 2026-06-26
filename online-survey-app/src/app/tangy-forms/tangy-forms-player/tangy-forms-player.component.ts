@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsService } from 'src/app/shared/_services/forms-service.service';
 import { CaseService } from 'src/app/case/services/case.service';
@@ -8,9 +8,11 @@ import { TangyFormService } from '../tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
-  selector: 'app-tangy-forms-player',
-  templateUrl: './tangy-forms-player.component.html',
-  styleUrls: ['./tangy-forms-player.component.css']
+    selector: 'app-tangy-forms-player',
+    templateUrl: './tangy-forms-player.component.html',
+    styleUrls: ['./tangy-forms-player.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class TangyFormsPlayerComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;

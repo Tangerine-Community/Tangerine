@@ -1,12 +1,14 @@
 import { AppConfigService } from './../../../shared/_services/app-config.service';
 import { Subject } from 'rxjs';
 import { LanguagesService } from './../../../shared/_services/languages.service';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-device-language',
-  templateUrl: './device-language.component.html',
-  styleUrls: ['./device-language.component.css']
+    selector: 'app-device-language',
+    templateUrl: './device-language.component.html',
+    styleUrls: ['./device-language.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DeviceLanguageComponent implements OnInit {
 

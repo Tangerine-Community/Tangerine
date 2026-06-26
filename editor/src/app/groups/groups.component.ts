@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { MenuService } from './../shared/_services/menu.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from './services/groups.service';
 import { TruncatePipe } from '../pipes/truncate';
 import { TangyErrorHandler } from '../shared/_services/tangy-error-handler.service';
@@ -10,9 +10,11 @@ import { _TRANSLATE } from '../shared/_services/translation-marker';
 import * as moment from 'moment'
 
 @Component({
-  // selector: 'app-groups',
-  templateUrl: './groups.component.html',
-  styleUrls: ['./groups.component.css'],
+    // selector: 'app-groups',
+    templateUrl: './groups.component.html',
+    styleUrls: ['./groups.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupsComponent implements OnInit {
 

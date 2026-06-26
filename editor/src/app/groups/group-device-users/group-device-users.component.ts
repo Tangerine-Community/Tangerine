@@ -2,14 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model';
 import {GroupsService} from "../services/groups.service";
 
 @Component({
-  selector: 'app-group-device-users',
-  templateUrl: './group-device-users.component.html',
-  styleUrls: ['./group-device-users.component.css']
+    selector: 'app-group-device-users',
+    templateUrl: './group-device-users.component.html',
+    styleUrls: ['./group-device-users.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDeviceUsersComponent implements OnInit {
   

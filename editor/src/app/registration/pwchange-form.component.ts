@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ValidationService } from '../validation/validation.service';//not an injectable service
@@ -17,7 +17,9 @@ declare var componentHandler: any;//needed to get js in materia.js to work with 
         .hideit {
             display: none;
         }
-    `]
+    `],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 
 

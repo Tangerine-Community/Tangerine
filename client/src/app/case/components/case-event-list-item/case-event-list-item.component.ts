@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, AfterContentInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -9,9 +9,11 @@ import { CaseDefinition } from '../../classes/case-definition.class';
 import { CaseService } from '../../services/case.service';
 
 @Component({
-  selector: 'app-case-event-list-item',
-  templateUrl: './case-event-list-item.component.html',
-  styleUrls: ['./case-event-list-item.component.css']
+    selector: 'app-case-event-list-item',
+    templateUrl: './case-event-list-item.component.html',
+    styleUrls: ['./case-event-list-item.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseEventListItemComponent implements AfterContentInit {
 

@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import {Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
 
 @Component({
-  selector: 'app-case-reports',
-  templateUrl: './case-reports.component.html',
-  styleUrls: ['./case-reports.component.css']
+    selector: 'app-case-reports',
+    templateUrl: './case-reports.component.html',
+    styleUrls: ['./case-reports.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseReportsComponent implements OnInit {
 

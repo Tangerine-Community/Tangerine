@@ -1,10 +1,12 @@
 import { MatTable } from '@angular/material/table';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-dynamic-table',
-  templateUrl: './dynamic-table.component.html',
-  styleUrls: ['./dynamic-table.component.css']
+    selector: 'app-dynamic-table',
+    templateUrl: './dynamic-table.component.html',
+    styleUrls: ['./dynamic-table.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DynamicTableComponent implements OnInit, OnChanges {
 

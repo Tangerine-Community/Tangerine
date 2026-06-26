@@ -1,26 +1,26 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div class="indent tad-lower">
-<mat-accordion>
-  <mat-expansion-panel  (opened)="panelOpenState = true"
-                        (closed)="panelOpenState = false">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <h4>Instructions</h4>
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <p>
-      In the <strong>Published Surveys</strong> section, use the link <i class="material-icons tangy-location-list-icon">link</i> to share the survey with users. Use the <i class="material-icons tangy-location-list-icon">close</i> button to "Un-publish" an online survey.
-      The <i class="material-icons tangy-location-list-icon">lock</i> button appears for surveys that require a Device User and Access Code.
-    </p>
+  <mat-accordion>
+    <mat-expansion-panel  (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h4>Instructions</h4>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>
+        In the <strong>Published Surveys</strong> section, use the link <i class="material-icons tangy-location-list-icon">link</i> to share the survey with users. Use the <i class="material-icons tangy-location-list-icon">close</i> button to "Un-publish" an online survey.
+        The <i class="material-icons tangy-location-list-icon">lock</i> button appears for surveys that require a Device User and Access Code.
+      </p>
 
-    <p>
-      In the <strong>Unpublish Surveys</strong> section, click the <i class="material-icons tangy-location-list-icon">publish</i>
-      button to "Publish" an online survey. It will then be listed in the Published Surveys section.
-      To 'Publish' a survey and require a Device User to provide an Access Code, click the <i class="material-icons tangy-location-list-icon">lock</i> button.
-    </p>
+      <p>
+        In the <strong>Unpublish Surveys</strong> section, click the <i class="material-icons tangy-location-list-icon">publish</i>
+        button to "Publish" an online survey. It will then be listed in the Published Surveys section.
+        To 'Publish' a survey and require a Device User to provide an Access Code, click the <i class="material-icons tangy-location-list-icon">lock</i> button.
+      </p>
     </mat-expansion-panel>
   </mat-accordion>
-  
+
 </div>
 
 <h2 class="tangy-foreground-secondary">{{'Published Surveys'|translate}}</h2>
@@ -44,7 +44,9 @@
   <ng-container matColumnDef="locked">
     <th mat-header-cell *matHeaderCellDef>{{ 'Locked' | translate }}</th>
     <td mat-cell *matCellDef="let form">
-      <i *ngIf="form.locked" class="material-icons tangy-location-list-icon">lock</i>
+      @if (form.locked) {
+        <i class="material-icons tangy-location-list-icon">lock</i>
+      }
     </td>
   </ng-container>
 

@@ -2,13 +2,15 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute } from '@angular/router';
 import { ReleasePwaComponent } from './../release-pwa/release-pwa.component';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import moment from "moment";
 
 @Component({
-  selector: 'app-group-release-pwa-test',
-  templateUrl: '../group-release-common/group-release.component.html',
-  styleUrls: ['../group-release-common/group-release.component.css']
+    selector: 'app-group-release-pwa-test',
+    templateUrl: '../group-release-common/group-release.component.html',
+    styleUrls: ['../group-release-common/group-release.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupReleasePwaTestComponent implements OnInit {
 

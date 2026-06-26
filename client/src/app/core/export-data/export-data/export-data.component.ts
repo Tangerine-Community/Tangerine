@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {UserService} from '../../../shared/_services/user.service';
 import {SyncingService} from '../../sync-records/_services/syncing.service';
 import {_TRANSLATE} from '../../../shared/translation-marker';
@@ -14,9 +14,11 @@ const VARIABLES_DATABASE_NAME = 'tangerine-variables';
 declare const cordova: any;
 
 @Component({
-  selector: 'app-export-data',
-  templateUrl: './export-data.component.html',
-  styleUrls: ['./export-data.component.css']
+    selector: 'app-export-data',
+    templateUrl: './export-data.component.html',
+    styleUrls: ['./export-data.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ExportDataComponent implements OnInit {
 

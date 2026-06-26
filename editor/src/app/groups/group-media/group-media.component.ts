@@ -1,12 +1,14 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentChecked, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentChecked, AfterContentInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Component({
-  selector: 'app-group-media',
-  templateUrl: './group-media.component.html',
-  styleUrls: ['./group-media.component.css']
+    selector: 'app-group-media',
+    templateUrl: './group-media.component.html',
+    styleUrls: ['./group-media.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupMediaComponent implements OnInit, AfterContentInit {
 

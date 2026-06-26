@@ -1,30 +1,33 @@
-<div class="form-cards"
-    *ngIf="participantInfo.caseEventHasEventFormsForParticipantsRole && ((participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0) || participantInfo.eventFormInfos.length > 0)"
->
-  <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
-  <div 
-    class="new-form-container"
-    *ngIf="participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0"
-  >
-    <paper-fab 
-      class="new-form-button"
-      routerLink="{{participantInfo.newFormLink}}"
-      icon="add"
+@if (participantInfo.caseEventHasEventFormsForParticipantsRole && ((participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0) || participantInfo.eventFormInfos.length > 0)) {
+  <div class="form-cards"
     >
-    </paper-fab>
+    <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
+    @if (participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0) {
+      <div
+        class="new-form-container"
+        >
+        <paper-fab
+          class="new-form-button"
+          routerLink="{{participantInfo.newFormLink}}"
+          icon="add"
+          >
+        </paper-fab>
+      </div>
+    }
+    @for (eventFormInfo of participantInfo.eventFormInfos; track eventFormInfo) {
+      <app-event-form-list-item (formDeleted)="updateFormList($event)"
+        [style.display]="eventFormInfo.eventForm.inactive?'none':'inherit'"
+        [case]="caseService.case"
+        [caseDefinition]="caseService.caseDefinition"
+        [caseEvent]="caseEvent"
+        [caseEventDefinition]="caseEventDefinition"
+        [eventForm]="eventFormInfo.eventForm"
+        [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+        [caseService]="caseService"
+        (formDeleted)="onFormDelete()"
+        class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}"
+        >
+      </app-event-form-list-item>
+    }
   </div>
-  <app-event-form-list-item (formDeleted)="updateFormList($event)"
-    *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
-    [style.display]="eventFormInfo.eventForm.inactive?'none':'inherit'"
-    [case]="caseService.case"
-    [caseDefinition]="caseService.caseDefinition"
-    [caseEvent]="caseEvent"
-    [caseEventDefinition]="caseEventDefinition"
-    [eventForm]="eventFormInfo.eventForm"
-    [eventFormDefinition]="eventFormInfo.eventFormDefinition"
-    [caseService]="caseService"
-    (formDeleted)="onFormDelete()"
-    class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-  >
-  </app-event-form-list-item>
-</div>
+}

@@ -1,29 +1,37 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <mat-tab-group>
 
-  <mat-tab label="{{'Levels'|translate}}" *ngIf="ready">
-    <ng-template matTabContent>
-      <app-manage-location-list-levels locationListFileName="{{ locationListFileName }}"></app-manage-location-list-levels>
-   </ng-template>
-  </mat-tab>
+  @if (ready) {
+    <mat-tab label="{{'Levels'|translate}}">
+      <ng-template matTabContent>
+        <app-manage-location-list-levels locationListFileName="{{ locationListFileName }}"></app-manage-location-list-levels>
+      </ng-template>
+    </mat-tab>
+  }
 
-  <mat-tab label="{{'Content'|translate}}" *ngIf="ready">
-    <ng-template matTabContent>
-      <app-location-list-editor locationListFileName="{{ locationListFileName }}"></app-location-list-editor>
-    </ng-template>
-  </mat-tab>
+  @if (ready) {
+    <mat-tab label="{{'Content'|translate}}">
+      <ng-template matTabContent>
+        <app-location-list-editor locationListFileName="{{ locationListFileName }}"></app-location-list-editor>
+      </ng-template>
+    </mat-tab>
+  }
 
-  <mat-tab label="{{'Import'|translate}}" *ngIf="ready">
-    <ng-template matTabContent>
-      <app-import-location-list locationListFileName="{{ locationListFileName }}"></app-import-location-list>
-    </ng-template>
-  </mat-tab>
-  
-  <mat-tab label="{{'Export'|translate}}" *ngIf="ready">
-    <ng-template matTabContent>
-      <app-export-location-list locationListFileName="{{ locationListFileName }}"></app-export-location-list>
-    </ng-template>
-  </mat-tab>
+  @if (ready) {
+    <mat-tab label="{{'Import'|translate}}">
+      <ng-template matTabContent>
+        <app-import-location-list locationListFileName="{{ locationListFileName }}"></app-import-location-list>
+      </ng-template>
+    </mat-tab>
+  }
+
+  @if (ready) {
+    <mat-tab label="{{'Export'|translate}}">
+      <ng-template matTabContent>
+        <app-export-location-list locationListFileName="{{ locationListFileName }}"></app-export-location-list>
+      </ng-template>
+    </mat-tab>
+  }
 
 
 </mat-tab-group>

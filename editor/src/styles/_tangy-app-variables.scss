@@ -68,6 +68,6 @@ $md-tangy-orange: (
   )
 );
 
-$tangerine-app-primary: mat.define-palette($md-tangy-blue, 500);
-$tangerine-app-accent: mat.define-palette($md-tangy-orange, 500);
-$tangerine-app-warn: mat.define-palette(mat.$red-palette);
+$tangerine-app-primary: mat.m2-define-palette($md-tangy-blue, 500);
+$tangerine-app-accent: mat.m2-define-palette($md-tangy-orange, 500);
+$tangerine-app-warn: mat.m2-define-palette(mat.$m2-red-palette);

@@ -1,31 +1,39 @@
 <table mat-table #table [dataSource]="dataSource">
 
-  <ng-container *ngFor="let column of columns" matColumnDef="{{column.columnDef}}">
-    <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
-    <td mat-cell *matCellDef="let row">{{ column.cell(row) }}</td>
-  </ng-container>
+  @for (column of columns; track column) {
+    <ng-container matColumnDef="{{column.columnDef}}">
+      <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
+      <td mat-cell *matCellDef="let row">{{ column.cell(row) }}</td>
+    </ng-container>
+  }
 
-  <ng-container matColumnDef="actions" stickyEnd *ngIf="!hideActionBar">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let row">
-      <div class="actions-container">
-        <button class="actions-menu" mat-stroked-button color="primary" [matMenuTriggerFor]="menu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button (click)="onRowEdit(row)" mat-menu-item>
-            <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
+  @if (!hideActionBar) {
+    <ng-container matColumnDef="actions" stickyEnd>
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <div class="actions-container">
+          <button class="actions-menu" mat-stroked-button color="primary" [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
           </button>
-          <button *ngIf="!showArchiveButton" (click)="onRowDelete(row)" mat-menu-item>
-            <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
-          </button>
-          <button *ngIf="showArchiveButton" (click)="onRowArchive(row)" mat-menu-item>
-            <mat-icon>archive</mat-icon><span>{{'archive'|translate}}</span>
-          </button>
-        </mat-menu>
-      </div>
-    </td>
-  </ng-container>
+          <mat-menu #menu="matMenu">
+            <button (click)="onRowEdit(row)" mat-menu-item>
+              <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
+            </button>
+            @if (!showArchiveButton) {
+              <button (click)="onRowDelete(row)" mat-menu-item>
+                <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
+              </button>
+            }
+            @if (showArchiveButton) {
+              <button (click)="onRowArchive(row)" mat-menu-item>
+                <mat-icon>archive</mat-icon><span>{{'archive'|translate}}</span>
+              </button>
+            }
+          </mat-menu>
+        </div>
+      </td>
+    </ng-container>
+  }
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 

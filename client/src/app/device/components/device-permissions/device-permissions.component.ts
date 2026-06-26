@@ -1,11 +1,13 @@
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { Subject } from 'rxjs';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-device-permissions',
-  templateUrl: './device-permissions.component.html',
-  styleUrls: ['./device-permissions.component.css']
+    selector: 'app-device-permissions',
+    templateUrl: './device-permissions.component.html',
+    styleUrls: ['./device-permissions.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DevicePermissionsComponent implements OnInit {
 

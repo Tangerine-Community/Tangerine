@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Form } from '../shared/classes/form';
 
 @Component({
-  selector: 'app-forms-list',
-  templateUrl: './forms-list.component.html',
-  styleUrls: ['./forms-list.component.css']
+    selector: 'app-forms-list',
+    templateUrl: './forms-list.component.html',
+    styleUrls: ['./forms-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FormsListComponent implements OnInit {
 

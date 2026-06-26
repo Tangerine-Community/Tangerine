@@ -5,7 +5,7 @@ import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.com
 import { Router } from '@angular/router';
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupIssuesService } from './../services/group-issues.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import * as moment from 'moment'
 
 // @TODO Turn this into a service that gets this info from a hook.
@@ -25,9 +25,11 @@ export const FORM_TYPES_INFO = [
 ]
 
 @Component({
-  selector: 'app-group-issues',
-  templateUrl: './group-issues.component.html',
-  styleUrls: ['./group-issues.component.css']
+    selector: 'app-group-issues',
+    templateUrl: './group-issues.component.html',
+    styleUrls: ['./group-issues.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupIssuesComponent implements OnInit {
 

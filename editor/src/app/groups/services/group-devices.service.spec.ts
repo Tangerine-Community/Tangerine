@@ -6,7 +6,7 @@ describe('GroupDevicesService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: GroupDevicesService = TestBed.get(GroupDevicesService);
+    const service: GroupDevicesService = TestBed.inject(GroupDevicesService);
     expect(service).toBeTruthy();
   });
 });

@@ -1,5 +1,5 @@
 import { TangerineFormsService } from './../../services/tangerine-forms.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
 import { Subscription } from 'rxjs';
@@ -8,9 +8,11 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 
 @Component({
-  selector: 'app-edit-event-form-definition',
-  templateUrl: './edit-event-form-definition.component.html',
-  styleUrls: ['./edit-event-form-definition.component.css']
+    selector: 'app-edit-event-form-definition',
+    templateUrl: './edit-event-form-definition.component.html',
+    styleUrls: ['./edit-event-form-definition.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EditEventFormDefinitionComponent implements OnInit, OnDestroy {
   groupId;

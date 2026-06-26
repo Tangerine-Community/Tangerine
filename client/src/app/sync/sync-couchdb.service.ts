@@ -1,6 +1,6 @@
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { LocationConfig } from './../device/classes/device.class';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ReplicationStatus } from './classes/replication-status.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from './../shared/_classes/user-database.class';

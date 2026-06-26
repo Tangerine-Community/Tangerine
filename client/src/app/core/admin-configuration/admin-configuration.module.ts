@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AdminConfigurationRoutingModule } from './admin-configuration-routing.module';
 import { AdminConfigurationComponent } from './admin-configuration/admin-configuration.component';
 import {SharedModule} from "../../shared/shared.module";
-import {HttpClientModule} from "@angular/common/http";
+import {} from "@angular/common/http";
 import {SyncModule} from "../../sync/sync.module";
 import {MatCardModule} from "@angular/material/card";
 
@@ -18,7 +18,7 @@ import {MatCardModule} from "@angular/material/card";
         MatCardModule
     ],
   declarations: [AdminConfigurationComponent],
-  providers: [HttpClientModule],
+  providers: [],
 
 })
 export class AdminConfigurationModule { }

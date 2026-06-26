@@ -4,92 +4,113 @@
     <p>
       <mat-select id="studentSelect" placeholder="{{'Select Student'|translate}}" (selectionChange)="onStudentSelect($event)">
         <mat-option value="none" selected>---</mat-option>
-        <mat-option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</mat-option>
+        @for (student of students; track student) {
+          <mat-option value="{{student.id}}">{{student.student_name}}</mat-option>
+        }
       </mat-select>
     </p>
     <div #curriculumSelectPara id="curriculumSelectPara" >
       <mat-button-toggle-group name="curriculumSelect" aria-label="Select Curr" (change)="onCurriculumSelect($event)">
-        <mat-button-toggle *ngFor="let subtestReport of subtestReports" value="{{subtestReport.cssName}}">{{subtestReport.label}}</mat-button-toggle>
+        @for (subtestReport of subtestReports; track subtestReport) {
+          <mat-button-toggle value="{{subtestReport.cssName}}">{{subtestReport.label}}</mat-button-toggle>
+        }
       </mat-button-toggle-group>
     </div>
   </div>
 
   <div #subTestReport>
-    <div *ngFor="let subtestReport of subtestReports" class="subtest-report-section" id="curr-{{subtestReport.cssName}}" [ngStyle]="{'display': 'none'}">
-      <h2>{{subtestReport.label}}</h2>
-
-      <ng-container *ngIf="!subtestReport.noCategories">
-        <table class="subtest">
-          <tr>
-            <th>{{'Subtask'|translate}}</th>
-            <th>&nbsp;</th>
-            <th *ngFor="let category of subtestReport.categories">{{category}}</th>
-          </tr>
-          <tr>
-            <th>&nbsp;</th>
-            <th>{{'Totals'|translate}}</th>
-            <th *ngFor="let category of subtestReport.categories">{{subtestReport.totals[category]}}</th>
-          </tr>
-          <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
-            <!--<tr>-->
+    @for (subtestReport of subtestReports; track subtestReport) {
+      <div class="subtest-report-section" id="curr-{{subtestReport.cssName}}" [ngStyle]="{'display': 'none'}">
+        <h2>{{subtestReport.label}}</h2>
+        @if (!subtestReport.noCategories) {
+          <table class="subtest">
+            <tr>
+              <th>{{'Subtask'|translate}}</th>
+              <th>&nbsp;</th>
+              @for (category of subtestReport.categories; track category) {
+                <th>{{category}}</th>
+              }
+            </tr>
+            <tr>
+              <th>&nbsp;</th>
+              <th>{{'Totals'|translate}}</th>
+              @for (category of subtestReport.categories; track category) {
+                <th>{{subtestReport.totals[category]}}</th>
+              }
+            </tr>
+            @for (student of subtestReport.studentCategorizedResults; track student) {
+              <!--<tr>-->
               <!--<td>&nbsp;</td>-->
               <!--<td>&nbsp;</td>-->
               <!--<td *ngFor="let category of subtestReport.categories">&nbsp;</td>-->
             <!--</tr>-->
-            <tr *ngFor="let item of generateArray(student.results)">
-              <td>{{item.key}}</td>
-              <td>&nbsp;</td>
-              <td *ngFor="let res of generateArray(item.value)">
-                <!--<span *ngFor="let res of generateArray(item.value)">-->
-                <span *ngIf="res.value">({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
-               </span>
-                <!--</span>-->
-              </td>
+            @for (item of generateArray(student.results); track item) {
+              <tr>
+                <td>{{item.key}}</td>
+                <td>&nbsp;</td>
+                @for (res of generateArray(item.value); track res) {
+                  <td>
+                    <!--<span *ngFor="let res of generateArray(item.value)">-->
+                    @if (res.value) {
+                      <span>({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
+                      </span>
+                    }
+                  <!--</span>-->
+                </td>
+              }
               <!--<td>-->
               <!--<span *ngFor="let res of generateArray(item.value)">-->
               <!--<span *ngIf="res.value">({{res.value.rawScore}}/{{res.value.totalGridAnswers}}) {{res.value.percentage}}-->
-              <!--</span>-->
-              <!--</span>-->
-              <!--</td>-->
-
-              <ng-container *ngIf="isEmpty(item.value)">
-                <td *ngFor="let category of subtestReport.categories"></td>
-              </ng-container>
-            </tr>
-          </ng-container>
-        </table>
-      </ng-container>
-
-      <ng-container *ngIf="subtestReport.noCategories">
-        <table class="subtest">
-          <tr>
-            <th>{{'Subtask'|translate}}</th>
-            <th *ngFor="let category of subtestReport.categories">{{category}}</th>
-          </tr>
-          <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
-            <tr *ngFor="let item of generateArray(student.results)">
-              <!--<td>&nbsp;</td>-->
-              <td>{{item.key}}</td>
-              <ng-container *ngIf="subtestReport.noCategories">
-                <td>
-              <span *ngFor="let res of generateArray(item.value)">
-               <ng-container *ngIf="res.value">
-                 <ng-container *ngIf="res.value.percentage && !res.value.customScore">
-                 ({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
-                 </ng-container>
-                 <ng-container *ngIf="res.value.customScore||res.value.customScore===0">
-                 {{(tNumber(res.value.customScore))|number : '1.2-2'}}%
-                 </ng-container>
-                 <!--<span *ngIf="res.value.totalCorrect">{{res.value.totalCorrect}}</span>-->
-               </ng-container>
-              </span>
-                </td>
-              </ng-container>
-            </tr>
-          </ng-container>
-        </table>
-      </ng-container>
-    </div>
-  </div>
+            <!--</span>-->
+          <!--</span>-->
+        <!--</td>-->
+        @if (isEmpty(item.value)) {
+          @for (category of subtestReport.categories; track category) {
+            <td></td>
+          }
+        }
+      </tr>
+    }
+  }
+</table>
+}
+@if (subtestReport.noCategories) {
+  <table class="subtest">
+    <tr>
+      <th>{{'Subtask'|translate}}</th>
+      @for (category of subtestReport.categories; track category) {
+        <th>{{category}}</th>
+      }
+    </tr>
+    @for (student of subtestReport.studentCategorizedResults; track student) {
+      @for (item of generateArray(student.results); track item) {
+        <tr>
+          <!--<td>&nbsp;</td>-->
+          <td>{{item.key}}</td>
+          @if (subtestReport.noCategories) {
+            <td>
+              @for (res of generateArray(item.value); track res) {
+                <span>
+                  @if (res.value) {
+                    @if (res.value.percentage && !res.value.customScore) {
+                      ({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
+                    }
+                    @if (res.value.customScore||res.value.customScore===0) {
+                      {{(tNumber(res.value.customScore))|number : '1.2-2'}}%
+                    }
+                    <!--<span *ngIf="res.value.totalCorrect">{{res.value.totalCorrect}}</span>-->
+                  }
+                </span>
+              }
+            </td>
+          }
+        </tr>
+      }
+    }
+  </table>
+}
+</div>
+}
+</div>
 </mat-card>
 

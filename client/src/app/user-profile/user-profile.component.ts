@@ -1,5 +1,5 @@
 import { UserAccount } from './../shared/_classes/user-account.class';
-import { AfterContentInit, ElementRef, Component, ViewChild } from '@angular/core';
+import { AfterContentInit, ElementRef, Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -7,16 +7,18 @@ import { UserService } from '../shared/_services/user.service';
 import {AppConfigService} from "../shared/_services/app-config.service";
 
 @Component({
-  selector: 'app-user-profile',
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.css']
+    selector: 'app-user-profile',
+    templateUrl: './user-profile.component.html',
+    styleUrls: ['./user-profile.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class UserProfileComponent implements AfterContentInit {
 
   tangyFormSrc: any;
-  tangyFormResponse: {};
-  returnUrl: string; // stores the value of the url to redirect to after login
-  @ViewChild('container', {static: true}) container: ElementRef;
+  tangyFormResponse: any = {};
+  returnUrl: string = ''; // stores the value of the url to redirect to after login
+  @ViewChild('container', {static: true}) container!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +38,7 @@ export class UserProfileComponent implements AfterContentInit {
     let formHtml =  await this.http.get('./assets/user-profile/form.html', {responseType: 'text'}).toPromise();
     container.innerHTML = formHtml
     let formEl = container.querySelector('tangy-form')
-    formEl.addEventListener('submit', async (event) => {
+    formEl.addEventListener('submit', async (event: Event) => {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
       await userDb.put(profileDoc)

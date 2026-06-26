@@ -1,15 +1,17 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { UserService } from './../../../core/auth/_services/user.service'
 import { Router, ActivatedRoute } from '@angular/router';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { CaseService } from '../../services/case.service';
 import { AppContext } from 'src/app/app-context.enum';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
 @Component({
-  selector: 'app-new-issue',
-  templateUrl: './new-issue.component.html',
-  styleUrls: ['./new-issue.component.css']
+    selector: 'app-new-issue',
+    templateUrl: './new-issue.component.html',
+    styleUrls: ['./new-issue.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class NewIssueComponent implements OnInit {
 

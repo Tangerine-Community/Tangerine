@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DashboardService} from "../../_services/dashboard.service";
@@ -7,9 +7,11 @@ import {KeyValue} from "@angular/common";
 import {VariableService} from "../../../shared/_services/variable.service";
 
 @Component({
-  selector: 'app-student-details',
-  templateUrl: './student-details.component.html',
-  styleUrls: ['./student-details.component.css']
+    selector: 'app-student-details',
+    templateUrl: './student-details.component.html',
+    styleUrls: ['./student-details.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class StudentDetailsComponent implements OnInit {
   

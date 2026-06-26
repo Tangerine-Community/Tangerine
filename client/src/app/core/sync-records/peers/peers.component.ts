@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {UserService} from '../../../shared/_services/user.service';
 import {Endpoint} from './endpoint';
 import {EndpointsService} from './endpoints.service';
@@ -6,9 +6,11 @@ import {PeersService} from '../_services/peers.service';
 import {Message} from './message';
 
 @Component({
-  selector: 'app-peers',
-  templateUrl: './peers.component.html',
-  styleUrls: ['./peers.component.css']
+    selector: 'app-peers',
+    templateUrl: './peers.component.html',
+    styleUrls: ['./peers.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PeersComponent implements OnInit, AfterContentInit {
 

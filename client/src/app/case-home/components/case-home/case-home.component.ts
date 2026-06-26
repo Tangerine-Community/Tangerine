@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { CaseService } from '../../../case/services/case.service';
 
 @Component({
-  selector: 'app-case-home',
-  templateUrl: './case-home.component.html',
-  styleUrls: ['./case-home.component.css']
+    selector: 'app-case-home',
+    templateUrl: './case-home.component.html',
+    styleUrls: ['./case-home.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CaseHomeComponent implements OnInit {
 

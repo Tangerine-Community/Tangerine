@@ -6,7 +6,7 @@ describe('CaseManagementEditorService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: CaseManagementEditorService = TestBed.get(CaseManagementEditorService);
+    const service: CaseManagementEditorService = TestBed.inject(CaseManagementEditorService);
     expect(service).toBeTruthy();
   });
 });

@@ -1,6 +1,6 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 import axios from "axios";
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 import { CaseService } from '../../services/case.service'
@@ -24,9 +24,11 @@ interface ParticipantInfo {
 }
 
 @Component({
-  selector: 'app-event',
-  templateUrl: './event.component.html',
-  styleUrls: ['./event.component.css']
+    selector: 'app-event',
+    templateUrl: './event.component.html',
+    styleUrls: ['./event.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class EventComponent implements OnInit {
 

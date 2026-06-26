@@ -1,11 +1,21 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<div class="sticky" *ngIf="formResponse">
-    <button *ngIf="!formResponse.verified" mat-raised-button color="accent" (click)="verify()">{{'Verify'|translate}}</button>
-    <button *ngIf="formResponse.verified" mat-raised-button color="accent" (click)="unverify()">{{'Unverify'|translate}}</button>
-    
-    <a *ngIf="editingAllowed" routerLink="edit" mat-raised-button color="accent">{{'Edit'|translate}}</a>
-    
-    <button *ngIf="formResponse.archived" mat-raised-button color="accent" (click)="unarchive()">{{'Unarchive'|translate}}</button>
-    <button *ngIf="!formResponse.archived" mat-raised-button color="accent" (click)="archive()">{{'Archive'|translate}}</button>
-</div>
+@if (formResponse) {
+  <div class="sticky">
+    @if (!formResponse.verified) {
+      <button mat-raised-button color="accent" (click)="verify()">{{'Verify'|translate}}</button>
+    }
+    @if (formResponse.verified) {
+      <button mat-raised-button color="accent" (click)="unverify()">{{'Unverify'|translate}}</button>
+    }
+    @if (editingAllowed) {
+      <a routerLink="edit" mat-raised-button color="accent">{{'Edit'|translate}}</a>
+    }
+    @if (formResponse.archived) {
+      <button mat-raised-button color="accent" (click)="unarchive()">{{'Unarchive'|translate}}</button>
+    }
+    @if (!formResponse.archived) {
+      <button mat-raised-button color="accent" (click)="archive()">{{'Archive'|translate}}</button>
+    }
+  </div>
+}
 <app-tangy-forms-player #formPlayer></app-tangy-forms-player>

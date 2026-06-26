@@ -1,10 +1,16 @@
 <div class="tangy-content-top-margin">
-<p *ngIf="!buildDatIsComplete&&!errorGeneratingDat">
-  {{'Your Dat Archive is building...'|translate}}
-</p>
-<p *ngIf="errorGeneratingDat">{{'Could Not Generate Dat Archive'|translate}}</p>
-<p *ngIf="buildDatIsComplete">
-  {{'View your Dat Archive'|translate}}<br>
-  <input value="{{datArchiveUrl}}">
-</p>
+  @if (!buildDatIsComplete&&!errorGeneratingDat) {
+    <p>
+      {{'Your Dat Archive is building...'|translate}}
+    </p>
+  }
+  @if (errorGeneratingDat) {
+    <p>{{'Could Not Generate Dat Archive'|translate}}</p>
+  }
+  @if (buildDatIsComplete) {
+    <p>
+      {{'View your Dat Archive'|translate}}<br>
+      <input value="{{datArchiveUrl}}">
+    </p>
+  }
 </div>

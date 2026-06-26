@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
@@ -12,9 +12,11 @@ const strongPasswordPolicyRegExEscaped = "(?=.*\\\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}
 //const strongPasswordPolicyRegEx = "foo"
 
 @Component({
-  selector: 'app-group-device-password-policy',
-  templateUrl: './group-device-password-policy.component.html',
-  styleUrls: ['./group-device-password-policy.component.css']
+    selector: 'app-group-device-password-policy',
+    templateUrl: './group-device-password-policy.component.html',
+    styleUrls: ['./group-device-password-policy.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupDevicePasswordPolicyComponent implements OnInit {
 

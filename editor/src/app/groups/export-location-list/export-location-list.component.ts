@@ -1,13 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 import { Loc } from 'tangy-form/util/loc.js';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-export-location-list',
-  templateUrl: './export-location-list.component.html',
-  styleUrls: ['./export-location-list.component.css']
+    selector: 'app-export-location-list',
+    templateUrl: './export-location-list.component.html',
+    styleUrls: ['./export-location-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ExportLocationListComponent implements OnInit {
 

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { TangyFormsInfoService } from './tangy-forms/tangy-forms-info-service';
 import { TangyFormService } from './tangy-forms/tangy-form.service';
 import { MenuService } from './shared/_services/menu.service';
-import {Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -23,9 +23,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AppComponent implements OnInit, OnDestroy {
 

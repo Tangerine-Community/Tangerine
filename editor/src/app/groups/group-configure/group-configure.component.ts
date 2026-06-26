@@ -1,12 +1,14 @@
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 
 @Component({
-  selector: 'app-group-configure',
-  templateUrl: './group-configure.component.html',
-  styleUrls: ['./group-configure.component.css']
+    selector: 'app-group-configure',
+    templateUrl: './group-configure.component.html',
+    styleUrls: ['./group-configure.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GroupConfigureComponent implements OnInit {
 

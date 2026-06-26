@@ -2,7 +2,8 @@ import { Directive, Input, TemplateRef, ViewContainerRef, OnInit } from '@angula
 import { AuthenticationService } from '../_services/authentication.service';
 
 @Directive({
-  selector: '[appHasAPermission]'
+    selector: '[appHasAPermission]',
+    standalone: false
 })
 export class HasAPermissionDirective implements OnInit {
   private _groupId;

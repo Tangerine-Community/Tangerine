@@ -1,12 +1,18 @@
-<div class="loading" *ngIf="loading">Loading...</div>
-<div class="no-issues-found" *ngIf="issues && issues.length === 0">No issues found.</div>
+@if (loading) {
+  <div class="loading">Loading...</div>
+}
+@if (issues && issues.length === 0) {
+  <div class="no-issues-found">No issues found.</div>
+}
 <div [hidden]="loading">
-  <div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="/issue/{{issue._id}}">
-    <mwc-icon slot="item-icon">receipt</mwc-icon>
-    <div>
-      <div>{{issue.label}}</div>
-      <div secondary>
+  @for (issue of issues; track issue) {
+    <div class="icon-list-item search-result" routerLink="/issue/{{issue._id}}">
+      <mwc-icon slot="item-icon">receipt</mwc-icon>
+      <div>
+        <div>{{issue.label}}</div>
+        <div secondary>
+        </div>
       </div>
     </div>
-  </div>
+  }
 </div>
