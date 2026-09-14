@@ -9,6 +9,7 @@ const fs = require('fs-extra')
 const axios = require('axios')
 const tangyModules = require('../modules/index.js')()
 const generateCsvDataSets = require('../scripts/generate-csv-data-sets/generate-csv-data-sets.js')
+const generateCsvDataSet = require('../scripts/generate-csv-data-set/generate-csv-data-set.js')
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -74,42 +75,37 @@ const generateCSV = async (req, res) => {
 }
 
 const generateCSVDataSet = async (req, res) => {
-  const groupId = sanitize(req.params.groupId)
-  // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
-  const formIds = req.body.formIds.split(',').map(formId => formId).join(',')
-  const {selectedYear, selectedMonth, description} = req.body
-  const http = await getUser1HttpInterface()
-  const group = (await http.get(`/nest/group/read/${groupId}`)).data
-  const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
-  const options = {
+  const santizeOptions = {
     replacement: '_'
   }
-  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
-  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${selectedYear === '*' ? `'*'` : sanitize(selectedYear)} ${selectedMonth === '*' ? `'*'` : sanitize(selectedMonth)} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
-  log.info(`generating csv start: ${cmd}`)
-  exec(cmd).then(status => {
-    log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}`)
+  const http = await getUser1HttpInterface()
+  const groupId = sanitize(req.params.groupId)
+  const group = (await http.get(`/nest/group/read/${groupId}`)).data
+  const options = {}
+  options.groupId = groupId
+  options.year = req.body.selectedYear
+  options.month = req.body.selectedMonth
+  options.description = req.body.description
+  options.formIds = req.body.formIds.split(',')
+  options.groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
+  options.excludePii = req.originalUrl.includes('-sanitized') ? true : false
+  options.dateCreated = Date.now()
+  options.fileName = `${sanitize(options.groupLabel, santizeOptions)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_'),
+  options.outputPath = `/csv/${options.fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
+  options.stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${options.fileName.replace('.zip', '.state.json')}`
+  options.downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${options.fileName}`
+  log.info(`generating spreadsheet request: ${JSON.stringify(options)}`)
+  // Generate CSV Dataset but don't wait, let it run in the background so user can monitor the stateUrl.
+  generateCsvDataSet(options.groupId, options.formIds, options.outputPath, options.year, options.month, options.excludePii).then(status => {
+    log.info(`generate spreadsheet request done: ${JSON.stringify(status)} ${options.outputPath}`)
   }).catch(error => {
     log.error(error)
   })
-  const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.zip', '.state.json')}`
-  const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
-  const csvDataSetInfo = await CSV_DATASETS.post({
-    groupId,
-    formIds,
-    fileName,
-    stateUrl,
-    downloadUrl,
-    description,
-    year: selectedYear,
-    month: selectedMonth,
-    dateCreated: Date.now()
-  })
+  // Save the dataset to the datasets database for reference later.
+  const csvDataSetInfo = await CSV_DATASETS.post(options)
+  // Return the stateUrl to the user so they can monitor the status of the dataset generation.
   res.send({
-    id: csvDataSetInfo.id,
-    stateUrl,
-    downloadUrl
+    id: csvDataSetInfo.id
   })
 }
 
