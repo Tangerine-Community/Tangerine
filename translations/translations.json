@@ -50,6 +50,11 @@
     "languageDirection": "ltr"
   },
   {
+    "label": "Myanmar",
+    "languageCode": "my",
+    "languageDirection": "ltr"
+  },
+  {
     "label": "Pashto",
     "languageCode": "ps",
     "languageDirection": "rtl"

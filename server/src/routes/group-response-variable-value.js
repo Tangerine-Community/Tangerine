@@ -40,6 +40,8 @@ module.exports = async (req, res) => {
       let extension = 'jpg'
       if (dataType && dataType === 'video') {
         extension = 'webm'
+      } else if (dataType && dataType === 'audio/wav') {
+        extension = 'wav'
       }
       const filePath = `/tangerine/client/content/groups/${req.params.groupId}/client-uploads/${variableName}_${responseId}.${extension}`
       if (fs.existsSync(filePath)) {

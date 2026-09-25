@@ -170,7 +170,7 @@ export class AppConfig {
   dbBackupSplitNumberFiles: number;
   
   // Media files configuration
-  mediaFileStorageLocation:string  // Options: 'database' (default) or 'file'. If undefined, will save to database.
+  mediaFileStorageLocation:string = 'file' // Options: 'database' or 'file' (default). If undefined, will save to database.
 
   //
   // Experimental configuration.
