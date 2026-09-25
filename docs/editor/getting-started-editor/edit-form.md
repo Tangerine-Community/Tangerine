@@ -21,7 +21,7 @@ The form editor provides the interface for adding and editing instrument section
 
 For each section there are two actions available.
 
-<B>COPY SECTION </B> <img src="../media/copyButton.png" width="30"> -- This icon copies the section and autmatically renames all variables. 
+<B>COPY SECTION </B> <img src="../media/copyButton.png" width="30"> -- This icon copies the section and automatically renames all variables. 
 
 <B>EDIT</B> <img src="../media/editButton.png" width="30"> -- This icon opens the interface to edit an instrument section (e.g., add items)
 
