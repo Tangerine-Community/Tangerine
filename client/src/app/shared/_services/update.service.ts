@@ -223,17 +223,17 @@ export class UpdateService {
   
   async runCustomUpdatesBefore(customUpdates) {
     this.status$.next(_TRANSLATE(`Applying Custom Update before Main Updates. `))
-    // TODO capture output of script and pass up to the component
-    await eval("(async () => {" + customUpdates + "})()")
+    // Expose a generic log function for custom updates.
+    const log = this.status$.next
+    eval(customUpdates)
     this.status$.next(_TRANSLATE(`Finished Custom Update before Main Updates. `))
   }
   
   async runCustomUpdatesAfter(customUpdates) {
     this.status$.next(_TRANSLATE(`Applying Custom Update after Main Updates. `))
-    // TODO capture output of script and pass up to the component
-    eval(`(() => {${customUpdates}})()`).then(function() {
-      this.status$.next(_TRANSLATE(`Finished Custom Update after Main Updates. `))
-      console.log("done");
-    });
+    // Expose a generic log function for custom updates.
+    const log = this.status$.next
+    eval(customUpdates)
+    this.status$.next(_TRANSLATE(`Finished Custom Update after Main Updates. `))
   }
 }
