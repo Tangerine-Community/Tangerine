@@ -125,7 +125,7 @@ def convert_participant(resp_dict):
             for key in resp_dict:
                 participantData.update({key: resp_dict.get(key)})
         
-        log("Updated participantData: {}".format(participantData))
+#         log("Updated participantData: {}".format(participantData))
        
         df = pd.DataFrame([participantData])
         # RJ: Do we need a df.rename() like we do on other types of data?
@@ -138,6 +138,7 @@ def convert_participant(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId + "' AND CaseID='" + caseId + "'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
+                log("Deleting participant in order to update it: " +  participantId + " dbRev: " + dbRev + " caseId: " + caseId)
                 cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId + "' AND CaseID='" + caseId + "'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -146,12 +147,15 @@ def convert_participant(resp_dict):
             mysql_connection.commit()
         except:
             try:
+                log("Rebuilding participant table for: " +  participantId + " dbRev: " + dbRev + " caseId: " + caseId)
+                log("participantData: {}".format(participantData))
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
                 df2 = pd.concat([data, df], sort=False)
                 mysql_connection.commit()
                 df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                log("Failure! Rebuilding participant table for: " +  participantId + " dbRev: " + dbRev + " caseId: " + caseId)
                 mysql_connection.commit()
                 df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
