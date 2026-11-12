@@ -445,7 +445,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
           tangyModules.setVariable(flatFormResponse, input, `${input.name}`, selectedOption ? selectedOption.name : '')
         } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
           tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
-        } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
+        } else if (input.tagName === 'TANGY-VIDEO-CAPTURE' || input.tagName == 'TANGY-AUDIO-RECORDING') {
           tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
           // Do nothing :).
