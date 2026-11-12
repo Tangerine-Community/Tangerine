@@ -55,6 +55,7 @@ interface VersionStat {
 interface DeviceInfo {
   _id:string
   claimed:boolean
+  verified:boolean
   assignedLocation:string
   syncLocations:string
   token:string
@@ -84,7 +85,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'encryptionLevel', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'storageAvailable', 'network', 'os', 'browserVersion', 'star']
+  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'verified', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'encryptionLevel', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'storageAvailable', 'network', 'os', 'browserVersion', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
@@ -124,12 +125,10 @@ export class GroupDevicesComponent implements OnInit {
   }
 
   deviceInLocationFilter(device:GroupDevice):Boolean {
-    debugger
     return true
   }
 
   userInLocationFilter(device:GroupDevice):Boolean {
-    debugger
     return true
   }
 
@@ -335,6 +334,13 @@ export class GroupDevicesComponent implements OnInit {
     window['dialog'].querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
   }
 
+  async verifyDevice(deviceId:string) {
+    const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
+    device.verified = true
+    await this.groupDevicesService.updateDevice(this.groupId, device)
+    this.update()
+  }
+
   async editDevice(deviceId:string) {
     const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
@@ -383,6 +389,7 @@ export class GroupDevicesComponent implements OnInit {
               <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
               <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
               <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
+              <tr><td class="device-settings-list">Verified</td><td>${device.verified ? 'Yes' : 'No'}</td></tr>
             </table>
             <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
             <tangy-checkbox 
@@ -620,6 +627,7 @@ export class GroupDevicesComponent implements OnInit {
         device.assignedLocation.showLevels = assignedLevels 
         device.syncLocations = syncLocations 
         device.description = description
+        device.verified = true
         await this.groupDevicesService.updateDevice(this.groupId, device)
         numberOfDevicesGenerated++
       }

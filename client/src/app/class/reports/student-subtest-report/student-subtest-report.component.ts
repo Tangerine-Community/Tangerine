@@ -10,9 +10,10 @@ import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { tNumber } from 'src/app/t-number.util';
+import { ClassFormMetadata } from '../../_classes/class-form-metadata.class';
 
 export class SubtestReport {
-  curriculumId: any;
+  formId: any;
   label: any;
   categories: any;
   totals: any;
@@ -43,7 +44,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   today:string 
 
   @ViewChild('subTestReport', {static: true}) subTestReport: ElementRef;
-  @ViewChild('curriculumSelectPara', {static: true}) curriculumSelect: ElementRef;
+  @ViewChild('curriculumSelectElement', {static: true}) curriculumSelect: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,6 +67,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
     if (currentUser) {
       this.classUtils = new ClassUtils();
     }
+    await this.dashboardService.initialize();
     const classId = this.route.snapshot.paramMap.get('classId');
     this.students = (await this.getMyStudents(classId)).sort((a, b) => a.student_name.localeCompare(b.student_name));
   }
@@ -104,36 +106,44 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   }
 
   async getReport(studentId) {
-    const classId = this.route.snapshot.paramMap.get('classId');
-    // console.log("type: " + classId)
-    const classDoc = await this.classFormService.getResponse(classId);
-    const classRegistration = this.classUtils.getInputValues(classDoc);
-
     // Get data about this particular subtest
 
     this.curriculums = [];
-    const allCurriculums = classRegistration.curriculum;
-    for (const curriculum of allCurriculums as any[] ) {
-      if (curriculum['value'] === 'on') {
-        const formId = curriculum.name;
-        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-        curriculum.label = formInfo.title;
-        this.curriculums.push(curriculum);
-      }
+
+    let formId;
+    let classIndex;
+    const __vars = await this.dashboardService.initExposeVariables(classIndex, formId);
+    const currentClass = __vars.currentClass;
+    if (!classIndex) {
+      classIndex = __vars.classIndex;
     }
+    formId = __vars.formId;
+
+    const curriculumArray = await this.dashboardService.getCurriculumArray();
+    const enabledClasses = await this.dashboardService.getEnabledClasses();
+
+    // When app is initialized, there is no formId, so we need to set it to the first one.
+    if (!formId && curriculumArray?.length > 0) {
+      formId = curriculumArray[0]
+    }
+
+    const curriculumInputValues = currentClass.items[0].inputs.filter(input => input.name === 'curriculum')[0].value;
+    const curriculum = curriculumInputValues.find(form => form.name === formId);
+    const classFormMetadata = new ClassFormMetadata(curriculum);
+    this.curriculums.push(classFormMetadata);
 
     this.subtestReports = [];
     for (const curriculum of this.curriculums) {
-      const curriculumId = curriculum.name;
-      const cssName = curriculumId.replace(/\./g, '-');
+      const formId = curriculum.name;
+      const cssName = curriculum.labelSafe;
       const label = curriculum.label;
       const subtestReport = new SubtestReport();
-      subtestReport.curriculumId = curriculumId;
+      subtestReport.formId = formId;
       subtestReport.label = label;
       subtestReport.cssName = cssName;
 
-      const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-      const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+      const curriculumFormHtml = await this.dashboardService.getForm(formId);
+      const curriculumFormsList = await this.classUtils.createCurriculumFormItemsList(curriculumFormHtml);
       // this.subtestReport.students = await this.getMyStudents(classId);
       const appConfig = await this.appConfigService.getAppConfig();
       this.categories = appConfig.categories;
@@ -172,10 +182,8 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
         studentResults[studentId] = forms;
       // }
 
-      // let results = (await this.getResultsByClass(classId, curriculumId, curriculumFormsList))
-      //   .filter(result => studentIds.indexOf(result.studentId) !== -1)
       const responses = (await this.classFormService.getResponsesByStudentId(studentId)).reduce((acc, curr) => {
-        return curr.doc.form.id === curriculumId ? acc.concat(curr) : acc;
+        return curr.doc.form.id === formId ? acc.concat(curr) : acc;
       }, [])
       const data = await this.dashboardService.transformResultSet(responses, curriculumFormsList, null);
       // clean the array

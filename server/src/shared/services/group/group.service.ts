@@ -143,6 +143,12 @@ export class GroupService {
     }
   }
 
+  async readAppConfig(groupId) {
+    let appConfig = {} as any;
+    appConfig = (JSON.parse(await fs.readFile(`/tangerine/groups/${groupId}/client/app-config.json`, 'utf8')) as any);
+    return appConfig;
+  }
+
   async create(label, contentSet, username): Promise<Group> {
     if (contentSet) {
       const p = await spawn(`create-group`, [label, contentSet], {encoding: 'utf8'});
@@ -151,7 +157,7 @@ export class GroupService {
     }
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
-    const config = await this.configService.config()
+    const config = await this.configService.config() // in the future, add this to the group doc
     await createGroupDatabase(groupId, '', true)
     await createGroupDatabase(groupId, '-log')
     await createGroupDatabase(groupId, '-conflict-revs')

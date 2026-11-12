@@ -4,7 +4,7 @@ import {StudentResult} from "./student-result";
 export interface ClassGroupingReport {
   id: string;
   itemId: string;
-  curriculumId: string;
+  formId: string;
   subtestName: string;
   classSize:number;
   studentsAssessed:number;

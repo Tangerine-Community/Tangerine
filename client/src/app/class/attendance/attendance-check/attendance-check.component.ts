@@ -81,9 +81,9 @@ export class AttendanceCheckComponent implements OnInit {
     this.periodsLength = this.periods.length
     
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    const curriculumId = await this.variableService.get('class-curriculumId');
-    this.curriculum = currArray.find(x => x.name === curriculumId);
-    
+    const formId = await this.variableService.get('class-formId');
+    this.curriculum = currArray.find(x => x.name === formId);
+
     const currentClassId = this.selectedClass._id
     await this.showAttendanceListing(currentClassId, this.curriculum, currentClass)
   }
@@ -103,7 +103,7 @@ export class AttendanceCheckComponent implements OnInit {
     const schoolYear = this.getValue('school_year', currentClass)
     const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
-    let curriculumLabel = curriculum.label
+    let curriculumLabel = curriculum.labelSafe
     if (this.ignoreCurriculumsForTracking) {
       curriculumLabel = null
     }
@@ -209,7 +209,7 @@ export class AttendanceCheckComponent implements OnInit {
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
-        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+        { formId: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
 

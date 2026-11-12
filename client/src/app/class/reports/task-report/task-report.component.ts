@@ -11,6 +11,7 @@ import {_TRANSLATE} from '../../../shared/translation-marker';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { tNumber } from 'src/app/t-number.util';
+import { ClassFormMetadata } from '../../_classes/class-form-metadata.class';
 
 @Component({
   selector: 'app-task-report',
@@ -54,38 +55,48 @@ export class TaskReportComponent implements OnInit {
     if (currentUser) {
     }
     this.classUtils = new ClassUtils();
+    this.dashboardService.initialize();
 
     this.classId = this.route.snapshot.paramMap.get('classId');
 
     this.curriculi = [];
-    const classDoc = await this.classFormService.getResponse(this.classId);
-    const classRegistration = this.classUtils.getInputValues(classDoc);
-    const allCurriculums = classRegistration.curriculum;
-    for (const curriculum of allCurriculums as any[] ) {
-      if (curriculum['value'] === 'on') {
-        const formId = curriculum.name;
-        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-        curriculum.label = formInfo.title;
-        this.curriculi.push(curriculum);
-      }
+
+    let formId;
+    let classIndex;
+    const __vars = await this.dashboardService.initExposeVariables(classIndex, formId);
+    const currentClass = __vars.currentClass;
+    if (!classIndex) {
+      classIndex = __vars.classIndex;
     }
+    formId = __vars.formId;
+
+    const curriculumArray = await this.dashboardService.getCurriculumArray();
+    // When app is initialized, there is no formId, so we need to set it to the first one.
+    if (!formId && curriculumArray?.length > 0) {
+      formId = curriculumArray[0]
+    }
+
+    const curriculumInputValues = currentClass.items[0].inputs.filter(input => input.name === 'curriculum')[0].value;
+    const curriculum = curriculumInputValues.find(form => form.name === formId);
+    const classFormMetadata = new ClassFormMetadata(curriculum);
+
+    this.curriculi.push(classFormMetadata);
   }
 
   async onCurriculumSelect(event) {
     if (event.value && event.value !== 'none') {
-      console.log('boom!: ' + event.value);
       const totals = [];
       const studentReportsCards: StudentReportsCards = {};
-      const curriculumId = event.value;
-      const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
+      const formId = event.value;
+      const curriculum = this.curriculi.find((curriculum) => curriculum.name === formId);
       this.curriculumName = curriculum.label;
       try {
-        const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-        this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+        const curriculumFormHtml = await this.dashboardService.getForm(formId);
+        this.curriculumFormsList = await this.classUtils.createCurriculumFormItemsList(curriculumFormHtml);
         const itemReport = await Promise.all(this.curriculumFormsList.map(async item => {
-          const results = await this.dashboardService.getResultsByClass(this.classId, curriculumId, this.curriculumFormsList, item);
+          const results = await this.dashboardService.getResultsByClass(this.classId, formId, this.curriculumFormsList, item);
           if (results.length > 0) {
-            return await this.dashboardService.getClassGroupReport(item, this.classId, curriculumId, results);
+            return await this.dashboardService.getClassGroupReport(item, this.classId, formId, results);
           }
         })
         );
@@ -124,7 +135,6 @@ export class TaskReportComponent implements OnInit {
         const colorClass  = ['concerning', 'poor', 'mediocre', 'good', 'great'];
         const status      = ['Concerning', 'Poor', 'Mediocre', 'Good', 'Great'];
         Object.values(studentReportsCards).forEach((reportCard: StudentResult) => {
-          console.log('hey');
           const reduceClassAverage =  ( p, studentResult) => {
             return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
           };

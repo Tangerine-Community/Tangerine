@@ -41,7 +41,7 @@ export class DashboardService {
   currentClassIndex
   currentClassId
   currentItemId
-  currArray
+  curriculumArray
   deviceInfo: AppInfo;
   
   // Some properties that will be shared with window.T:
@@ -49,23 +49,23 @@ export class DashboardService {
   formList
   enabledClasses
   allStudentResults: StudentResult[];
-  curriculumFormsList: TangyFormResponse[]
+  curriculumFormItemsList: TangyFormResponse[]
 
   public readonly enabledClasses$: Subject<any> = new Subject();
   public readonly selectedClass$: Subject<any> = new Subject();
-  public readonly selectedCurriculumId$: Subject<any> = new Subject();
-  public readonly currArray$: Subject<any> = new Subject();
+  public readonly selectedFormId$: Subject<any> = new Subject();
+  public readonly curriculumArray$: Subject<any> = new Subject();
 
   async initialize() {
     // this.db = await this.getUserDB();
     // this.formList = await this.getFormList();
     this.deviceInfo = await this.deviceService.getAppInfo()
-    this.currArray = await this.getCurrArray();
+    this.curriculumArray = await this.getCurriculumArray();
     this.enabledClasses = await this.getSchoolGrades()
     this.enabledClasses$.next(this.enabledClasses);
     // this.selectedClass = this.getSelectedClass(this.enabledClasses, this.currentClassIndex);
     // this.selectedClass$.next(this.selectedClass);
-    this.currArray$.next(this.currArray);
+    this.curriculumArray$.next(this.curriculumArray);
   }
 
   async getUserDB() {
@@ -78,9 +78,16 @@ export class DashboardService {
     return formList;
   }
 
-  async getCurriculaForms(curriculum) {
-    const formHtml =  await this.http.get(`./assets/${curriculum}/form.html`, {responseType: 'text'}).toPromise();
+  async getForm(formId) {
+    const formHtml =  await this.http.get(`./assets/${formId}/form.html`, {responseType: 'text'}).toPromise();
     return formHtml;
+  }
+
+  async getDeviceInfo() {
+    if (!this.deviceInfo) {
+      this.deviceInfo = await this.deviceService.getAppInfo();
+    }
+    return this.deviceInfo;
   }
 
   /**
@@ -90,8 +97,8 @@ export class DashboardService {
   async getSchoolGrades() {    
     let showAllGrades = false, locationNode:LocationSelection
     const curriculumValueProperty = []
-    if (this.currArray) {
-      for (const formId of this.currArray) {
+    if (this.curriculumArray) {
+      for (const formId of this.curriculumArray) {
         const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
         const label = formInfo.title
         const labelSafe = sanitize(formInfo.title.replace(/\s+/g, ''))
@@ -171,9 +178,8 @@ export class DashboardService {
     return classes;
   }
 
-  async getCurrArray() {
+  async getCurriculumArray() {
     const curriculum = this.deviceInfo.curriculum;
-    const grades = this.deviceInfo.grades;
     const curriculumArray = typeof curriculum === 'string'
         ? (curriculum as string).split(',').map(s => s.trim())
         : [];
@@ -186,7 +192,7 @@ export class DashboardService {
   }
 
   /**
-   * Queries the view tangy-class/responsesByClassIdCurriculumId to get the list of curricula for the selected class.
+   * Queries the view tangy-class/responsesForStudentRegByClassId to get the list of students for the selected class.
    * @param selectedClass
    */
    async getMyStudents(selectedClass: any) {
@@ -202,32 +208,32 @@ export class DashboardService {
   /**
    *
    * @param classId
-   * @param curriculum
-   * @param curriculumFormsList
+   * @param formId
+   * @param curriculumFormItemsList
    * @param tangyFormItem - optional
    */
-  async getResultsByClass(classId: any, curriculum, curriculumFormsList, tangyFormItem) {
-    const theKey = [classId, curriculum];
+  async getResultsByClass(classId: any, formId: string, curriculumFormItemsList, tangyFormItem) {
+    const theKey = [classId, formId];
     this.db = await this.getUserDB();
-    const result = await this.db.query('tangy-class/responsesByClassIdCurriculumId', {
+    const result = await this.db.query('tangy-class/responsesByClassIdFormId', {
       key: theKey,
       include_docs: true
     });
-    const data = await this.transformResultSet(result.rows, curriculumFormsList, tangyFormItem);
+    const data = await this.transformResultSet(result.rows, curriculumFormItemsList, tangyFormItem);
     // clean the array
     const cleanData = this.clean(data, undefined);
     return cleanData;
   }
 
-  async getCurriculumResponse(classId, curriculumId, studentId) {
+  async getClassFormResponse(classId, formId, studentId) {
     this.db = await this.getUserDB();
-    const curriculumResponsesForClass = (await this.db.query('tangy-class/responsesByClassIdCurriculumId', {
-        key: [classId, curriculumId],
+    const formResponsesForClass = (await this.db.query('tangy-class/responsesByClassIdFormId', {
+        key: [classId, formId],
         include_docs: true
       }))
       .rows
       .map(row => row.doc)
-    return curriculumResponsesForClass.find(response => response.metadata.studentRegistrationDoc.id === studentId)
+    return formResponsesForClass.find(response => response.metadata.studentRegistrationDoc.id === studentId)
   }
 
   clean = function(obj, deleteValue) {
@@ -279,16 +285,16 @@ export class DashboardService {
   /**
    * Creates a list of forms with the results populated
    * @param resultSet
-   * @param curriculumFormsList - use to find if the form is a grid subtest.
+   * @param curriculumFormItemsList - use to find if the form is a grid subtest.
    * @param tangyFormItem - use to filter by tangyFormItem
    * @returns {Promise<any[]>}
    */
-  async transformResultSet(resultSet, curriculumFormsList, item) {
+  async transformResultSet(resultSet, curriculumFormItemsList, item) {
 
     const transformedResults = [];
     for (const observation of resultSet) {
       if (item) {
-        const form = curriculumFormsList.find(x => x.id === item.id);
+        const form = curriculumFormItemsList.find(x => x.id === item.id);
         const items = observation.doc['items'];
         const thisItem = items.find(x => x.id === item.id);
         const response = this.populateTransformedResult(thisItem, item, form, observation);
@@ -297,7 +303,7 @@ export class DashboardService {
         const items = observation.doc['items'];
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
-          const form = curriculumFormsList.find(x => x.id === item.id);
+          const form = curriculumFormItemsList.find(x => x.id === item.id);
           const response = this.populateTransformedResult(item, i, form, observation);
           transformedResults.push(response);
         }
@@ -545,7 +551,7 @@ export class DashboardService {
     return data;
   }
 
-  async getClassGroupReport(item, classId, curriculumId, results) {
+  async getClassGroupReport(item, classId, formId, results) {
 
     // # Used to calculate percentiles
     // # Use indices where Index = Standard Deviation * 100 for negative deviations
@@ -697,7 +703,7 @@ export class DashboardService {
 
     const classGroupReport: ClassGroupingReport = {
       id: null,
-      curriculumId: null,
+      formId: null,
       itemId: null,
       subtestName: null,
       classSize: null,
@@ -712,7 +718,7 @@ export class DashboardService {
       allStudentResults: []
     };
 
-    classGroupReport.curriculumId = curriculumId;
+    classGroupReport.formId = formId;
     classGroupReport.itemId = item.id;
     classGroupReport.subtestName = item.title;
     classGroupReport.studentsAssessed = studentsAssessed;
@@ -761,10 +767,10 @@ export class DashboardService {
     return percentileRange;
   }
 
-  public async getFeedback(percentile, curriculumId, itemId) {
+  public async getFeedback(percentile, formId, itemId) {
     let feedback: Feedback;
     const forDefs = await this.getFormList();
-    const formMetadata: FormMetadata = forDefs.find(form => form.id === curriculumId);
+    const formMetadata: FormMetadata = forDefs.find(form => form.id === formId);
     if (formMetadata.feedbackItems) {
       feedback = formMetadata.feedbackItems.find(item => item.formItem === itemId && String(item.percentile) === String(percentile));
       if (feedback) {
@@ -1014,7 +1020,7 @@ export class DashboardService {
           if (!currentStudent.scores) {
             currentStudent.scores = {}
           }
-          // using bracket notation in case the curriculumId is a number.
+          // using bracket notation in case the formId is a number.
           currentStudent.scores[curriculumLabel] = averageScore
         } else {
           currentStudent.score = averageScore
@@ -1082,13 +1088,13 @@ export class DashboardService {
 
   async generateStudentReportsCards(curriculum, classId) {
     const studentReportsCards: StudentReportsCards = {};
-    const curriculumId = curriculum.name
-    const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
-    const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-    const itemReport = await Promise.all(curriculumFormsList.map(async item => {
-        const results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList, item);
+    const formId = curriculum.name
+    const curriculumFormHtml = await this.getForm(formId);
+    const curriculumFormItemsList = await this.classUtils.createCurriculumFormItemsList(curriculumFormHtml);
+    const itemReport = await Promise.all(curriculumFormItemsList.map(async item => {
+        const results = await this.getResultsByClass(classId, formId, curriculumFormItemsList, item);
         if (results.length > 0) {
-          return await this.getClassGroupReport(item, classId, curriculumId, results);
+          return await this.getClassGroupReport(item, classId, formId, results);
         }
       })
     );
@@ -1128,15 +1134,15 @@ export class DashboardService {
    * @returns 
    */
   async populateCurrentCurriculums(currentClass) {
-    let inputs = [], fullCurrArray
+    let inputs = [], fullCurriculumArray
     currentClass.items.forEach(item => inputs = [...inputs, ...item.inputs]);
     if (inputs.length > 0) {
       // find the curriculum element
       const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
       // find the options that are set to 'on'
       if (curriculumInput) {
-        const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
-        fullCurrArray =  Promise.all(currArray.map(async curr => {
+        const curriculumArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
+        fullCurriculumArray =  Promise.all(curriculumArray.map(async curr => {
           const formId = curr.name;
           const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
           curr.label = formInfo.title
@@ -1144,12 +1150,12 @@ export class DashboardService {
           return curr
         }));
       } else {
-        fullCurrArray = [];
+        fullCurriculumArray = [];
       }
       
     }
 
-    return fullCurrArray;
+    return fullCurriculumArray;
   }
 
   getClassTitle(classResponse: TangyFormResponse) {
@@ -1157,7 +1163,7 @@ export class DashboardService {
     return gradeInput?.value
   }
 
-  async getAllStudentResults(students, studentsResponses, curriculumFormsList, curriculum) {
+  async getAllStudentResults(students, studentsResponses, curriculumFormItemsList, classFormMetdata) {
     const allStudentResults = [];
 
     const appConfig = await this.appConfigService.getAppConfig();
@@ -1174,17 +1180,17 @@ export class DashboardService {
       studentRegistrationFields.forEach((field) => {
         studentResult[field] = this.getValue(field, student.doc)
       })
-      studentResult['forms'] = {};
-      curriculumFormsList.forEach((form) => {
+      studentResult['formItems'] = {};
+      curriculumFormItemsList.forEach((item) => {
         const formResult = {};
-        formResult['formId'] = form.id;
-        formResult['curriculum'] = curriculum;
-        formResult['title'] = form.title;
-        formResult['src'] = form.src;
+        formResult['itemId'] = item.id;
+        formResult['classFormMetadata'] = classFormMetdata;
+        formResult['title'] = item.title;
+        formResult['src'] = item.src;
         if (studentsResponses[student.id]) {
-          formResult['response'] = studentsResponses[student.id][form.id];
+          formResult['response'] = studentsResponses[student.id][item.id];
         }
-        studentResult['forms'][form.id] = formResult;
+        studentResult['formItems'][item.id] = formResult;
       });
       allStudentResults.push(studentResult);
     });
@@ -1255,18 +1261,8 @@ export class DashboardService {
           }
         list.push(studentResult)
       } else {
-        // const student_name = this.getValue('student_name', student.doc)
-        // const student_surname = this.getValue('student_surname', student.doc)
-        // const phone = this.getValue('phone', student.doc);
-        // const classId = this.getValue('classId', student.doc)
         studentResult = {}
         studentResult['id'] = studentId
-        // studentResult['name'] = student_name
-        // studentResult['surname'] = student_surname
-        // studentResult['phone'] = phone
-        // studentResult['classId'] = classId
-        // studentResult['forms'] = {}
-        // studentResult['absent'] = null
         studentRegistrationFields.forEach((field) => {
           studentResult[field] = this.getValue(field, student.doc)
         })
@@ -1275,7 +1271,7 @@ export class DashboardService {
       }
     }
     return list
-    // await this.populateFeedback(curriculumId);
+    // await this.populateFeedback(formId);
   }
 
   /**
@@ -1304,47 +1300,19 @@ export class DashboardService {
           }
         list.push(studentResult)
       } else {
-        // const student_name = this.getValue('student_name', student.doc)
-        // const student_surname = this.getValue('student_surname', student.doc)
-        // const phone = this.getValue('phone', student.doc);
-        // const classId = this.getValue('classId', student.doc)
-
         studentResult = {}
         studentResult['id'] = studentId
         studentRegistrationFields.forEach((field) => {
           studentResult[field] = this.getValue(field, student.doc)
         })
-        // studentResult['name'] = student_name
-        // studentResult['surname'] = student_surname
-        // studentResult['phone'] = phone
-        // studentResult['classId'] = classId
-        // studentResult['forms'] = {}
-        // studentResult['absent'] = false
-        // studentResult['behavior'] = null
-
-        // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
-        // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-        // curriculumFormsList.forEach((form) => {
-        //   const formResult = {};
-        //   formResult['formId'] = form.id;
-        //   formResult['curriculum'] = curriculumName;
-        //   formResult['title'] = form.title;
-        //   formResult['src'] = form.src;
-        //   if (studentsResponses[student.id]) {
-        //     formResult['response'] = studentsResponses[student.id][form.id];
-        //   }
-        //   studentResults['forms'][form.id] = formResult;
-        // });
-
-        // await this.addBehaviorRecords(studentResult, studentId);
         list.push(studentResult)
       }
     }
     return list
-    // await this.populateFeedback(curriculumId);
+    // await this.populateFeedback(formId);
   }
 
-  async initExposeVariables(classIndex: number, curriculumId: string) {
+  async initExposeVariables(classIndex: number, formId: string) {
     let currentItemId: string
     let currentClassId: string
     let currentClass
@@ -1358,7 +1326,7 @@ export class DashboardService {
       }
       currentItemId = await this.variableService.get('class-currentItemId');
       currentClassId = await this.variableService.get('class-currentClassId');
-      curriculumId = await this.variableService.get('class-curriculumId');
+      formId = await this.variableService.get('class-formId');
     } else {
       this.currentClassIndex = classIndex
     }
@@ -1370,26 +1338,26 @@ export class DashboardService {
       currentClass = this.enabledClasses[this.currentClassIndex].doc
     }
     
-    // this.currArray = await this.populateCurrentCurriculums(currentClass);
-    if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
-      const curriculum = this.currArray[0];
-      curriculumId = curriculum.name;
+    // this.curriculumArray = await this.populateCurrentCurriculums(currentClass);
+    if (typeof formId === 'undefined' || formId === null || formId === '') {
+      const curriculum = this.curriculumArray[0];
+      formId = curriculum.name;
     }
-    this.selectedCurriculumId$.next(curriculumId)
+    this.selectedFormId$.next(formId)
 
-    await this.variableService.set('class-curriculumId', curriculumId);
+    await this.variableService.set('class-formId', formId);
     await this.variableService.set('class-classIndex', this.currentClassIndex);
     await this.variableService.set('class-currentClassId', this.currentClassId);
     
     this.selectedClass = currentClass;
     this.selectedClass$.next(currentClass)
-    return {classIndex, currentItemId, currentClassId, curriculumId, currentClass};
+    return {classIndex, currentItemId, currentClassId, formId, currentClass};
   }
 
-// Uses curriculumFormsList to populate formList for a curriculum.
-  async populateFormsMetadata(curriculumId, curriculumFormsList, currentClass) {
+// Uses curriculumFormItemsList to populate formList for a curriculum.
+  async populateFormsMetadata(formId, curriculumFormItemsList, currentClass) {
     // this only needs to happen once.
-    if (typeof curriculumFormsList === 'undefined') {
+    if (typeof curriculumFormItemsList === 'undefined') {
       const msg = _TRANSLATE(`This is an error - there are no this.curriculumForms
       for this curriculum or range. Check if the config files are available.`);
       console.log(msg);
@@ -1402,32 +1370,30 @@ export class DashboardService {
     if (typeof currentClass !== 'undefined') {
       currentClassId = currentClass._id;
     }
-    for (const form of curriculumFormsList) {
+    for (const form of curriculumFormItemsList) {
       const formEl = {
         'title': form.title,
         'id': form.id,
         'classId': currentClassId,
-        'curriculumId': curriculumId
+        'formId': formId
       };
       formList.push(formEl);
     }
     return formList
   }
 
-  async selectSubTask(itemId, classId, curriculumId, curriculumFormsList) {
-    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-    const curriculumName = curriculumId
-    if (!curriculumFormsList) {
-      const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
-      curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+  async selectSubTask(itemId, classId, formId, curriculumFormItemsList) {
+    if (!curriculumFormItemsList) {
+      const curriculumFormHtml = await this.getForm(formId);
+      curriculumFormItemsList = await this.classUtils.createCurriculumFormItemsList(curriculumFormHtml);
     }
     await this.variableService.set( 'class-currentItemId', itemId );
     const students = await this.getMyStudents(classId);
-    const item = curriculumFormsList.find(x => x.id === itemId);
-    const results = await this.getResultsByClass(classId, curriculumName, [item], item);
+    const item = curriculumFormItemsList.find(x => x.id === itemId);
+    const results = await this.getResultsByClass(classId, formId, [item], item);
     const studentsResponses = [];
     const formsTodisplay = {};
-    curriculumFormsList.forEach(form => {
+    curriculumFormItemsList.forEach(form => {
       formsTodisplay[form.id] = form;
     });
     for (const response of results as any[] ) {
@@ -1452,17 +1418,17 @@ export class DashboardService {
       studentResults['name'] = student_name
       studentResults['phone'] = phone
       studentResults['classId'] = classId
-      studentResults['forms'] = {};
-      curriculumFormsList.forEach((form) => {
+      studentResults['formItems'] = {};
+      curriculumFormItemsList.forEach((item) => {
         const formResult = {};
-        formResult['formId'] = form.id;
-        formResult['curriculum'] = curriculumName;
-        formResult['title'] = form.title;
-        formResult['src'] = form.src;
+        formResult['formId'] = item.id;
+        formResult['formId'] = formId;
+        formResult['title'] = item.title;
+        formResult['src'] = item.src;
         if (studentsResponses[student.id]) {
-          formResult['response'] = studentsResponses[student.id][form.id];
+          formResult['response'] = studentsResponses[student.id][item.id];
         }
-        studentResults['forms'][form.id] = formResult;
+        studentResults['formItems'][item.id] = formResult;
       });
       allStudentResults.push(studentResults);
     });
@@ -1472,7 +1438,7 @@ export class DashboardService {
   async setCurrentClass() {
     await this.variableService.set('class-classIndex', null);
     await this.variableService.set('class-currentClassId', null);
-    await this.variableService.set('class-curriculumId', null);
+    await this.variableService.set('class-formId', null);
     await this.variableService.set('class-currentItemId', null);
     const classes = await this.getSchoolGrades();
     const enabledClasses = classes.map(klass => {

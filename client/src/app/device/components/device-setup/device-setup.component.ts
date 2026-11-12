@@ -114,7 +114,8 @@ export class DeviceSetupComponent implements OnInit {
           })
           await this.userService.login(username, password)
 
-          this.stepUserProfile.load();
+          const returnUrl = 'device-setup'
+          this.stepUserProfile.load(returnUrl);
 
           this.step = STEP_USER_PROFILE
         } catch (e) {
@@ -125,7 +126,9 @@ export class DeviceSetupComponent implements OnInit {
       })
       this.stepUserProfile.done$.subscribe(async () => {
         this.step = STEP_SYNC
-        if (!isSandbox) {
+        // The first sync only pulls down data so skip it if sandbox or if device is already verified.
+        const deviceVerified = await this.deviceService.isDeviceVerified()
+        if (deviceVerified && !isSandbox) {
           this.stepDeviceSync.sync()
         } else {
           await this.userService.logout()

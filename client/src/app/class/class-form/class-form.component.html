@@ -1,7 +1,7 @@
 <app-class-forms-player #formPlayer></app-class-forms-player>
 <div #buildContainer  id="buildContainer"></div>
 
-<div id="profile-mgmt" *ngIf="curriculum === 'student-registration' && studentId">
+<div id="profile-mgmt" *ngIf="formId === 'student-registration' && studentId">
   <div id="profile-toolbar">
     <div (click)="$event ? archiveStudent(studentId) : null" >
       <button routerLink="dashboard" mat-menu-item>

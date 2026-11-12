@@ -3,6 +3,7 @@ export class Device {
   collection = 'Device'
   token:string
   key:string
+  verified:boolean
   claimed:boolean
   updatedOn:number
   version:string

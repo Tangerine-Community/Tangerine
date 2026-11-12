@@ -10,6 +10,7 @@ import {AppConfig} from '../../shared/_classes/app-config.class';
 import {ReplicationStatus} from "../../sync/classes/replication-status.class";
 import {UserService} from "../../shared/_services/user.service";
 const bcrypt = window['dcodeIO'].bcrypt
+import { v4 as UUID } from 'uuid';
 
 export interface AppInfo {
   encryptionLevel:string
@@ -119,18 +120,44 @@ export class DeviceService {
     }
   }
 
-  async getRemoteDeviceInfo(id, token, isTest=false):Promise<Device> {
-    const appConfig = await this.appConfigService.getAppConfig()
-     let device:Device
+  async getRemoteDeviceInfo(id, token, isTest=false): Promise<Device> {
+    const appConfig = await this.appConfigService.getAppConfig();
+    let device: Device;
     if (isTest) {
-      const homeUrl = appConfig.homeUrl
+      const homeUrl = appConfig.homeUrl;
       device = await this.generateTestDevice(id, token, homeUrl);
     } else {
-      device = <Device>await this
-        .httpClient
-        .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise()
+      const url = `${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`
+      device = <Device>await this.httpClient.get(url).toPromise();
     }
-    return device
+    return device;
+  }
+
+  async registerOpenDevice(token, location, isTest=false): Promise<Device> {
+    let device: Device;
+    const appConfig = await this.appConfigService.getAppConfig();
+    if (isTest) {
+      const homeUrl = appConfig.homeUrl;
+      const id = <string>UUID();
+      const token = <string>UUID();
+      device = await this.generateTestDevice(id, token, homeUrl);
+    } else {
+      const url = `${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${token}`;
+      device = <Device>await this.httpClient.post(url, { location }).toPromise();
+    }
+    return device;
+  }
+
+  async isDeviceVerified(): Promise<boolean> {
+    const device = await this.getDevice()
+    const deviceId = device._id
+    const deviceToken = device.token
+
+    // This function is meant to check if the device is verified on the server.
+    // Do not assume the device is verified if remoteDevice is not found.
+    const remoteDevice = await this.getRemoteDeviceInfo(deviceId, deviceToken, undefined)
+    if (!remoteDevice) return false
+    return remoteDevice.verified
   }
 
   async register(id, token, isTest = false):Promise<Device> {
@@ -327,6 +354,10 @@ export class DeviceService {
       "value": pickedLocation,
       "showLevels": flatLocationList.locationsLevels
     }
+    const syncLocation: LocationConfig = {
+      "value": pickedLocation,
+      "showLevels": flatLocationList.locationsLevels
+    }
     
     
     // @TODO Assign a location.
@@ -335,7 +366,7 @@ export class DeviceService {
       token,
       key: 'test',
       assignedLocation: assignedLocation,
-      syncLocations: pickedLocation,
+      syncLocations: [syncLocation],
       collection: 'Device',
       version: 'sandbox',
       claimed: true,

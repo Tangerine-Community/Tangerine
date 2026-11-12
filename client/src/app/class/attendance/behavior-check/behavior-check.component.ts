@@ -74,7 +74,7 @@ export class BehaviorCheckComponent implements OnInit {
     this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
 
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    const curriculumId = await this.variableService.get('class-curriculumId');
+    const curriculumId = await this.variableService.get('class-formId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
 
     const currentClassId = this.selectedClass._id
@@ -173,7 +173,11 @@ export class BehaviorCheckComponent implements OnInit {
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
-        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+        { formId: 'student-registration', 
+          studentId: studentId, 
+          classId: classId, 
+          responseId: studentId, 
+          viewRecord: true }
     });
   }
 
@@ -184,20 +188,20 @@ export class BehaviorCheckComponent implements OnInit {
     event.currentTarget.checked = true;
     const studentId = column.id;
     const classId = column.classId;
-    // const selectedFormId = selectedForm['formId'];
-    const selectedFormId = null;
-    // const curriculum = selectedForm['curriculum'];
-    const curriculum = formId;
-    // const src = selectedForm['src'];
+    const selectedSectionId = null;
     const src = "./assets/form-internal-behaviour/form.html"
-    // const title = selectedForm['title'];
     const title = "Behavior";
     // const responseId = selectedForm['response']['_id'];
     const responseId = column.behavior?.formResponseId
     this.router.navigate(['class-form'], { queryParams:
-        { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
-          classId: classId, itemId: selectedFormId, src: src, title:
-          title, responseId: responseId }
+        { formId: formId, 
+          studentId: studentId,
+          classId: classId, 
+          sectionId: selectedSectionId, 
+          src: src,
+          title: title,
+          responseId: responseId 
+        }
     });
   }
 
@@ -208,15 +212,14 @@ export class BehaviorCheckComponent implements OnInit {
   async selectStudentForm(column, formId) {
     const studentId = column.id;
     const classId = column.classId;
-    const selectedFormId = null;
-    const curriculum = formId;
+    const selectedSectionId = null;
     const src = null;
     const title = null;
     let responseId = null;
     
     this.router.navigate(['class-form'], { queryParams:
-        { formId: selectedFormId,
-          curriculum: curriculum,
+        { formId: formId,
+          sectionId: selectedSectionId,
           curriculumLabel: this.curriculum.label,
           reportDate: this.register.reportDate,
           studentId: studentId,

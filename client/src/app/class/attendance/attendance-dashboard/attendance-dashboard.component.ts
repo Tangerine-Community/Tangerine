@@ -25,7 +25,7 @@ export class AttendanceDashboardComponent implements OnInit {
   selectedClass: any
   reportDate:string
   classRegistrationParams = {
-    curriculum: 'class-registration'
+    formId: 'class-registration'
   };
   curriculum: any;
   units: string[] = []
@@ -70,20 +70,20 @@ export class AttendanceDashboardComponent implements OnInit {
 
       this.route.queryParams.subscribe(async params => {
         classIndex = params['classIndex'];
-        let curriculumId = params['curriculumId'];
-        
-        const __vars = await this.dashboardService.initExposeVariables(classIndex, curriculumId);
+        let formId = params['formId'];
+
+        const __vars = await this.dashboardService.initExposeVariables(classIndex, formId);
         const currentClass = __vars.currentClass;
-        curriculumId = __vars.curriculumId;
+        formId = __vars.formId;
         this.selectedClass = currentClass;
         this.ready = true;
         const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
         this.currArray = currArray
-        // When app is initialized, there is no curriculumId, so we need to set it to the first one.
-        if (!curriculumId && currArray?.length > 0) {
-          curriculumId = currArray[0].name
+        // When app is initialized, there is no formId, so we need to set it to the first one.
+        if (!formId && currArray?.length > 0) {
+          formId = currArray[0].name
         }
-        this.curriculum = currArray.find(x => x.name === curriculumId);
+        this.curriculum = currArray.find(x => x.name === formId);
         if (currentClass) {
           this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
           await this.populateSummary(currentClass, this.curriculum)
@@ -243,7 +243,7 @@ export class AttendanceDashboardComponent implements OnInit {
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
-        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+        { formId: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
 
